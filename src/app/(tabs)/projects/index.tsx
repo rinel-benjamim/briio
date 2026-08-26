@@ -14,6 +14,7 @@ import {
   Plus,
   ArrowUpDown,
   X,
+  Building2,
 } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
@@ -100,7 +101,10 @@ export default function ProjectsScreen() {
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
-        <Text style={styles.navTitle}>Obras</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.navTitle}>Obras</Text>
+          <Text style={styles.navSubtitle}>Gerir suas obras de trabalho</Text>
+        </View>
         <View style={styles.topActions}>
           <PressableOpacity
             style={styles.iconButton}
@@ -211,6 +215,15 @@ export default function ProjectsScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Building2 size={40} color={colors.textMuted} />
+            <Text style={styles.emptyTitle}>Nenhuma obra encontrada</Text>
+            <Text style={styles.emptyDescription}>
+              Tente alterar os filtros ou criar uma nova obra.
+            </Text>
+          </View>
+        }
       />
 
       <PressableOpacity
@@ -238,9 +251,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  headerLeft: {
+    flex: 1,
+    gap: 2,
+  },
   navTitle: {
     ...typography.presets.h1,
     color: colors.textMain,
+  },
+  navSubtitle: {
+    ...typography.presets.body,
+    color: colors.textMuted,
   },
   topActions: {
     flexDirection: "row",
@@ -326,6 +347,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 100,
     gap: 12,
+    flexGrow: 1,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    gap: 12,
+  },
+  emptyTitle: {
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
+  },
+  emptyDescription: {
+    ...typography.presets.caption,
+    color: colors.textMuted,
+    textAlign: "center",
   },
   fab: {
     position: "absolute",
@@ -338,7 +376,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.24,
     shadowRadius: 12,
     elevation: 8,
   },

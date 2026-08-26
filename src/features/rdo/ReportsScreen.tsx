@@ -18,6 +18,7 @@ import {
   X,
   Check,
   Building2,
+  FileText,
 } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
@@ -160,7 +161,10 @@ export default function ReportsScreen() {
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
-        <Text style={styles.navTitle}>Relatórios</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.navTitle}>Relatórios</Text>
+          <Text style={styles.navSubtitle}>Acompanhe os relatórios diários</Text>
+        </View>
         <View style={styles.topActions}>
           <PressableOpacity
             style={styles.iconButton}
@@ -258,6 +262,15 @@ export default function ReportsScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <FileText size={40} color={colors.textMuted} />
+            <Text style={styles.emptyTitle}>Nenhum relatório encontrado</Text>
+            <Text style={styles.emptyDescription}>
+              Tente alterar os filtros ou criar um novo relatório.
+            </Text>
+          </View>
+        }
       />
 
       <PressableOpacity
@@ -355,9 +368,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  headerLeft: {
+    flex: 1,
+    gap: 2,
+  },
   navTitle: {
     ...typography.presets.h1,
     color: colors.textMain,
+  },
+  navSubtitle: {
+    ...typography.presets.body,
+    color: colors.textMuted,
   },
   topActions: {
     flexDirection: "row",
@@ -367,7 +388,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#F4F6F4",
+    backgroundColor: colors.bgMain,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -384,7 +405,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     height: 32,
     justifyContent: "center",
-    backgroundColor: "#F4F6F4",
+    backgroundColor: colors.bgMain,
   },
   filterPillActive: {
     backgroundColor: colors.primary,
@@ -443,6 +464,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 100,
     gap: 12,
+    flexGrow: 1,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    gap: 12,
+  },
+  emptyTitle: {
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
+  },
+  emptyDescription: {
+    ...typography.presets.caption,
+    color: colors.textMuted,
+    textAlign: "center",
   },
   reportCard: {
     backgroundColor: colors.bgSurface,
@@ -507,7 +545,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.24,
     shadowRadius: 12,
     elevation: 8,
   },
@@ -517,7 +555,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.bgSurface,
+    backgroundColor: colors.primaryLight,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -538,7 +576,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#F4F6F4",
+    backgroundColor: colors.bgMain,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -565,7 +603,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#F4F6F4",
+    backgroundColor: colors.bgMain,
     justifyContent: "center",
     alignItems: "center",
   },
