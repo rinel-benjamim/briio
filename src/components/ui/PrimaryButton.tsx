@@ -48,6 +48,11 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius["2xl"],
     height: 56,
     gap: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 4,
   },
   label: {
     ...typography.presets.h3,

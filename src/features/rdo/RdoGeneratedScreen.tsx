@@ -8,11 +8,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeftCircle,
   CheckCircle,
-  FileSearch,
   Share2,
   Printer,
   ArrowRight,
@@ -21,7 +18,10 @@ import {
   FileText,
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
-import { colors } from "@/constants";
+import { colors, borderRadius } from "@/constants";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   generateRdoPdf,
@@ -36,7 +36,6 @@ import {
 
 export default function RdoGeneratedScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfHtml, setPdfHtml] = useState<string>("");
   const [pdfSize, setPdfSize] = useState<string>("...");
@@ -114,16 +113,10 @@ export default function RdoGeneratedScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
-        <PressableOpacity
-          style={styles.navButton}
-          onPress={() => router.replace(`/(tabs)/reports/${id}`)}
-        >
-          <ArrowLeftCircle size={22} color={colors.textMain} />
-        </PressableOpacity>
-        <Text style={styles.navTitle}>RDO Gerado</Text>
-        <View style={styles.spacer} />
-      </View>
+      <ScreenHeader
+        title="RDO Gerado"
+        onBack={() => router.replace(`/(tabs)/reports/${id}`)}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -177,41 +170,27 @@ export default function RdoGeneratedScreen() {
         </View>
 
         <PressableOpacity
-          style={styles.openButton}
+          style={styles.openPdfLink}
           onPress={handleOpenPdf}
           disabled={isGenerating}
         >
-          <FileSearch size={16} color={colors.textOnBrand} />
-          <Text style={styles.openButtonText}>Abrir PDF</Text>
+          <Text style={styles.openPdfText}>Abrir PDF</Text>
         </PressableOpacity>
 
-        <PressableOpacity
-          style={styles.primaryButton}
+        <PrimaryButton
+          label={isSharing ? "A partilhar..." : "Partilhar PDF"}
           onPress={handleShare}
           disabled={isGenerating || isSharing}
-        >
-          {isSharing ? (
-            <ActivityIndicator size="small" color={colors.textOnBrand} />
-          ) : (
-            <Share2 size={18} color={colors.textOnBrand} />
-          )}
-          <Text style={styles.primaryButtonText}>Partilhar PDF</Text>
-        </PressableOpacity>
+          loading={isSharing}
+          icon={!isSharing ? <Share2 size={18} color={colors.textOnBrand} /> : undefined}
+        />
 
-        <View style={styles.secondaryActions}>
-          <PressableOpacity
-            style={styles.secondaryButton}
-            onPress={handlePrint}
-            disabled={isGenerating || isPrinting}
-          >
-            {isPrinting ? (
-              <ActivityIndicator size="small" color={colors.textMuted} />
-            ) : (
-              <Printer size={16} color={colors.textMuted} />
-            )}
-            <Text style={styles.secondaryButtonText}>Imprimir</Text>
-          </PressableOpacity>
-        </View>
+        <SecondaryButton
+          label={isPrinting ? "A imprimir..." : "Imprimir"}
+          onPress={handlePrint}
+          disabled={isGenerating || isPrinting}
+          icon={!isPrinting ? <Printer size={16} color={colors.textMuted} /> : undefined}
+        />
 
         <View style={styles.reportStatus}>
           <View style={styles.statusRow}>
@@ -241,43 +220,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bgMain,
   },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-    flex: 1,
-  },
-  spacer: {
-    width: 48,
-  },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 24,
-    gap: 10,
+    gap: 14,
   },
   successCard: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.successBg,
-    borderRadius: 16,
+    borderRadius: borderRadius["2xl"],
     padding: 18,
     gap: 12,
   },
@@ -304,9 +260,11 @@ const styles = StyleSheet.create({
   },
   reportIdentity: {
     backgroundColor: colors.bgSurface,
-    borderRadius: 24,
+    borderRadius: borderRadius["2xl"],
     padding: 20,
     gap: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   reportNumber: {
     fontSize: typography.fontSize["3xl"],
@@ -336,7 +294,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warningBg,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 100,
+    borderRadius: borderRadius.full,
   },
   fileText: {
     fontSize: typography.fontSize.xs,
@@ -345,7 +303,7 @@ const styles = StyleSheet.create({
   },
   pdfPreview: {
     backgroundColor: colors.progressTrack,
-    borderRadius: 16,
+    borderRadius: borderRadius["2xl"],
     height: 250,
     justifyContent: "center",
     alignItems: "center",
@@ -357,7 +315,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 190,
     backgroundColor: colors.bgSurface,
-    borderRadius: 10,
+    borderRadius: borderRadius.lg,
     padding: 10,
     gap: 4,
   },
@@ -400,58 +358,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  openButton: {
-    flexDirection: "row",
+  openPdfLink: {
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
+    paddingVertical: 8,
   },
-  openButtonText: {
+  openPdfText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textOnBrand,
-  },
-  primaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  secondaryActions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  secondaryButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    height: 50,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  secondaryButtonText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
+    color: colors.primary,
   },
   reportStatus: {
     backgroundColor: colors.bgSurface,
-    borderRadius: 16,
+    borderRadius: borderRadius["2xl"],
     padding: 12,
     paddingHorizontal: 16,
     gap: 4,
@@ -476,7 +394,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.bgSurface,
-    borderRadius: 16,
+    borderRadius: borderRadius["2xl"],
     height: 56,
     gap: 6,
     borderWidth: 1,

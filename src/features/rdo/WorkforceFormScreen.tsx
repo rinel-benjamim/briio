@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import { CirclePlus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -15,9 +16,11 @@ import { MOCK_RDO_CONTEXT, MOCK_ROLES, MOCK_WORKFORCE_DATA } from "@/mocks";
 
 interface WorkforceFormProps {
   mode: "add" | "edit";
+  currentStep?: number;
+  totalSteps?: number;
 }
 
-export function WorkforceForm({ mode }: WorkforceFormProps) {
+export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: WorkforceFormProps) {
   const { id, workforceId } = useLocalSearchParams<{ id: string; workforceId?: string }>();
 
   const editData = mode === "edit" ? MOCK_WORKFORCE_DATA[workforceId || "1"] : null;
@@ -31,11 +34,20 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
   const totalHours = peopleCount * hoursPerPerson;
   const isCustomRole = role === "Outro";
 
+  const stepBadge = (
+    <View style={styles.stepBadge}>
+      <Text style={styles.stepBadgeText}>
+        {currentStep} de {totalSteps}
+      </Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <ScreenHeader
         title={mode === "add" ? "Adicionar mão de obra" : "Editar função"}
         onBack={() => router.back()}
+        rightSlot={stepBadge}
       />
 
       <ScrollView
@@ -46,8 +58,6 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
         <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>DADOS DA EQUIPA</Text>
-
           <SelectField
             label="Função"
             value={isCustomRole ? customRole || "" : role}
@@ -67,44 +77,54 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
             />
           )}
 
-          <StepperField
-            label="Número de pessoas"
-            value={peopleCount}
-            onChange={setPeopleCount}
-            min={1}
-          />
-
-          <StepperField
-            label="Horas por pessoa"
-            value={hoursPerPerson}
-            onChange={setHoursPerPerson}
-            min={1}
-            suffix="horas"
-          />
+          <View style={styles.stepperRow}>
+            <View style={styles.stepperHalf}>
+              <StepperField
+                label="N.º de pessoas"
+                value={peopleCount}
+                onChange={setPeopleCount}
+                min={1}
+              />
+            </View>
+            <View style={styles.stepperHalf}>
+              <StepperField
+                label="Horas por pessoa"
+                value={hoursPerPerson}
+                onChange={setHoursPerPerson}
+                min={1}
+                suffix="h"
+              />
+            </View>
+          </View>
         </View>
 
         <View style={styles.summaryCard}>
           <View style={styles.summaryLeft}>
             <Text style={styles.summaryTitle}>Total de horas</Text>
             <Text style={styles.summarySubtitle}>
-              {peopleCount} {peopleCount === 1 ? "pessoa" : "pessoas"} × {hoursPerPerson} h
+              {peopleCount} {peopleCount === 1 ? "pessoa" : "pessoas"} × {hoursPerPerson} horas
             </Text>
           </View>
           <Text style={styles.summaryValue}>{totalHours} h</Text>
         </View>
 
         <TextArea
-          label="OBSERVAÇÃO"
+          label="Observação"
           value={observation}
           onChangeText={setObservation}
           placeholder="Ex.: Equipa trabalhou no período da manhã."
           height={112}
         />
 
+        <View style={styles.saveReassurance}>
+          <AutosaveStatus />
+        </View>
+
         <View style={styles.buttonSection}>
           <PrimaryButton
-            label={mode === "add" ? "Guardar" : "Guardar alterações"}
+            label={mode === "add" ? "Adicionar à equipa" : "Guardar alterações"}
             onPress={() => router.back()}
+            icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
             style={styles.cancelButton}
@@ -115,8 +135,6 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
             <Text style={styles.cancelText}>Cancelar</Text>
           </PressableOpacity>
         </View>
-
-        <AutosaveStatus />
       </ScrollView>
     </View>
   );
@@ -134,16 +152,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 8,
-    gap: 20,
+    gap: 18,
+  },
+  stepBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.progressTrack,
+  },
+  stepBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
   section: {
+    gap: 7,
+  },
+  stepperRow: {
+    flexDirection: "row",
     gap: 12,
   },
-  sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+  stepperHalf: {
+    flex: 1,
   },
   summaryCard: {
     flexDirection: "row",
@@ -154,24 +186,34 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   summaryLeft: {
-    gap: 2,
+    gap: 3,
   },
   summaryTitle: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily,
     color: colors.primaryHover,
   },
   summarySubtitle: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   summaryValue: {
-    fontSize: typography.fontSize["4xl"],
-    fontWeight: typography.fontWeight.bold,
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.primary,
   },
+  saveReassurance: {
+    alignItems: "flex-start",
+  },
   buttonSection: {
-    gap: 12,
+    gap: 10,
   },
   cancelButton: {
     alignItems: "center",
@@ -179,7 +221,10 @@ const styles = StyleSheet.create({
     height: 48,
   },
   cancelText: {
-    ...typography.presets.body,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
 });
