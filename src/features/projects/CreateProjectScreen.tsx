@@ -5,23 +5,21 @@ import {
   StyleSheet,
   Text,
   Pressable,
-  Modal,
   Platform,
 } from "react-native";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeftCircle,
-  MapPin,
+  ArrowRight,
   ChevronDown,
-  ChevronRight,
   Calendar,
 } from "lucide-react-native";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { Field } from "@/components/ui/Form/Field";
 import { SelectField } from "@/components/ui/Form/SelectField";
 
@@ -110,9 +108,11 @@ function DateField({
 }
 
 export default function CreateProjectScreen() {
-  const insets = useSafeAreaInsets();
-  const [step] = useState(1);
-  const totalSteps = 2;
+  const stepBadge = (
+    <View style={styles.stepBadge}>
+      <Text style={styles.stepBadgeText}>1 de 2</Text>
+    </View>
+  );
 
   const [name, setName] = useState("");
   const [reference, setReference] = useState("");
@@ -127,17 +127,11 @@ export default function CreateProjectScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
-        <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeftCircle size={22} color={colors.textMain} />
-        </PressableOpacity>
-        <Text style={styles.navTitle}>Nova obra</Text>
-        <View style={styles.progressBadge}>
-          <Text style={styles.progressText}>
-            {step} de {totalSteps}
-          </Text>
-        </View>
-      </View>
+      <ScreenHeader
+        title="Nova obra"
+        onBack={() => router.back()}
+        rightSlot={stepBadge}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -145,7 +139,6 @@ export default function CreateProjectScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Identificação</Text>
           <Field
             label="Nome da obra"
             value={name}
@@ -164,7 +157,6 @@ export default function CreateProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Localização</Text>
           <Field
             label="Localização da obra"
             value={location}
@@ -181,7 +173,6 @@ export default function CreateProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Planeamento</Text>
           <DateField
             label="Data de início"
             value={startDate}
@@ -207,7 +198,7 @@ export default function CreateProjectScreen() {
               <Text style={styles.sectionTitle}>Entidades</Text>
               <Text style={styles.sectionOptional}>Opcional</Text>
             </View>
-            <ChevronRight
+            <ChevronDown
               size={18}
               color={colors.textMuted}
               style={[styles.chevron, entidadesExpanded && styles.chevronExpanded]}
@@ -237,12 +228,11 @@ export default function CreateProjectScreen() {
           )}
         </View>
 
-        <PressableOpacity
-          style={styles.primaryButton}
+        <PrimaryButton
+          label="Continuar"
           onPress={() => router.push(`/(tabs)/projects/1/configure-rdo`)}
-        >
-          <Text style={styles.primaryButtonText}>Continuar</Text>
-        </PressableOpacity>
+          icon={<ArrowRight size={18} color={colors.textOnBrand} />}
+        />
 
         <Text style={styles.supportingText}>
           Poderá alterar estas informações posteriormente.
@@ -257,52 +247,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bgMain,
   },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  progressBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 9999,
-    backgroundColor: colors.primaryLight,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
   scrollView: {
     flex: 1,
   },
   content: {
     paddingHorizontal: 20,
     paddingBottom: 24,
-    gap: 24,
+    paddingTop: 8,
+    gap: 18,
+  },
+  stepBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.progressTrack,
+  },
+  stepBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
   section: {
-    gap: 10,
+    gap: 7,
   },
   sectionHeaderRow: {
     flexDirection: "row",
@@ -318,15 +286,20 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "0deg" }],
   },
   chevronExpanded: {
-    transform: [{ rotate: "90deg" }],
+    transform: [{ rotate: "180deg" }],
   },
   sectionTitle: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMain,
   },
   sectionOptional: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   field: {
@@ -338,11 +311,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   fieldLabelText: {
-    ...typography.presets.label,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily,
     color: colors.textMain,
   },
   fieldOptional: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
     marginLeft: 6,
   },
@@ -372,14 +351,11 @@ const styles = StyleSheet.create({
   inputText: {
     color: colors.textMain,
   },
-  inputWithIcon: {
-    marginLeft: 4,
-  },
-  placeholder: {
-    color: colors.textMuted,
-  },
   fieldRequired: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   optionalField: {
@@ -397,69 +373,12 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.textOnBrand,
   },
-  primaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius["2xl"],
-    height: 56,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
   supportingText: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
     textAlign: "center",
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: colors.bgSurface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "60%",
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textMain,
-  },
-  sheetClose: {
-    ...typography.presets.bodySmall,
-    color: colors.primary,
-    fontWeight: typography.fontWeight.medium,
-  },
-  sheetContent: {
-    paddingBottom: 34,
-  },
-  sheetOption: {
-    padding: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  sheetOptionActive: {
-    backgroundColor: colors.primaryLight,
-  },
-  sheetOptionText: {
-    ...typography.presets.bodySmall,
-    color: colors.textMain,
-  },
-  sheetOptionTextActive: {
-    color: colors.primary,
   },
 });

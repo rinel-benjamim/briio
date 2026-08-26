@@ -5,13 +5,10 @@ import {
   StyleSheet,
   Text,
   Pressable,
-  Modal,
   Platform,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeftCircle,
   ChevronDown,
   Calendar,
 } from "lucide-react-native";
@@ -19,7 +16,10 @@ import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { Field } from "@/components/ui/Form/Field";
 import { SelectField } from "@/components/ui/Form/SelectField";
 
@@ -122,7 +122,6 @@ function DateField({
 
 export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
 
   const [name, setName] = useState(MOCK_PROJECT.name);
   const [reference, setReference] = useState(MOCK_PROJECT.reference);
@@ -137,12 +136,10 @@ export default function EditProjectScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
-        <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeftCircle size={22} color={colors.textMain} />
-        </PressableOpacity>
-        <Text style={styles.navTitle}>Editar obra</Text>
-      </View>
+      <ScreenHeader
+        title="Editar obra"
+        onBack={() => router.back()}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -150,7 +147,6 @@ export default function EditProjectScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Identificação</Text>
           <Field
             label="Nome da obra"
             value={name}
@@ -169,7 +165,6 @@ export default function EditProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Localização</Text>
           <Field
             label="Localização da obra"
             value={location}
@@ -186,7 +181,6 @@ export default function EditProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Planeamento</Text>
           <DateField
             label="Data de início"
             value={startDate}
@@ -204,7 +198,6 @@ export default function EditProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Responsabilidade</Text>
           <Field
             label="Responsável pela obra"
             value={responsible}
@@ -238,13 +231,23 @@ export default function EditProjectScreen() {
           />
         </View>
 
-        <PressableOpacity style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText}>Guardar alterações</Text>
-        </PressableOpacity>
+        <View style={styles.saveReassurance}>
+          <AutosaveStatus />
+        </View>
 
-        <Text style={styles.supportingText}>
-          Alterações serão guardadas localmente.
-        </Text>
+        <PrimaryButton
+          label="Guardar alterações"
+          onPress={() => router.back()}
+        />
+
+        <PressableOpacity
+          style={styles.cancelButton}
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Cancelar"
+        >
+          <Text style={styles.cancelText}>Cancelar</Text>
+        </PressableOpacity>
       </ScrollView>
     </View>
   );
@@ -255,36 +258,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bgMain,
   },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
   scrollView: {
     flex: 1,
   },
   content: {
     paddingHorizontal: 20,
     paddingBottom: 24,
-    gap: 24,
+    paddingTop: 8,
+    gap: 18,
   },
   section: {
-    gap: 10,
+    gap: 7,
   },
   sectionHeaderRow: {
     flexDirection: "row",
@@ -292,12 +276,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sectionTitle: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMain,
   },
   sectionOptional: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   field: {
@@ -309,11 +298,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   fieldLabelText: {
-    ...typography.presets.label,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily,
     color: colors.textMain,
   },
   fieldOptional: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
     marginLeft: 6,
   },
@@ -346,14 +341,11 @@ const styles = StyleSheet.create({
   inputText: {
     color: colors.textMain,
   },
-  inputWithIcon: {
-    marginLeft: 4,
-  },
-  placeholder: {
-    color: colors.textMuted,
-  },
   fieldRequired: {
-    ...typography.presets.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   datePickerConfirm: {
@@ -368,69 +360,19 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.textOnBrand,
   },
-  primaryButton: {
+  saveReassurance: {
+    alignItems: "flex-start",
+  },
+  cancelButton: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius["2xl"],
-    height: 56,
+    height: 48,
   },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  supportingText: {
-    ...typography.presets.caption,
+  cancelText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
-    textAlign: "center",
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: colors.bgSurface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "60%",
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textMain,
-  },
-  sheetClose: {
-    ...typography.presets.bodySmall,
-    color: colors.primary,
-    fontWeight: typography.fontWeight.medium,
-  },
-  sheetContent: {
-    paddingBottom: 34,
-  },
-  sheetOption: {
-    padding: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  sheetOptionActive: {
-    backgroundColor: colors.primaryLight,
-  },
-  sheetOptionText: {
-    ...typography.presets.bodySmall,
-    color: colors.textMain,
-  },
-  sheetOptionTextActive: {
-    color: colors.primary,
   },
 });
