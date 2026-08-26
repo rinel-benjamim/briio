@@ -9,7 +9,6 @@ import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SelectField } from "@/components/ui/Form/SelectField";
-import { StepperField } from "@/components/ui/Form/StepperField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
 import { MOCK_RDO_CONTEXT, MOCK_ROLES, MOCK_WORKFORCE_DATA } from "@/mocks";
@@ -79,20 +78,21 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
 
           <View style={styles.stepperRow}>
             <View style={styles.stepperHalf}>
-              <StepperField
+              <Field
                 label="N.º de pessoas"
-                value={peopleCount}
-                onChange={setPeopleCount}
-                min={1}
+                value={String(peopleCount)}
+                onChangeText={(v) => setPeopleCount(Number(v) || 1)}
+                keyboardType="numeric"
+                placeholder="2"
               />
             </View>
             <View style={styles.stepperHalf}>
-              <StepperField
+              <Field
                 label="Horas por pessoa"
-                value={hoursPerPerson}
-                onChange={setHoursPerPerson}
-                min={1}
-                suffix="h"
+                value={String(hoursPerPerson)}
+                onChangeText={(v) => setHoursPerPerson(Number(v) || 1)}
+                keyboardType="numeric"
+                placeholder="8"
               />
             </View>
           </View>

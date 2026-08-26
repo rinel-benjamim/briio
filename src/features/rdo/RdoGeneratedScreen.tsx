@@ -12,16 +12,12 @@ import {
   CheckCircle,
   Share2,
   Printer,
-  ArrowRight,
-  Clock,
-  PenLine,
-  FileText,
+  FileSearch,
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
 import { colors, borderRadius } from "@/constants";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   generateRdoPdf,
@@ -42,10 +38,6 @@ export default function RdoGeneratedScreen() {
   const [isGenerating, setIsGenerating] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
-  const [generationTime] = useState(() => {
-    const now = new Date();
-    return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-  });
 
   useEffect(() => {
     generatePdf();
@@ -107,10 +99,6 @@ export default function RdoGeneratedScreen() {
     }
   }
 
-  function handleViewHistory() {
-    router.push(`/(tabs)/reports/${id}`);
-  }
-
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -124,9 +112,7 @@ export default function RdoGeneratedScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.successCard}>
-          <View style={styles.successIconContainer}>
-            <CheckCircle size={20} color={colors.success} />
-          </View>
+          <CheckCircle size={20} color={colors.success} />
           <View style={styles.successInfo}>
             <Text style={styles.successTitle}>Relatório concluído</Text>
             <Text style={styles.successSubtitle}>
@@ -141,7 +127,6 @@ export default function RdoGeneratedScreen() {
           <Text style={styles.reportProject}>Reabilitação Pedrinhas</Text>
           <Text style={styles.reportLocation}>Zango 1 — Icolo e Bengo</Text>
           <View style={styles.reportFile}>
-            <FileText size={14} color={colors.textMuted} />
             <Text style={styles.fileText}>PDF · {pdfSize}</Text>
           </View>
         </View>
@@ -169,13 +154,13 @@ export default function RdoGeneratedScreen() {
           </View>
         </View>
 
-        <PressableOpacity
-          style={styles.openPdfLink}
+        <PrimaryButton
+          label={isGenerating ? "A gerar..." : "Abrir PDF"}
           onPress={handleOpenPdf}
           disabled={isGenerating}
-        >
-          <Text style={styles.openPdfText}>Abrir PDF</Text>
-        </PressableOpacity>
+          loading={isGenerating}
+          icon={!isGenerating ? <FileSearch size={18} color={colors.textOnBrand} /> : undefined}
+        />
 
         <PrimaryButton
           label={isSharing ? "A partilhar..." : "Partilhar PDF"}
@@ -185,31 +170,13 @@ export default function RdoGeneratedScreen() {
           icon={!isSharing ? <Share2 size={18} color={colors.textOnBrand} /> : undefined}
         />
 
-        <SecondaryButton
-          label={isPrinting ? "A imprimir..." : "Imprimir"}
+        <PrimaryButton
+          label={isPrinting ? "A imprimir..." : "Imprimir PDF"}
           onPress={handlePrint}
           disabled={isGenerating || isPrinting}
-          icon={!isPrinting ? <Printer size={16} color={colors.textMuted} /> : undefined}
+          loading={isPrinting}
+          icon={!isPrinting ? <Printer size={18} color={colors.textOnBrand} /> : undefined}
         />
-
-        <View style={styles.reportStatus}>
-          <View style={styles.statusRow}>
-            <Clock size={16} color={colors.textMuted} />
-            <Text style={styles.statusText}>Gerado hoje às {generationTime}</Text>
-          </View>
-          <View style={styles.statusRow}>
-            <PenLine size={14} color={colors.warning} />
-            <Text style={styles.statusWarning}>Assinatura física pendente</Text>
-          </View>
-        </View>
-
-        <PressableOpacity
-          style={styles.historyLink}
-          onPress={handleViewHistory}
-        >
-          <Text style={styles.historyText}>Ver RDOs da obra</Text>
-          <ArrowRight size={16} color={colors.primary} />
-        </PressableOpacity>
       </ScrollView>
     </View>
   );
@@ -236,14 +203,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius["2xl"],
     padding: 18,
     gap: 12,
-  },
-  successIconContainer: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.success,
-    justifyContent: "center",
-    alignItems: "center",
   },
   successInfo: {
     gap: 2,
@@ -286,15 +245,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   reportFile: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginTop: 8,
     alignSelf: "flex-start",
     backgroundColor: colors.warningBg,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
+    marginTop: 8,
   },
   fileText: {
     fontSize: typography.fontSize.xs,
@@ -357,52 +313,5 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  openPdfLink: {
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  openPdfText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  reportStatus: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius["2xl"],
-    padding: 12,
-    paddingHorizontal: 16,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  statusText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.textMuted,
-  },
-  statusWarning: {
-    ...typography.presets.caption,
-    color: colors.warning,
-  },
-  historyLink: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius["2xl"],
-    height: 56,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  historyText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
   },
 });
