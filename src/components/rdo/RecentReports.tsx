@@ -1,0 +1,203 @@
+import { View, Text, StyleSheet } from "react-native";
+import { ArrowRight } from "lucide-react-native";
+import { colors, typography, borderRadius } from "@/constants";
+import { PressableOpacity } from "@/components/ui/PressableOpacity";
+
+interface RecentReport {
+  id: string;
+  number: number;
+  date: string;
+  day: string;
+  month: string;
+  projectName: string;
+  status: "draft" | "completed" | "generated";
+}
+
+interface RecentReportsProps {
+  reports: RecentReport[];
+  onViewAll?: () => void;
+  onReportPress?: (id: string) => void;
+}
+
+const statusConfig = {
+  draft: {
+    label: "Rascunho",
+    color: colors.textTertiary,
+    bg: "rgba(100, 116, 139, 0.15)",
+  },
+  completed: {
+    label: "Concluído",
+    color: colors.success,
+    bg: colors.successBg,
+  },
+  generated: {
+    label: "Gerado",
+    color: "#15803D",
+    bg: "#DCFCE7",
+  },
+};
+
+export function RecentReports({
+  reports,
+  onViewAll,
+  onReportPress,
+}: RecentReportsProps) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Relatórios recentes</Text>
+      </View>
+
+      <View style={styles.list}>
+        {reports.map((report, index) => (
+          <View key={report.id}>
+            <PressableOpacity
+              style={styles.item}
+              onPress={() => onReportPress?.(report.id)}
+            >
+              <View style={styles.left}>
+                <View style={styles.dateColumn}>
+                  <Text style={styles.day}>{report.day}</Text>
+                  <Text style={styles.month}>{report.month}</Text>
+                </View>
+                <View style={styles.itemDivider} />
+                <View style={styles.info}>
+                  <Text style={styles.reportNumber}>RDO #{report.number}</Text>
+                  <Text style={styles.reportProject}>{report.projectName}</Text>
+                </View>
+              </View>
+              <View
+                style={[
+                  styles.badge,
+                  { backgroundColor: statusConfig[report.status].bg },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: statusConfig[report.status].color },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.badgeText,
+                    { color: statusConfig[report.status].color },
+                  ]}
+                >
+                  {statusConfig[report.status].label}
+                </Text>
+              </View>
+            </PressableOpacity>
+            {index < reports.length - 1 && <View style={styles.divider} />}
+          </View>
+        ))}
+      </View>
+
+      <PressableOpacity style={styles.footer} onPress={onViewAll}>
+        <Text style={styles.viewAll}>Ver todos</Text>
+        <ArrowRight size={14} color={colors.brandPrimary} />
+      </PressableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 12,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: {
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textSecondary,
+    letterSpacing: 1,
+  },
+  list: {
+    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+    borderColor: "rgba(148, 163, 184, 0.08)",
+    overflow: "hidden",
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 14,
+    paddingHorizontal: 16,
+  },
+  left: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  dateColumn: {
+    width: 40,
+    alignItems: "center",
+    gap: 1,
+  },
+  day: {
+    ...typography.presets.h4,
+    color: colors.textPrimary,
+  },
+  month: {
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textSecondary,
+  },
+  itemDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: "#E5E7EB",
+  },
+  info: {
+    flex: 1,
+    gap: 2,
+  },
+  reportNumber: {
+    ...typography.presets.bodySmall,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+  },
+  reportProject: {
+    ...typography.presets.caption,
+    color: colors.textSecondary,
+  },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    gap: 4,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  badgeText: {
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.medium,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(229, 231, 235, 0.1)",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 4,
+  },
+  viewAll: {
+    ...typography.presets.bodySmall,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.brandPrimary,
+  },
+});
