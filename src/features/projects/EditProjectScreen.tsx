@@ -82,8 +82,9 @@ function DateField({
   return (
     <View style={styles.field}>
       <View style={styles.fieldLabel}>
-        <Text style={styles.fieldLabelText}>{label}</Text>
-        {optional && <Text style={styles.fieldOptional}>Opcional</Text>}
+        <Text style={styles.fieldLabelText}>
+          {label}{required && " *"}
+        </Text>
       </View>
       <Pressable style={styles.inputContainer} onPress={() => setShow(true)}>
         <View style={styles.inputLeft}>
@@ -94,7 +95,6 @@ function DateField({
         </View>
         <ChevronDown size={20} color={colors.textMuted} />
       </Pressable>
-      {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
 
       {show && (
         <DateTimePicker
@@ -153,15 +153,12 @@ export default function EditProjectScreen() {
             onChangeText={setName}
             placeholder="Ex.: Reabilitação Pedrinhas"
           />
-          <View style={styles.optionalField}>
-            <Field
-              label="Referência"
-              value={reference}
-              onChangeText={setReference}
-              placeholder="Ex.: OBR-2026-032"
-            />
-            <Text style={styles.fieldOptional}>Opcional</Text>
-          </View>
+          <Field
+            label="Referência"
+            value={reference}
+            onChangeText={setReference}
+            placeholder="Ex.: OBR-2026-032"
+          />
         </View>
 
         <View style={styles.section}>
@@ -213,10 +210,7 @@ export default function EditProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Entidades</Text>
-            <Text style={styles.sectionOptional}>Opcional</Text>
-          </View>
+          <Text style={styles.sectionTitle}>Entidades</Text>
           <Field
             label="Cliente"
             value={client}
@@ -283,24 +277,12 @@ const styles = StyleSheet.create({
   fieldHalf: {
     flex: 1,
   },
-  sectionHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
   sectionTitle: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: typography.fontWeight.bold,
     fontFamily: typography.fontFamily,
     color: colors.textMain,
-  },
-  sectionOptional: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
   },
   field: {
     gap: 6,
@@ -316,17 +298,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     fontFamily: typography.fontFamily,
     color: colors.textMain,
-  },
-  fieldOptional: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-    marginLeft: 6,
-  },
-  optionalField: {
-    gap: 4,
   },
   inputContainer: {
     flexDirection: "row",
@@ -353,13 +324,6 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: colors.textMain,
-  },
-  fieldRequired: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
   },
   datePickerConfirm: {
     alignItems: "center",

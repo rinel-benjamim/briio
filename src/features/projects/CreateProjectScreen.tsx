@@ -69,8 +69,9 @@ function DateField({
   return (
     <View style={styles.field}>
       <View style={styles.fieldLabel}>
-        <Text style={styles.fieldLabelText}>{label}</Text>
-        {optional && <Text style={styles.fieldOptional}>Opcional</Text>}
+        <Text style={styles.fieldLabelText}>
+          {label}{required && " *"}
+        </Text>
       </View>
       <Pressable style={styles.inputContainer} onPress={() => setShow(true)}>
         <View style={styles.inputLeft}>
@@ -81,7 +82,6 @@ function DateField({
         </View>
         <ChevronDown size={20} color={colors.textMuted} />
       </Pressable>
-      {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
 
       {show && (
         <DateTimePicker
@@ -145,15 +145,12 @@ export default function CreateProjectScreen() {
             onChangeText={setName}
             placeholder="Ex.: Reabilitação Pedrinhas"
           />
-          <View style={styles.optionalField}>
-            <Field
-              label="Referência"
-              value={reference}
-              onChangeText={setReference}
-              placeholder="Ex.: OBR-2026-032"
-            />
-            <Text style={styles.fieldOptional}>Opcional</Text>
-          </View>
+          <Field
+            label="Referência"
+            value={reference}
+            onChangeText={setReference}
+            placeholder="Ex.: OBR-2026-032"
+          />
         </View>
 
         <View style={styles.section}>
@@ -200,10 +197,7 @@ export default function CreateProjectScreen() {
             style={styles.sectionHeaderRow}
             onPress={() => setEntidadesExpanded(!entidadesExpanded)}
           >
-            <View style={styles.sectionHeaderLeft}>
-              <Text style={styles.sectionTitle}>Entidades</Text>
-              <Text style={styles.sectionOptional}>Opcional</Text>
-            </View>
+            <Text style={styles.sectionTitle}>Entidades</Text>
             <ChevronDown
               size={18}
               color={colors.textMuted}
@@ -308,13 +302,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily,
     color: colors.textMain,
   },
-  sectionOptional: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
   field: {
     gap: 6,
   },
@@ -329,14 +316,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     fontFamily: typography.fontFamily,
     color: colors.textMain,
-  },
-  fieldOptional: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-    marginLeft: 6,
   },
   inputContainer: {
     flexDirection: "row",
@@ -363,16 +342,6 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: colors.textMain,
-  },
-  fieldRequired: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  optionalField: {
-    gap: 4,
   },
   datePickerConfirm: {
     alignItems: "center",
