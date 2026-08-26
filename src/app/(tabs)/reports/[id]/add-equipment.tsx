@@ -1,5 +1,5 @@
-import AddEquipmentScreen from "@/features/rdo/AddEquipmentScreen";
+import { EquipmentForm } from "@/features/rdo/EquipmentFormScreen";
 
-export default function AddEquipmentRoute() {
-  return <AddEquipmentScreen />;
+export default function AddEquipmentScreen() {
+  return <EquipmentForm mode="add" />;
 }

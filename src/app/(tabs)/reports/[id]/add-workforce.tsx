@@ -1,5 +1,5 @@
-import AddWorkforceScreen from "@/features/rdo/AddWorkforceScreen";
+import { WorkforceForm } from "@/features/rdo/WorkforceFormScreen";
 
-export default function AddWorkforceRoute() {
-  return <AddWorkforceScreen />;
+export default function AddWorkforceScreen() {
+  return <WorkforceForm mode="add" />;
 }

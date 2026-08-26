@@ -1,5 +1,5 @@
-import EditTaskScreen from "@/features/rdo/EditTaskScreen";
+import { TaskForm } from "@/features/rdo/TaskFormScreen";
 
-export default function EditTaskRoute() {
-  return <EditTaskScreen />;
+export default function EditTaskScreen() {
+  return <TaskForm mode="edit" />;
 }

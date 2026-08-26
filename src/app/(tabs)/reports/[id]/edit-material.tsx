@@ -1,5 +1,5 @@
-import EditMaterialScreen from "@/features/rdo/EditMaterialScreen";
+import { MaterialForm } from "@/features/rdo/MaterialFormScreen";
 
-export default function EditMaterialRoute() {
-  return <EditMaterialScreen />;
+export default function EditMaterialScreen() {
+  return <MaterialForm mode="edit" />;
 }

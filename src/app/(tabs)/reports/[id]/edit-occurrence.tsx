@@ -1,5 +1,5 @@
-import EditOccurrenceScreen from "@/features/rdo/EditOccurrenceScreen";
+import { OccurrenceForm } from "@/features/rdo/OccurrenceFormScreen";
 
-export default function EditOccurrenceRoute() {
-  return <EditOccurrenceScreen />;
+export default function EditOccurrenceScreen() {
+  return <OccurrenceForm mode="edit" />;
 }

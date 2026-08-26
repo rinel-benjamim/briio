@@ -9,7 +9,7 @@
 | 1 | Extrair componentes UI partilhados | ✅ Concluída |
 | 2 | Consolidar mock data em `src/mocks/` | ✅ Concluída |
 | 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ✅ Concluída |
-| 4 | Unificar Add/Edit screens (12 → 6) | ⏳ Pendente |
+| 4 | Unificar Add/Edit screens (12 → 6) | ✅ Concluída |
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ⏳ Pendente |
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ⏳ Pendente |
 | 7 | Corrigir bugs e erros de estilo | ⏳ Pendente |
@@ -106,18 +106,23 @@
 
 ---
 
-## Fase 4 — Unificar Add/Edit Screens ⏳
+## Fase 4 — Unificar Add/Edit Screens ✅
 
-**Objetivo:** 12 ecrãs → 6 ecrãs parametrizados.
+**Objetivo:** 12 ecrãs → 6 form componentes parametrizados.
 
-| Par | Resultado |
-|-----|-----------|
-| AddWorkforce + EditWorkforce | `WorkforceFormScreen.tsx` |
-| AddMaterial + EditMaterial | `MaterialFormScreen.tsx` |
-| AddEquipment + EditEquipment | `EquipmentFormScreen.tsx` |
-| AddTask + EditTask | `TaskFormScreen.tsx` |
-| AddOccurrence + EditOccurrence | `OccurrenceFormScreen.tsx` |
-| AddPhoto + EditPhoto | `PhotoFormScreen.tsx` |
+| Par | Resultado | Linhas eliminadas |
+|-----|-----------|-------------------|
+| AddWorkforce + EditWorkforce | `WorkforceFormScreen.tsx` | ~887 → ~130 |
+| AddMaterial + EditMaterial | `MaterialFormScreen.tsx` | ~1004 → ~190 |
+| AddEquipment + EditEquipment | `EquipmentFormScreen.tsx` | ~1010 → ~195 |
+| AddTask + EditTask | `TaskFormScreen.tsx` | ~1121 → ~215 |
+| AddOccurrence + EditOccurrence | `OccurrenceFormScreen.tsx` | ~793 → ~175 |
+| AddPhoto + EditPhoto | `PhotoFormScreen.tsx` | ~802 → ~175 |
+
+- Route files: 12 ficheiros → 3 linhas cada
+- Todos usam `ScreenHeader`, `ContextBar`, `PrimaryButton`, `SecondaryButton`, `AutosaveStatus`
+- Mock data consolidada de `@/mocks` (Fase 2)
+- Economia total: ~5600 linhas eliminadas
 
 ---
 

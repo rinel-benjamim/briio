@@ -1,5 +1,5 @@
-import EditPhotoScreen from "@/features/rdo/EditPhotoScreen";
+import { PhotoForm } from "@/features/rdo/PhotoFormScreen";
 
-export default function EditPhotoRoute() {
-  return <EditPhotoScreen />;
+export default function EditPhotoScreen() {
+  return <PhotoForm mode="edit" />;
 }

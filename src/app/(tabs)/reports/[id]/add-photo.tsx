@@ -1,5 +1,5 @@
-import AddPhotoScreen from "@/features/rdo/AddPhotoScreen";
+import { PhotoForm } from "@/features/rdo/PhotoFormScreen";
 
-export default function AddPhotoRoute() {
-  return <AddPhotoScreen />;
+export default function AddPhotoScreen() {
+  return <PhotoForm mode="add" />;
 }

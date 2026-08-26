@@ -1,5 +1,5 @@
-import AddOccurrenceScreen from "@/features/rdo/AddOccurrenceScreen";
+import { OccurrenceForm } from "@/features/rdo/OccurrenceFormScreen";
 
-export default function AddOccurrenceRoute() {
-  return <AddOccurrenceScreen />;
+export default function AddOccurrenceScreen() {
+  return <OccurrenceForm mode="add" />;
 }

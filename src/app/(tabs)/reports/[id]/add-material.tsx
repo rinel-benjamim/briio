@@ -1,5 +1,5 @@
-import AddMaterialScreen from "@/features/rdo/AddMaterialScreen";
+import { MaterialForm } from "@/features/rdo/MaterialFormScreen";
 
-export default function AddMaterialRoute() {
-  return <AddMaterialScreen />;
+export default function AddMaterialScreen() {
+  return <MaterialForm mode="add" />;
 }

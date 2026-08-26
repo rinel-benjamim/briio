@@ -1,5 +1,5 @@
-import EditEquipmentScreen from "@/features/rdo/EditEquipmentScreen";
+import { EquipmentForm } from "@/features/rdo/EquipmentFormScreen";
 
-export default function EditEquipmentRoute() {
-  return <EditEquipmentScreen />;
+export default function EditEquipmentScreen() {
+  return <EquipmentForm mode="edit" />;
 }

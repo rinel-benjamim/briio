@@ -1,5 +1,5 @@
-import AddTaskScreen from "@/features/rdo/AddTaskScreen";
+import { TaskForm } from "@/features/rdo/TaskFormScreen";
 
-export default function AddTaskRoute() {
-  return <AddTaskScreen />;
+export default function AddTaskScreen() {
+  return <TaskForm mode="add" />;
 }

@@ -1,5 +1,5 @@
-import EditWorkforceScreen from "@/features/rdo/EditWorkforceScreen";
+import { WorkforceForm } from "@/features/rdo/WorkforceFormScreen";
 
-export default function EditWorkforceRoute() {
-  return <EditWorkforceScreen />;
+export default function EditWorkforceScreen() {
+  return <WorkforceForm mode="edit" />;
 }
