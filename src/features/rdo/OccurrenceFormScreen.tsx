@@ -97,9 +97,9 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
               style={styles.timeField}
               onPress={() => setShowTimePicker(true)}
             >
-              <Clock size={18} color={colors.textMuted} />
+              <Clock size={16} color={colors.textMuted} />
               <Text style={styles.timeValue}>{formatTime(timeDate)}</Text>
-              <ChevronDown size={18} color={colors.textMuted} />
+              <ChevronDown size={20} color={colors.textMuted} />
             </PressableOpacity>
             {showTimePicker && (
               <DateTimePicker

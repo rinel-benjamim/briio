@@ -5,7 +5,7 @@ import { colors, typography, borderRadius } from "@/constants";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { SecondaryButton } from "@/components/ui/SecondaryButton";
+import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SelectField } from "@/components/ui/Form/SelectField";
 import { StepperField } from "@/components/ui/Form/StepperField";
@@ -98,7 +98,7 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
           value={observation}
           onChangeText={setObservation}
           placeholder="Ex.: Equipa trabalhou no período da manhã."
-          height={80}
+          height={112}
         />
 
         <View style={styles.buttonSection}>
@@ -106,7 +106,14 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
             label={mode === "add" ? "Guardar" : "Guardar alterações"}
             onPress={() => router.back()}
           />
-          <SecondaryButton label="Cancelar" onPress={() => router.back()} />
+          <PressableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Cancelar"
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </PressableOpacity>
         </View>
 
         <AutosaveStatus />
@@ -142,11 +149,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius["2xl"],
     padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   summaryLeft: {
     gap: 2,
@@ -154,17 +159,27 @@ const styles = StyleSheet.create({
   summaryTitle: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
+    color: colors.primaryHover,
   },
   summarySubtitle: {
     ...typography.presets.caption,
     color: colors.textMuted,
   },
   summaryValue: {
-    ...typography.presets.h2,
+    fontSize: typography.fontSize["4xl"],
+    fontWeight: typography.fontWeight.bold,
     color: colors.primary,
   },
   buttonSection: {
     gap: 12,
+  },
+  cancelButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 48,
+  },
+  cancelText: {
+    ...typography.presets.body,
+    color: colors.textMuted,
   },
 });

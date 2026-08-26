@@ -11,7 +11,7 @@ import {
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
+  ArrowLeftCircle,
   MapPin,
   ChevronDown,
   ChevronRight,
@@ -81,7 +81,7 @@ function DateField({
             {value ? formatDate(value) : placeholder}
           </Text>
         </View>
-        <ChevronDown size={18} color={colors.textMuted} />
+        <ChevronDown size={20} color={colors.textMuted} />
       </Pressable>
       {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
 
@@ -129,7 +129,7 @@ export default function CreateProjectScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Nova obra</Text>
         <View style={styles.progressBadge}>
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 50,
+    height: 48,
     backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
@@ -401,8 +401,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderRadius: borderRadius.lg,
-    height: 50,
+    borderRadius: borderRadius["2xl"],
+    height: 56,
   },
   primaryButtonText: {
     ...typography.presets.body,

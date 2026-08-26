@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet } from "react-native";
-import { Check } from "lucide-react-native";
+import { ShieldCheck } from "lucide-react-native";
 import { colors, typography } from "@/constants";
 
 export function AutosaveStatus() {
   return (
     <View style={styles.container}>
-      <Check size={14} color={colors.success} />
-      <Text style={styles.text}>Salvo automaticamente</Text>
+      <ShieldCheck size={17} color={colors.textMuted} />
+      <Text style={styles.text}>Os dados ficam guardados automaticamente.</Text>
     </View>
   );
 }

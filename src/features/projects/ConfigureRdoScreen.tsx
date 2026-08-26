@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
+  ArrowLeftCircle,
   User,
   CircleCheck,
   FileText,
@@ -53,7 +53,7 @@ export default function ConfigureRdoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Configurar RDO</Text>
         <View style={styles.progressBadge}>
@@ -348,8 +348,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderRadius: 24,
-    height: 50,
+    borderRadius: borderRadius["2xl"],
+    height: 56,
   },
   primaryButtonText: {
     ...typography.presets.body,

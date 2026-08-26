@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { colors, typography, spacing } from "@/constants";
-import { figma } from "@/constants/figma";
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -59,7 +59,7 @@ export function CustomTabBar({ state, navigation, descriptors }: TabBarProps) {
           const isActive = state.index === index;
           const options = descriptors[route.key]?.options;
           const label = options?.title ?? route.name;
-          const iconColor = isActive ? figma.primary : figma.inactiveIcon;
+          const iconColor = isActive ? colors.primary : colors.inactiveIcon;
           const Icon = options?.tabBarIcon;
 
           return (
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
     backgroundColor: colors.bgSurface,
     borderTopWidth: 1,
-    borderTopColor: figma.border,
+    borderTopColor: colors.border,
   },
   bar: {
     flexDirection: "row",
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     height: 58,
   },
   activeTab: {
-    backgroundColor: figma.activeTabBg,
+    backgroundColor: colors.activeTabBg,
   },
   tabInner: {
     flex: 1,
@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
   label: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: figma.inactiveIcon,
+    color: colors.inactiveIcon,
   },
   activeLabel: {
-    color: figma.primary,
+    color: colors.primary,
     fontWeight: typography.fontWeight.bold,
   },
 });

@@ -2,32 +2,16 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
-  Ellipsis,
-  CircleCheck,
+  ArrowLeftCircle,
+  MoreHorizontal,
+  CheckCircle,
   Circle,
   ChevronRight,
   ArrowRight,
   Eye,
 } from "lucide-react-native";
-import { typography, borderRadius } from "@/constants";
+import { typography, borderRadius, colors } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-
-const tokens = {
-  bgMain: "#F4F6F4",
-  bgSurface: "#FFFFFF",
-  primary: "#134E32",
-  primaryLight: "#E6F4EA",
-  textMain: "#1A2E22",
-  textMuted: "#5B6E63",
-  textOnBrand: "#FFFFFF",
-  border: "#E0E6E1",
-  success: "#137333",
-  successBg: "#E6F4EA",
-  warning: "#B96A00",
-  warningBg: "#FFF8F0",
-  overlay: "rgba(0, 0, 0, 0.3)",
-};
 
 const MOCK_RDO = {
   date: "12 Agosto 2026",
@@ -92,11 +76,11 @@ export default function RdoOverviewScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={tokens.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>RDO de hoje</Text>
         <PressableOpacity style={styles.navButton}>
-          <Ellipsis size={20} color={tokens.textMain} />
+          <MoreHorizontal size={22} color={colors.textMain} />
         </PressableOpacity>
       </View>
 
@@ -150,16 +134,16 @@ export default function RdoOverviewScreen() {
               >
                 <View style={styles.sectionLeft}>
                   {section.completed ? (
-                    <CircleCheck size={18} color={tokens.success} />
+                    <CheckCircle size={20} color={colors.success} />
                   ) : (
-                    <Circle size={18} color={tokens.textMuted} />
+                    <Circle size={18} color={colors.textMuted} />
                   )}
                   <View style={styles.sectionInfo}>
                     <Text style={styles.sectionName}>{section.name}</Text>
                     <Text style={styles.sectionSummary}>{section.summary}</Text>
                   </View>
                 </View>
-                <ChevronRight size={16} color={tokens.textMuted} />
+                <ChevronRight size={16} color={colors.textMuted} />
               </PressableOpacity>
               {index < RDO_SECTIONS.length - 1 && <View style={styles.divider} />}
             </View>
@@ -179,11 +163,11 @@ export default function RdoOverviewScreen() {
           <Text style={styles.primaryButtonText}>
             {nextSection ? "Continuar" : "Gerar Relatório"}
           </Text>
-          <ArrowRight size={18} color={tokens.textOnBrand} />
+          <ArrowRight size={18} color={colors.textOnBrand} />
         </PressableOpacity>
 
         <PressableOpacity style={styles.secondaryButton}>
-          <Eye size={16} color={tokens.textMuted} />
+          <Eye size={16} color={colors.textMuted} />
           <Text style={styles.secondaryButtonText}>Ver resumo</Text>
         </PressableOpacity>
       </ScrollView>
@@ -194,7 +178,7 @@ export default function RdoOverviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.bgMain,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -214,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   scrollView: {
     flex: 1,
@@ -231,15 +215,15 @@ const styles = StyleSheet.create({
   dateLabel: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   projectName: {
     ...typography.presets.h3,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   projectLocation: {
     ...typography.presets.body,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   reportMeta: {
     flexDirection: "row",
@@ -255,17 +239,17 @@ const styles = StyleSheet.create({
   reportNumber: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   metaDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: tokens.textMuted,
+    backgroundColor: colors.textMuted,
   },
   reportMetaDate: {
     ...typography.presets.bodySmall,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   statusBadge: {
     flexDirection: "row",
@@ -273,27 +257,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 9999,
-    backgroundColor: tokens.warningBg,
+    backgroundColor: colors.warningBg,
     gap: 4,
   },
   statusDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: tokens.warning,
+    backgroundColor: colors.warning,
   },
   statusText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.warning,
+    color: colors.warning,
   },
   progressSection: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 20,
     gap: 12,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   progressHeader: {
     flexDirection: "row",
@@ -302,35 +286,35 @@ const styles = StyleSheet.create({
   },
   progressValue: {
     ...typography.presets.h1,
-    color: tokens.primary,
+    color: colors.primary,
   },
   progressSteps: {
     ...typography.presets.bodySmall,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     textAlign: "right",
   },
   progressTrack: {
     height: 8,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
     borderRadius: 4,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: tokens.primary,
+    backgroundColor: colors.primary,
     borderRadius: 4,
   },
   sectionsLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   sectionsList: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
     overflow: "hidden",
   },
   sectionRow: {
@@ -351,21 +335,21 @@ const styles = StyleSheet.create({
   sectionName: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   sectionSummary: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   divider: {
     height: 1,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: tokens.primary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.lg,
     height: 56,
     gap: 8,
@@ -373,7 +357,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textOnBrand,
+    color: colors.textOnBrand,
   },
   secondaryButton: {
     flexDirection: "row",
@@ -385,6 +369,6 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
 });

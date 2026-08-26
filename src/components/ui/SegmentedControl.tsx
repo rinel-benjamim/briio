@@ -41,7 +41,7 @@ export function SegmentedControl({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "#F4F6F4",
+    backgroundColor: colors.bgMain,
     borderRadius: borderRadius.lg,
     padding: 3,
     gap: 3,

@@ -26,7 +26,7 @@ export function ProjectSelector({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>OBRA ATUAL</Text>
+      <Text style={styles.label}>Obra atual</Text>
       <PressableOpacity style={styles.button} onPress={() => setVisible(true)}>
         <View style={styles.info}>
           <Text style={styles.name}>{selected?.name}</Text>
@@ -106,8 +106,9 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
+    fontWeight: typography.fontWeight.bold,
     color: colors.textMuted,
+    textTransform: "uppercase",
     letterSpacing: 1,
   },
   button: {

@@ -3,28 +3,13 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
-  CircleCheck,
+  ArrowLeftCircle,
+  CheckCircle,
   FileDown,
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
+import { colors } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-
-const tokens = {
-  bgMain: "#F4F6F4",
-  bgSurface: "#FFFFFF",
-  primary: "#134E32",
-  primaryLight: "#E6F4EA",
-  textMain: "#1A2E22",
-  textMuted: "#5B6E63",
-  textOnBrand: "#FFFFFF",
-  border: "#E0E6E1",
-  success: "#137333",
-  successBg: "#E6F4EA",
-  warning: "#B96A00",
-  warningBg: "#FFF8F0",
-  overlay: "rgba(0, 0, 0, 0.3)",
-};
 
 const MOCK_RDO = {
   number: "RDO #032",
@@ -65,7 +50,7 @@ export default function ReviewRdoScreen() {
           style={styles.navButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={20} color={tokens.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Revisar RDO</Text>
         <View style={styles.progressIndicator}>
@@ -88,7 +73,7 @@ export default function ReviewRdoScreen() {
         </View>
 
         <View style={styles.overallStatus}>
-          <CircleCheck size={22} color={tokens.success} />
+          <CheckCircle size={20} color={colors.success} />
           <View style={styles.overallInfo}>
             <Text style={styles.overallTitle}>Tudo preenchido</Text>
             <Text style={styles.overallSubtitle}>
@@ -109,7 +94,7 @@ export default function ReviewRdoScreen() {
                 }
               >
                 <View style={styles.checklistItemLeft}>
-                  <CircleCheck size={18} color={tokens.success} />
+                  <CheckCircle size={20} color={colors.success} />
                   <View style={styles.checklistItemInfo}>
                     <Text style={styles.checklistItemName}>{section.name}</Text>
                     <Text style={styles.checklistItemSummary}>
@@ -140,7 +125,7 @@ export default function ReviewRdoScreen() {
           onPress={() => router.push(`/(tabs)/reports/${id}/generated`)}
         >
           <Text style={styles.primaryButtonText}>Gerar RDO</Text>
-          <FileDown size={18} color={tokens.textOnBrand} />
+          <FileDown size={18} color={colors.textOnBrand} />
         </PressableOpacity>
 
         <Text style={styles.primaryHint}>
@@ -154,7 +139,7 @@ export default function ReviewRdoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.bgMain,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -173,21 +158,21 @@ const styles = StyleSheet.create({
   navTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
     flex: 1,
   },
   progressIndicator: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 9999,
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   progressText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   scrollView: {
     flex: 1,
@@ -203,32 +188,32 @@ const styles = StyleSheet.create({
   },
   reportNumber: {
     ...typography.presets.h2,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   reportDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   reportProject: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   reportLocation: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   overallStatus: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: tokens.successBg,
+    backgroundColor: colors.successBg,
     borderRadius: 16,
     padding: 14,
     paddingHorizontal: 16,
     gap: 10,
     borderWidth: 1,
-    borderColor: tokens.success,
+    borderColor: colors.success,
   },
   overallInfo: {
     gap: 2,
@@ -236,22 +221,22 @@ const styles = StyleSheet.create({
   overallTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.success,
+    color: colors.success,
   },
   overallSubtitle: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   checklistLabel: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   checklist: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
     overflow: "hidden",
   },
   checklistItem: {
@@ -273,53 +258,53 @@ const styles = StyleSheet.create({
   checklistItemName: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   checklistItemSummary: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   editButton: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.primary,
+    color: colors.primary,
   },
   divider: {
     height: 1,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
   },
   signatureSection: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: 16,
     padding: 14,
     paddingHorizontal: 16,
     gap: 4,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   signatureLabel: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   signatureRole: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   signatureName: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   signatureNote: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: tokens.primary,
+    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
@@ -327,11 +312,11 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textOnBrand,
+    color: colors.textOnBrand,
   },
   primaryHint: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     textAlign: "center",
   },
 });

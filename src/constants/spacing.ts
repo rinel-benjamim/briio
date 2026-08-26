@@ -18,9 +18,11 @@ export const borderRadius = {
   none: 0,
   sm: 4,
   md: 8,
-  lg: 12,
-  xl: 16,
-  "2xl": 20,
+  lg: 10,
+  xl: 12,
+  "2xl": 16,
+  "3xl": 20,
+  "4xl": 24,
   full: 9999,
 } as const;
 
@@ -28,19 +30,19 @@ export type BorderRadiusToken = keyof typeof borderRadius;
 
 export const padding = {
   screen: {
-    horizontal: spacing.lg,
+    horizontal: spacing.xl,
     vertical: spacing.lg,
   },
   card: {
     horizontal: spacing.lg,
-    vertical: spacing.md,
+    vertical: spacing.lg,
   },
   button: {
-    horizontal: spacing.lg,
-    vertical: spacing.md,
+    horizontal: spacing.xl,
+    vertical: spacing.lg,
   },
   input: {
-    horizontal: spacing.md,
-    vertical: spacing.md,
+    horizontal: 14,
+    vertical: spacing.sm,
   },
 } as const;

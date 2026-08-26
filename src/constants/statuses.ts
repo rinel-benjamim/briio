@@ -10,42 +10,42 @@ export interface StatusConfig {
 export const PROJECT_STATUS_CONFIG: Record<ProjectStatus, StatusConfig> = {
   active: {
     label: "Em andamento",
-    dotColor: "#137333",
-    bgColor: "#E6F4EA",
-    textColor: "#134E32",
+    dotColor: "#176B50",
+    bgColor: "#DDF5E9",
+    textColor: "#176B50",
   },
   completed: {
     label: "Concluído",
-    dotColor: "#5B6E63",
-    bgColor: "#F4F6F4",
-    textColor: "#5B6E63",
+    dotColor: "#687770",
+    bgColor: "#F5F7F6",
+    textColor: "#687770",
   },
   archived: {
     label: "Arquivada",
-    dotColor: "#B96A00",
-    bgColor: "#FFF8F0",
-    textColor: "#B96A00",
+    dotColor: "#E69B2D",
+    bgColor: "#FFF2D8",
+    textColor: "#E69B2D",
   },
 };
 
 export const PROJECT_STATUS_CONFIG_UPPERCASE: Record<ProjectStatus, StatusConfig> = {
   active: {
     label: "ATIVA",
-    dotColor: "#137333",
-    bgColor: "#E6F4EA",
-    textColor: "#134E32",
+    dotColor: "#176B50",
+    bgColor: "#DDF5E9",
+    textColor: "#176B50",
   },
   completed: {
     label: "CONCLUÍDA",
-    dotColor: "#5B6E63",
-    bgColor: "#F4F6F4",
-    textColor: "#5B6E63",
+    dotColor: "#687770",
+    bgColor: "#F5F7F6",
+    textColor: "#687770",
   },
   archived: {
     label: "ARQUIVADA",
-    dotColor: "#B96A00",
-    bgColor: "#FFF8F0",
-    textColor: "#B96A00",
+    dotColor: "#E69B2D",
+    bgColor: "#FFF2D8",
+    textColor: "#E69B2D",
   },
 };
 
@@ -60,12 +60,12 @@ export interface RdoStatusConfig {
 export const RDO_STATUS_CONFIG: Record<RdoStatus, RdoStatusConfig> = {
   draft: {
     label: "Rascunho",
-    bgColor: "#FFF8F0",
-    textColor: "#B96A00",
+    bgColor: "#FFF2D8",
+    textColor: "#E69B2D",
   },
   generated: {
     label: "Gerado",
-    bgColor: "#E6F4EA",
-    textColor: "#137333",
+    bgColor: "#DDF5E9",
+    textColor: "#176B50",
   },
 };

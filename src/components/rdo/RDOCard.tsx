@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
-import { figma } from "@/constants/figma";
+
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RDOCardProps {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: figma.heroBg,
+    backgroundColor: colors.heroBg,
     borderRadius: 24,
     padding: 20,
     gap: 16,
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   headerLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.bold,
-    color: figma.primaryLight,
+    color: colors.primaryLight,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 9999,
-    backgroundColor: figma.warningBg,
+    backgroundColor: colors.warningBg,
   },
   statusText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.bold,
-    color: figma.warningText,
+    color: colors.warning,
   },
   completionSection: {
     gap: 8,
@@ -124,29 +124,31 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   completionPercent: {
-    ...figma.heroPercent,
+    ...typography.presets.h1,
+    fontWeight: typography.fontWeight.regular,
     color: colors.textOnBrand,
   },
   completionSteps: {
-    ...figma.heroSteps,
-    color: figma.primaryLight,
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.regular,
+    color: colors.primaryLight,
   },
   progressTrack: {
     height: 8,
-    backgroundColor: figma.progressTrack,
+    backgroundColor: colors.progressTrack,
     borderRadius: 9999,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     borderRadius: 9999,
   },
   ctaButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     gap: 10,

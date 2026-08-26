@@ -100,7 +100,7 @@ export default function PhotosScreen() {
         style={styles.addButton}
         onPress={() => router.push(`/(tabs)/reports/${id}/add-photo`)}
       >
-        <Camera size={18} color={colors.primary} />
+        <Camera size={20} color={colors.primary} />
         <Text style={styles.addButtonText}>Adicionar fotografia</Text>
       </PressableOpacity>
     </RdoScreenLayout>

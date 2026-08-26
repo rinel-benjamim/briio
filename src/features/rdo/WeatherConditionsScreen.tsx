@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Sun, Cloud, CloudRain } from "lucide-react-native";
 import { colors, typography } from "@/constants";
-import { figma } from "@/constants/figma";
+
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -31,7 +31,7 @@ function WeatherPeriod({ label, selected, onSelect }: WeatherPeriodProps) {
         >
           <Sun
             size={25}
-            color={selected === "sol" ? colors.textOnBrand : figma.inactiveIcon}
+            color={selected === "sol" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
@@ -49,7 +49,7 @@ function WeatherPeriod({ label, selected, onSelect }: WeatherPeriodProps) {
         >
           <Cloud
             size={25}
-            color={selected === "nublado" ? colors.textOnBrand : figma.inactiveIcon}
+            color={selected === "nublado" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
@@ -67,7 +67,7 @@ function WeatherPeriod({ label, selected, onSelect }: WeatherPeriodProps) {
         >
           <CloudRain
             size={25}
-            color={selected === "chuva" ? colors.textOnBrand : figma.inactiveIcon}
+            color={selected === "chuva" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
@@ -99,6 +99,7 @@ export default function WeatherConditionsScreen() {
       title="Condições do dia"
       progress={{ current: step, total: totalSteps }}
       onBack={() => router.back()}
+      continueLabel="Guardar e continuar"
       onContinue={() => {
         if (fromReview) {
           router.push(`/(tabs)/reports/${id}/review`);
@@ -133,8 +134,8 @@ export default function WeatherConditionsScreen() {
           style={styles.obsInput}
           value={observation}
           onChangeText={setObservation}
-          placeholder="Ex.: chuva intensa durante aproximadamente 1 hora..."
-          placeholderTextColor={figma.textMuted}
+          placeholder="Adicionar observação meteorológica (opcional)"
+          placeholderTextColor={colors.textMuted}
           multiline
           textAlignVertical="top"
         />
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   contextText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: figma.textMuted,
+    color: colors.textMuted,
   },
   titleSection: {
     gap: 6,
@@ -160,11 +161,11 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     fontWeight: "400",
     fontFamily: typography.fontFamily,
-    color: figma.textMain,
+    color: colors.textMain,
   },
   subtitle: {
     ...typography.presets.body,
-    color: figma.textMuted,
+    color: colors.textMuted,
   },
   periodSection: {
     gap: 10,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   periodLabel: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.bold,
-    color: figma.textMain,
+    color: colors.textMain,
   },
   periodOptions: {
     flexDirection: "row",
@@ -184,19 +185,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.bgSurface,
     borderWidth: 1,
-    borderColor: figma.border,
+    borderColor: colors.border,
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
   },
   weatherOptionSelected: {
-    backgroundColor: figma.primary,
-    borderColor: figma.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   weatherOptionText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: figma.inactiveIcon,
+    color: colors.inactiveIcon,
   },
   weatherOptionTextSelected: {
     color: colors.textOnBrand,
@@ -212,8 +213,8 @@ const styles = StyleSheet.create({
     padding: 14,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: figma.border,
-    ...typography.presets.body,
-    color: figma.textMain,
+    borderColor: colors.border,
+    ...typography.presets.bodySmall,
+    color: colors.textMain,
   },
 });

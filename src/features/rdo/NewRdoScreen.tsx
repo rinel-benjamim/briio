@@ -2,31 +2,15 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
+  ArrowLeftCircle,
   Copy,
   FilePlus,
   ArrowRight,
   Info,
 } from "lucide-react-native";
-import { typography, borderRadius } from "@/constants";
+import { typography, borderRadius, colors } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
-
-const tokens = {
-  bgMain: "#F4F6F4",
-  bgSurface: "#FFFFFF",
-  primary: "#134E32",
-  primaryLight: "#E6F4EA",
-  textMain: "#1A2E22",
-  textMuted: "#5B6E63",
-  textOnBrand: "#FFFFFF",
-  border: "#E0E6E1",
-  success: "#137333",
-  successBg: "#E6F4EA",
-  warning: "#B96A00",
-  warningBg: "#FFF8F0",
-  overlay: "rgba(0, 0, 0, 0.3)",
-};
 
 const MOCK_CONTEXT = {
   date: "17 Agosto 2026",
@@ -48,7 +32,7 @@ export default function NewRdoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={tokens.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Novo RDO</Text>
         <View style={styles.navSpacer} />
@@ -77,7 +61,7 @@ export default function NewRdoScreen() {
         >
           <View style={styles.optionHeader}>
             <View style={styles.optionIcon}>
-              <Copy size={22} color={tokens.primary} />
+              <Copy size={22} color={colors.primary} />
             </View>
             <View style={styles.optionTextGroup}>
               <Text style={styles.optionTitle}>Usar RDO anterior</Text>
@@ -101,7 +85,7 @@ export default function NewRdoScreen() {
             </View>
             <View style={styles.previousReportAction}>
               <Text style={styles.previousReportActionText}>Selecionar</Text>
-              <ArrowRight size={14} color={tokens.primary} />
+              <ArrowRight size={14} color={colors.primary} />
             </View>
           </View>
         </PressableOpacity>
@@ -114,7 +98,7 @@ export default function NewRdoScreen() {
         >
           <View style={styles.optionLeftSecondary}>
             <View style={styles.optionIconSecondary}>
-              <FilePlus size={24} color={tokens.textMuted} />
+              <FilePlus size={24} color={colors.textMuted} />
             </View>
             <Text style={styles.optionTitle}>Começar do zero</Text>
             <Text style={styles.optionDesc}>
@@ -123,14 +107,14 @@ export default function NewRdoScreen() {
           </View>
           <View style={styles.optionActionSecondary}>
             <Text style={styles.optionActionTextSecondary}>Criar</Text>
-            <ArrowRight size={14} color={tokens.textMuted} />
+            <ArrowRight size={14} color={colors.textMuted} />
           </View>
         </PressableOpacity>
 
         <View style={styles.spacer} />
 
         <View style={styles.note}>
-          <Info size={18} color={tokens.textMuted} />
+          <Info size={18} color={colors.textMuted} />
           <Text style={styles.noteText}>
             Os dados específicos do dia, como condições meteorológicas,
             ocorrências e fotografias, serão atualizados para o novo RDO.
@@ -144,7 +128,7 @@ export default function NewRdoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.bgMain,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -164,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   navSpacer: {
     width: 36,
@@ -185,30 +169,30 @@ const styles = StyleSheet.create({
   contextDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   contextProject: {
     ...typography.presets.body,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   question: {
     gap: 4,
   },
   questionTitle: {
     ...typography.presets.h2,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   questionSubtitle: {
     ...typography.presets.body,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   optionCard: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   optionHeader: {
     flexDirection: "row",
@@ -229,17 +213,17 @@ const styles = StyleSheet.create({
   optionTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   optionDesc: {
     ...typography.presets.bodySmall,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   previousReport: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: tokens.bgMain,
+    backgroundColor: colors.bgMain,
     borderRadius: borderRadius.md,
     padding: 10,
     paddingHorizontal: 12,
@@ -250,15 +234,15 @@ const styles = StyleSheet.create({
   previousReportNumber: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   previousReportDate: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   previousReportMeta: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   previousReportAction: {
     flexDirection: "row",
@@ -268,7 +252,7 @@ const styles = StyleSheet.create({
   previousReportActionText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.primary,
+    color: colors.primary,
   },
   spacer: {
     height: 4,
@@ -277,11 +261,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 16,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   optionLeftSecondary: {
     flex: 1,
@@ -302,21 +286,21 @@ const styles = StyleSheet.create({
   optionActionTextSecondary: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   note: {
     flexDirection: "row",
     gap: 10,
-    backgroundColor: tokens.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: borderRadius.xl,
     padding: 14,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   noteText: {
     flex: 1,
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
 });

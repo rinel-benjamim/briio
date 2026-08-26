@@ -21,17 +21,17 @@ export const shadows = {
     elevation: 3,
   },
   lg: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
+    shadowColor: "#10201A",
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
-    shadowRadius: 20,
+    shadowRadius: 24,
     elevation: 5,
   },
   hero: {
-    shadowColor: "#134E32",
-    shadowOffset: { width: 0, height: 6 },
+    shadowColor: "#10201A",
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
-    shadowRadius: 20,
+    shadowRadius: 24,
     elevation: 4,
   },
 } as const;

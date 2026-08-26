@@ -49,7 +49,7 @@ export default function ProjectsScreen() {
           style={styles.addButton}
           onPress={() => router.push("/(tabs)/projects/create")}
         >
-          <Plus size={20} color={colors.textOnBrand} />
+          <Plus size={18} color={colors.textOnBrand} />
         </PressableOpacity>
       </View>
 

@@ -3,8 +3,8 @@ import { View, ScrollView, StyleSheet, Text, Modal, Pressable } from "react-nati
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
-  Ellipsis,
+  ArrowLeftCircle,
+  MoreHorizontal,
   ArrowRight,
   Pencil,
   Plus,
@@ -63,7 +63,7 @@ export default function ProjectDetailScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle} numberOfLines={1}>
           {MOCK_PROJECT.name}
@@ -72,7 +72,7 @@ export default function ProjectDetailScreen() {
           style={styles.navButton}
           onPress={() => setOverflowVisible(true)}
         >
-          <Ellipsis size={20} color={colors.textMain} />
+          <MoreHorizontal size={22} color={colors.textMain} />
         </PressableOpacity>
       </View>
 
@@ -323,8 +323,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderRadius: borderRadius.lg,
-    height: 50,
+    borderRadius: borderRadius["2xl"],
+    height: 56,
     gap: 8,
   },
   ctaText: {

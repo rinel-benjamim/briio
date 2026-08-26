@@ -2,8 +2,8 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
-  Ellipsis,
+  ArrowLeftCircle,
+  MoreHorizontal,
   MapPin,
   Copy,
   Map,
@@ -55,11 +55,11 @@ export default function ProjectInfoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Informações da obra</Text>
         <PressableOpacity style={styles.navButton}>
-          <Ellipsis size={20} color={colors.textMain} />
+          <MoreHorizontal size={22} color={colors.textMain} />
         </PressableOpacity>
       </View>
 

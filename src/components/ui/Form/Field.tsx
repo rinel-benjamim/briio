@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     color: colors.textMain,
   },
   input: {
-    height: 50,
+    height: 48,
     backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,

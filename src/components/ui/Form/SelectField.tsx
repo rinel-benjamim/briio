@@ -39,7 +39,7 @@ export function SelectField({
         <Text style={[styles.value, !value && styles.placeholder]}>
           {value || placeholder}
         </Text>
-        <ChevronDown size={18} color={colors.textMuted} />
+        <ChevronDown size={20} color={colors.textMuted} />
       </PressableOpacity>
       {isOpen && (
         <View style={styles.options}>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
-    height: 50,
+    height: 48,
     paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: colors.border,

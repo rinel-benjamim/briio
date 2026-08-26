@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Plus, X, Check, Building2, Camera, Users, AlertTriangle } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
-import { figma } from "@/constants/figma";
+
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   ProjectSelector,
@@ -138,7 +138,7 @@ export default function DashboardScreen() {
                 }}
               >
                 <View style={styles.quickActionIcon}>
-                  <action.icon size={18} color={figma.primary} />
+                  <action.icon size={20} color={colors.primary} />
                 </View>
                 <Text style={styles.quickActionLabel}>{action.label}</Text>
               </PressableOpacity>
@@ -203,7 +203,7 @@ export default function DashboardScreen() {
                     }}
                   >
                     <View style={styles.projectOptionIcon}>
-                      <Building2 size={20} color={isSelected ? figma.primary : colors.textMuted} />
+                      <Building2 size={20} color={isSelected ? colors.primary : colors.textMuted} />
                     </View>
                     <View style={styles.projectOptionInfo}>
                       <Text
@@ -219,7 +219,7 @@ export default function DashboardScreen() {
                       </Text>
                     </View>
                     {isSelected && (
-                      <Check size={18} color={figma.primary} />
+                      <Check size={18} color={colors.primary} />
                     )}
                   </PressableOpacity>
                 );
@@ -235,7 +235,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: figma.canvas,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -259,11 +259,11 @@ const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: "400",
     fontFamily: typography.fontFamily,
-    color: figma.textMain,
+    color: colors.textMain,
   },
   subtitle: {
     ...typography.presets.body,
-    color: figma.textMuted,
+    color: colors.textMuted,
   },
   avatar: {
     width: 46,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   newReportLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.bold,
-    color: figma.textMuted,
+    color: colors.textMuted,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
@@ -304,11 +304,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   quickActionsLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.bold,
-    color: figma.textMuted,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+    ...typography.presets.label,
+    color: colors.textMuted,
   },
   quickActionsGrid: {
     flexDirection: "row",
@@ -316,24 +313,26 @@ const styles = StyleSheet.create({
   },
   quickActionCard: {
     flex: 1,
-    backgroundColor: figma.primaryLight,
+    height: 94,
+    backgroundColor: colors.primaryLight,
     borderRadius: 16,
     padding: 14,
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
   quickActionIcon: {
     width: 40,
     height: 40,
     borderRadius: 9999,
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   quickActionLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.bold,
-    color: figma.primary,
+    color: colors.primary,
   },
   fab: {
     position: "absolute",
@@ -341,10 +340,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: figma.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.24,
     shadowRadius: 12,
@@ -356,7 +355,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: figma.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -371,19 +370,19 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     ...typography.presets.h2,
-    color: figma.textMain,
+    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   sheetSubtitle: {
     ...typography.presets.body,
-    color: figma.textMuted,
+    color: colors.textMuted,
     paddingHorizontal: 20,
     marginBottom: 8,
   },
@@ -398,13 +397,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   projectOptionSelected: {
-    backgroundColor: figma.primary,
+    backgroundColor: colors.primary,
   },
   projectOptionIcon: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: figma.primaryLight,
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -414,13 +413,13 @@ const styles = StyleSheet.create({
   },
   projectOptionName: {
     ...typography.presets.bodyMedium,
-    color: figma.textMain,
+    color: colors.textMain,
   },
   projectOptionNameSelected: {
-    color: figma.primary,
+    color: colors.primary,
   },
   projectOptionLocation: {
     ...typography.presets.caption,
-    color: figma.textMuted,
+    color: colors.textMuted,
   },
 });

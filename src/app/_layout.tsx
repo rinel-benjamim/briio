@@ -9,7 +9,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#F4F6F4" },
+          contentStyle: { backgroundColor: "#F5F7F6" },
         }}
       />
     </DatabaseProvider>

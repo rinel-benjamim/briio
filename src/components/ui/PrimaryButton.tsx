@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderRadius: borderRadius.lg,
-    height: 52,
+    borderRadius: borderRadius["2xl"],
+    height: 56,
     gap: 8,
   },
   label: {

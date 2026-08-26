@@ -9,28 +9,31 @@ const fontFamily = Platform.select({
 export const typography = {
   fontFamily,
 
-  // Font sizes — Master Design System scale
+  // Font sizes — Figma scale
   fontSize: {
-    xs: 12,
+    xs: 11,
     sm: 12,
-    md: 14,
-    lg: 15,
-    xl: 18,
-    "2xl": 20,
-    "3xl": 24,
-    "4xl": 30,
+    md: 13,
+    lg: 14,
+    xl: 15,
+    "2xl": 17,
+    "3xl": 23,
+    "4xl": 24,
+    "5xl": 26,
+    "6xl": 28,
   },
 
   // Line heights
   lineHeight: {
-    xs: 16,
+    xs: 14,
     sm: 16,
-    md: 20,
-    lg: 18,
+    md: 18,
+    lg: 20,
     xl: 22,
     "2xl": 28,
     "3xl": 28,
-    "4xl": 42,
+    "4xl": 30,
+    "5xl": 32,
   },
 
   // Font weights
@@ -41,7 +44,7 @@ export const typography = {
     bold: "700" as const,
   },
 
-  // Preset styles — Master Design System
+  // Preset styles — Figma
   presets: {
     h1: {
       fontSize: 24 as const,
@@ -49,19 +52,14 @@ export const typography = {
       fontWeight: "700" as const,
     },
     h2: {
-      fontSize: 18 as const,
+      fontSize: 17 as const,
       lineHeight: 22 as const,
-      fontWeight: "600" as const,
+      fontWeight: "700" as const,
     },
     h3: {
       fontSize: 15 as const,
       lineHeight: 18 as const,
-      fontWeight: "600" as const,
-    },
-    h4: {
-      fontSize: 18 as const,
-      lineHeight: 22 as const,
-      fontWeight: "600" as const,
+      fontWeight: "700" as const,
     },
     body: {
       fontSize: 14 as const,
@@ -74,19 +72,24 @@ export const typography = {
       fontWeight: "500" as const,
     },
     bodySmall: {
-      fontSize: 14 as const,
-      lineHeight: 20 as const,
+      fontSize: 13 as const,
+      lineHeight: 18 as const,
       fontWeight: "400" as const,
     },
     label: {
-      fontSize: 13 as const,
-      lineHeight: 18 as const,
-      fontWeight: "600" as const,
-    },
-    caption: {
       fontSize: 12 as const,
       lineHeight: 16 as const,
       fontWeight: "500" as const,
+    },
+    caption: {
+      fontSize: 11 as const,
+      lineHeight: 14 as const,
+      fontWeight: "700" as const,
+    },
+    h4: {
+      fontSize: 17 as const,
+      lineHeight: 22 as const,
+      fontWeight: "700" as const,
     },
   },
 } as const;

@@ -10,9 +10,9 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  ArrowLeft,
-  Ellipsis,
-  CircleCheck,
+  ArrowLeftCircle,
+  MoreHorizontal,
+  CheckCircle,
   CloudSun,
   Users,
   Package,
@@ -27,6 +27,7 @@ import {
   Download,
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
+import { colors } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   generateRdoPdf,
@@ -34,22 +35,6 @@ import {
   openRdoPdf,
   getMockRdoData,
 } from "@/services/pdf-generator";
-
-const tokens = {
-  bgMain: "#F4F6F4",
-  bgSurface: "#FFFFFF",
-  primary: "#134E32",
-  primaryLight: "#E6F4EA",
-  textMain: "#1A2E22",
-  textMuted: "#5B6E63",
-  textOnBrand: "#FFFFFF",
-  border: "#E0E6E1",
-  success: "#137333",
-  successBg: "#E6F4EA",
-  warning: "#B96A00",
-  warningBg: "#FFF8F0",
-  overlay: "rgba(0, 0, 0, 0.3)",
-};
 
 type SectionItem = {
   id: string;
@@ -61,13 +46,13 @@ type SectionItem = {
 };
 
 const RDO_SECTIONS: SectionItem[] = [
-  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: tokens.primary, route: "weather" },
-  { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: tokens.primary, route: "workforce" },
-  { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: tokens.primary, route: "materials" },
-  { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: tokens.primary, route: "equipment" },
-  { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: tokens.primary, route: "tasks" },
-  { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: tokens.warning, route: "occurrences" },
-  { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: tokens.primary, route: "observations" },
+  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: colors.primary, route: "weather" },
+  { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: colors.primary, route: "workforce" },
+  { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: colors.primary, route: "materials" },
+  { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: colors.primary, route: "equipment" },
+  { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: colors.primary, route: "tasks" },
+  { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: colors.warning, route: "occurrences" },
+  { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: colors.primary, route: "observations" },
 ];
 
 const MOCK_PHOTOS = [
@@ -139,11 +124,11 @@ export default function RdoDetailScreen() {
           style={styles.navButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={20} color={tokens.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>RDO #032</Text>
         <PressableOpacity style={styles.navButton}>
-          <Ellipsis size={20} color={tokens.textMain} />
+          <MoreHorizontal size={22} color={colors.textMain} />
         </PressableOpacity>
       </View>
 
@@ -156,7 +141,7 @@ export default function RdoDetailScreen() {
           <View style={styles.rhTop}>
             <Text style={styles.rhNumber}>RDO #032</Text>
             <View style={styles.rhStatus}>
-              <CircleCheck size={14} color={tokens.success} />
+              <CheckCircle size={20} color={colors.success} />
               <Text style={styles.rhStatusText}>Gerado</Text>
             </View>
           </View>
@@ -211,7 +196,7 @@ export default function RdoDetailScreen() {
                     <Text style={styles.sectionSummary}>{section.summary}</Text>
                   </View>
                 </View>
-                <ChevronRight size={18} color={tokens.textMuted} />
+                <ChevronRight size={18} color={colors.textMuted} />
               </PressableOpacity>
               {index < RDO_SECTIONS.length - 1 && <View style={styles.sectionDivider} />}
             </View>
@@ -230,7 +215,7 @@ export default function RdoDetailScreen() {
           </View>
           <PressableOpacity style={styles.viewAllLink} onPress={handleViewAllPhotos}>
             <Text style={styles.viewAllText}>Ver todas</Text>
-            <ArrowRight size={14} color={tokens.primary} />
+            <ArrowRight size={14} color={colors.primary} />
           </PressableOpacity>
         </View>
 
@@ -240,11 +225,11 @@ export default function RdoDetailScreen() {
           disabled={pdfLoading}
         >
           {pdfLoading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small" color={colors.textOnBrand} />
           ) : (
             <>
               <Text style={styles.primaryButtonText}>Abrir PDF</Text>
-              <FileText size={18} color="#FFFFFF" />
+              <FileText size={18} color={colors.textOnBrand} />
             </>
           )}
         </PressableOpacity>
@@ -256,10 +241,10 @@ export default function RdoDetailScreen() {
             disabled={pdfLoading}
           >
             {pdfLoading ? (
-              <ActivityIndicator size="small" color={tokens.textMuted} />
+              <ActivityIndicator size="small" color={colors.textMuted} />
             ) : (
               <>
-                <Share2 size={16} color={tokens.textMuted} />
+                <Share2 size={18} color={colors.textMuted} />
                 <Text style={styles.secondaryButtonText}>Partilhar</Text>
               </>
             )}
@@ -270,10 +255,10 @@ export default function RdoDetailScreen() {
             disabled={pdfLoading}
           >
             {pdfLoading ? (
-              <ActivityIndicator size="small" color={tokens.textMuted} />
+              <ActivityIndicator size="small" color={colors.textMuted} />
             ) : (
               <>
-                <Download size={16} color={tokens.textMuted} />
+                <Download size={18} color={colors.textMuted} />
                 <Text style={styles.secondaryButtonText}>Guardar</Text>
               </>
             )}
@@ -287,7 +272,7 @@ export default function RdoDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.bgMain,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -306,7 +291,7 @@ const styles = StyleSheet.create({
   navTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMain,
+    color: colors.textMain,
     flex: 1,
     textAlign: "center",
   },
@@ -320,12 +305,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   reportHeader: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: 16,
     padding: 16,
     gap: 2,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   rhTop: {
     flexDirection: "row",
@@ -334,13 +319,13 @@ const styles = StyleSheet.create({
   },
   rhNumber: {
     ...typography.presets.h3,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   rhStatus: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: tokens.successBg,
+    backgroundColor: colors.successBg,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -348,29 +333,29 @@ const styles = StyleSheet.create({
   rhStatusText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.success,
+    color: colors.success,
     fontSize: 12,
   },
   rhDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   rhProject: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   rhLocation: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   summary: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   summaryRow: {
     flexDirection: "row",
@@ -383,23 +368,23 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     ...typography.presets.h3,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   summaryLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   summaryDivider: {
     height: 1,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
     marginVertical: 4,
   },
   sectionList: {
-    backgroundColor: tokens.bgSurface,
+    backgroundColor: colors.bgSurface,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
     overflow: "hidden",
   },
   sectionItem: {
@@ -421,15 +406,15 @@ const styles = StyleSheet.create({
   sectionName: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMain,
+    color: colors.textMain,
   },
   sectionSummary: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   sectionDivider: {
     height: 1,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
   },
   photos: {
     gap: 4,
@@ -442,12 +427,12 @@ const styles = StyleSheet.create({
   photoTitle: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textMuted,
+    color: colors.textMuted,
     letterSpacing: 0.5,
   },
   photoCount: {
     ...typography.presets.caption,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
   photoStrip: {
     flexDirection: "row",
@@ -457,7 +442,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 10,
-    backgroundColor: tokens.border,
+    backgroundColor: colors.border,
   },
   viewAllLink: {
     flexDirection: "row",
@@ -469,13 +454,13 @@ const styles = StyleSheet.create({
   viewAllText: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.primary,
+    color: colors.primary,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: tokens.primary,
+    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
@@ -483,7 +468,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: tokens.textOnBrand,
+    color: colors.textOnBrand,
   },
   secondaryActions: {
     flexDirection: "row",
@@ -494,16 +479,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: tokens.bgSurface,
-    borderRadius: 12,
-    height: 44,
+    backgroundColor: colors.bgSurface,
+    borderRadius: 16,
+    height: 50,
     gap: 6,
     borderWidth: 1,
-    borderColor: tokens.border,
+    borderColor: colors.border,
   },
   secondaryButtonText: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.medium,
-    color: tokens.textMuted,
+    color: colors.textMuted,
   },
 });

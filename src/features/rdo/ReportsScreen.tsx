@@ -264,7 +264,7 @@ export default function ReportsScreen() {
         style={[styles.fab, { bottom: insets.bottom + 24 }]}
         onPress={() => setProjectModalVisible(true)}
       >
-        <Plus size={24} color={colors.textOnBrand} />
+        <Plus size={18} color={colors.textOnBrand} />
       </PressableOpacity>
 
       <Modal
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
-    height: 50,
+    height: 48,
     gap: 10,
     borderWidth: 1,
     borderColor: colors.border,

@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft, CircleCheck } from "lucide-react-native";
+import { ArrowLeftCircle, CheckCircle } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
@@ -19,7 +19,7 @@ export default function ProjectCreatedScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textMain} />
+          <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>{MOCK_PROJECT.name}</Text>
       </View>
@@ -27,7 +27,7 @@ export default function ProjectCreatedScreen() {
       <View style={styles.content}>
         <View style={styles.success}>
           <View style={styles.successIcon}>
-            <CircleCheck size={22} color={colors.success} />
+            <CheckCircle size={20} color={colors.success} />
           </View>
           <View style={styles.successInfo}>
             <Text style={styles.successTitle}>Obra criada com sucesso</Text>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius["2xl"],
     height: 56,
   },
   primaryButtonText: {
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     alignItems: "center",
     justifyContent: "center",
-    height: 44,
+    height: 50,
   },
   secondaryButtonText: {
     ...typography.presets.body,
