@@ -173,20 +173,26 @@ export default function CreateProjectScreen() {
         </View>
 
         <View style={styles.section}>
-          <DateField
-            label="Data de início"
-            value={startDate}
-            placeholder="Selecionar data"
-            required
-            onChange={setStartDate}
-          />
-          <DateField
-            label="Previsão de conclusão"
-            value={endDate}
-            placeholder="Selecionar data"
-            optional
-            onChange={setEndDate}
-          />
+          <View style={styles.fieldRow}>
+            <View style={styles.fieldHalf}>
+              <DateField
+                label="Data de início"
+                value={startDate}
+                placeholder="Selecionar data"
+                required
+                onChange={setStartDate}
+              />
+            </View>
+            <View style={styles.fieldHalf}>
+              <DateField
+                label="Previsão de conclusão"
+                value={endDate}
+                placeholder="Selecionar data"
+                optional
+                onChange={setEndDate}
+              />
+            </View>
+          </View>
         </View>
 
         <View style={styles.section}>
@@ -271,6 +277,13 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 7,
+  },
+  fieldRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  fieldHalf: {
+    flex: 1,
   },
   sectionHeaderRow: {
     flexDirection: "row",
