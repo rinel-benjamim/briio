@@ -14,16 +14,20 @@
 Screens (app/)
   → Components (components/)
   → Features (features/)
+  → Contexts (contexts/)
   → Services (services/)
   → Repositories (repositories/) [futuro]
   → Database (database/)
   → Storage (storage/)
+  → Mocks (mocks/)
 ```
 
 - Nenhum SQL direto nas telas
 - Autosave com debounce (300-500ms)
 - UUIDs para todas as entidades
 - Migrations obrigatórias
+- Componentes compartilhados em `components/ui/`
+- Formulários parametrizados com `mode: "add" | "edit"`
 
 ## 3. Estrutura de ficheiros
 
@@ -46,24 +50,24 @@ src/
 │       │       ├── detail.tsx         ← Detalhe do RDO Gerado
 │       │       ├── weather.tsx        ← Condições do dia
 │       │       ├── workforce.tsx      ← Mão de obra
-│       │       ├── add-workforce.tsx  ← Adicionar mão de obra
-│       │       ├── edit-workforce.tsx ← Editar mão de obra
+│       │       ├── add-workforce.tsx  ← 3 linhas (importa WorkforceForm)
+│       │       ├── edit-workforce.tsx ← 3 linhas (importa WorkforceForm)
 │       │       ├── materials.tsx      ← Materiais
-│       │       ├── add-material.tsx   ← Adicionar material
-│       │       ├── edit-material.tsx  ← Editar material
+│       │       ├── add-material.tsx   ← 3 linhas (importa MaterialForm)
+│       │       ├── edit-material.tsx  ← 3 linhas (importa MaterialForm)
 │       │       ├── equipment.tsx      ← Equipamentos
-│       │       ├── add-equipment.tsx  ← Adicionar equipamento
-│       │       ├── edit-equipment.tsx ← Editar equipamento
+│       │       ├── add-equipment.tsx  ← 3 linhas (importa EquipmentForm)
+│       │       ├── edit-equipment.tsx ← 3 linhas (importa EquipmentForm)
 │       │       ├── tasks.tsx          ← Tarefas
-│       │       ├── add-task.tsx       ← Adicionar atividade
-│       │       ├── edit-task.tsx      ← Editar atividade
+│       │       ├── add-task.tsx       ← 3 linhas (importa TaskForm)
+│       │       ├── edit-task.tsx      ← 3 linhas (importa TaskForm)
 │       │       ├── occurrences.tsx    ← Ocorrências
-│       │       ├── add-occurrence.tsx ← Adicionar ocorrência
-│       │       ├── edit-occurrence.tsx ← Editar ocorrência
+│       │       ├── add-occurrence.tsx ← 3 linhas (importa OccurrenceForm)
+│       │       ├── edit-occurrence.tsx ← 3 linhas (importa OccurrenceForm)
 │       │       ├── observations.tsx   ← Observações
 │       │       ├── photos.tsx         ← Fotografias
-│       │       ├── add-photo.tsx      ← Adicionar fotografia
-│       │       ├── edit-photo.tsx     ← Editar fotografia
+│       │       ├── add-photo.tsx      ← 3 linhas (importa PhotoForm)
+│       │       ├── edit-photo.tsx     ← 3 linhas (importa PhotoForm)
 │       │       ├── review.tsx         ← Revisar RDO
 │       │       └── generated.tsx      ← RDO Gerado (PDF)
 │       └── projects/
@@ -80,20 +84,40 @@ src/
 ├── components/
 │   ├── ui/
 │   │   ├── PressableOpacity.tsx       ← Wrapper animado (opacity 0.7→1)
-│   │   └── TabBar.tsx                 ← Tab bar customizada (Expo Router tabBar prop)
+│   │   ├── TabBar.tsx                 ← Tab bar customizada (Expo Router tabBar prop)
+│   │   ├── ScreenHeader.tsx           ← Header com botão voltar + título
+│   │   ├── ContextBar.tsx             ← Barra de contexto (data + projeto)
+│   │   ├── SummaryCard.tsx            ← Card de resumo
+│   │   ├── PrimaryButton.tsx          ← Botão primário (accessível)
+│   │   ├── SecondaryButton.tsx        ← Botão secundário (accessível)
+│   │   ├── AddItemButton.tsx          ← Botão para adicionar item
+│   │   ├── AutosaveStatus.tsx         ← Indicador de auto-save
+│   │   ├── ProgressBadge.tsx          ← Badge de progresso
+│   │   ├── Stepper.tsx                ← Componente stepper
+│   │   ├── Dropdown.tsx               ← Dropdown genérico
+│   │   ├── SegmentedControl.tsx       ← Controle segmentado
+│   │   ├── StatusBadge.tsx            ← Badge de status
+│   │   ├── EmptyState.tsx             ← Estado vazio
+│   │   └── Form/
+│   │       ├── index.ts               ← Barrel export
+│   │       ├── Field.tsx              ← Label + TextInput (accessível)
+│   │       ├── TextArea.tsx           ← Label + TextInput multiline
+│   │       ├── StepperField.tsx       ← Label + [-] [valor] [+] (accessível)
+│   │       ├── SelectField.tsx        ← Label + dropdown (accessível)
+│   │       └── SegmentedField.tsx     ← Label + opções horizontais (accessível)
 │   ├── rdo/
 │   │   ├── ProjectSelector.tsx        ← Select de obra (modal bottom sheet)
 │   │   ├── RDOCard.tsx                ← Card do RDO com progresso
 │   │   └── RecentReports.tsx          ← Lista de relatórios recentes
-│   ├── projects/
-│   │   ├── SearchBar.tsx              ← Input de busca (TextInput)
-│   │   ├── ProjectCard.tsx            ← Card de projeto na lista
-│   │   ├── ProjectHeader.tsx          ← Header com badge de status
-│   │   ├── InfoCard.tsx               ← Grid 2x2 de informações
-│   │   └── RecentRdoList.tsx          ← Lista simplificada de RDOs
+│   └── projects/
+│       ├── SearchBar.tsx              ← Input de busca (TextInput)
+│       ├── ProjectCard.tsx            ← Card de projeto na lista
+│       ├── ProjectHeader.tsx          ← Header com badge de status
+│       ├── InfoCard.tsx               ← Grid 2x2 de informações
+│       └── RecentRdoList.tsx          ← Lista simplificada de RDOs
+├── contexts/
+│   └── RdoContext.tsx                 ← Estado partilhado do RDO (rdoId, projectId)
 ├── features/
-│   ├── dashboard/
-│   │   └── DashboardScreen.tsx        ← Tela inicial
 │   ├── rdo/
 │   │   ├── ReportsScreen.tsx          ← Lista de Relatórios
 │   │   ├── RdoDetailScreen.tsx        ← Detalhe do RDO Gerado
@@ -102,24 +126,18 @@ src/
 │   │   ├── ReuseRdoScreen.tsx         ← Usar RDO anterior
 │   │   ├── WeatherConditionsScreen.tsx ← Condições do dia
 │   │   ├── WorkforceScreen.tsx        ← Mão de obra
-│   │   ├── AddWorkforceScreen.tsx     ← Adicionar mão de obra
-│   │   ├── EditWorkforceScreen.tsx    ← Editar mão de obra
+│   │   ├── WorkforceFormScreen.tsx    ← Formulário unificado (add/edit)
 │   │   ├── MaterialsScreen.tsx        ← Materiais
-│   │   ├── AddMaterialScreen.tsx      ← Adicionar material
-│   │   ├── EditMaterialScreen.tsx     ← Editar material
+│   │   ├── MaterialFormScreen.tsx     ← Formulário unificado (add/edit)
 │   │   ├── EquipmentScreen.tsx        ← Equipamentos
-│   │   ├── AddEquipmentScreen.tsx     ← Adicionar equipamento
-│   │   ├── EditEquipmentScreen.tsx    ← Editar equipamento
+│   │   ├── EquipmentFormScreen.tsx    ← Formulário unificado (add/edit)
 │   │   ├── TasksScreen.tsx            ← Tarefas
-│   │   ├── AddTaskScreen.tsx          ← Adicionar atividade
-│   │   ├── EditTaskScreen.tsx         ← Editar atividade
+│   │   ├── TaskFormScreen.tsx         ← Formulário unificado (add/edit)
 │   │   ├── OccurrencesScreen.tsx      ← Ocorrências
-│   │   ├── AddOccurrenceScreen.tsx    ← Adicionar ocorrência
-│   │   ├── EditOccurrenceScreen.tsx   ← Editar ocorrência
+│   │   ├── OccurrenceFormScreen.tsx   ← Formulário unificado (add/edit)
 │   │   ├── ObservationsScreen.tsx     ← Observações
 │   │   ├── PhotosScreen.tsx           ← Fotografias
-│   │   ├── AddPhotoScreen.tsx         ← Adicionar fotografia
-│   │   ├── EditPhotoScreen.tsx        ← Editar fotografia
+│   │   ├── PhotoFormScreen.tsx        ← Formulário unificado (add/edit)
 │   │   ├── ReviewRdoScreen.tsx        ← Revisar RDO
 │   │   └── RdoGeneratedScreen.tsx     ← RDO Gerado (PDF)
 │   └── projects/
@@ -129,6 +147,20 @@ src/
 │       ├── ConfigureRdoScreen.tsx     ← Configurar RDO (passo 2)
 │       ├── EditProjectScreen.tsx      ← Editar obra
 │       └── ProjectCreatedScreen.tsx   ← Obra criada com sucesso
+├── mocks/
+│   ├── index.ts                       ← Barrel export
+│   ├── projects.ts                    ← Dados de projetos
+│   ├── rdo-context.ts                 ← Contexto do RDO
+│   ├── rdo-sections.ts                ← Seções do RDO
+│   ├── workforce.ts                   ← Dados de mão de obra
+│   ├── materials.ts                   ← Dados de materiais
+│   ├── equipment.ts                   ← Dados de equipamentos
+│   ├── tasks.ts                       ← Dados de tarefas
+│   ├── occurrences.ts                 ← Dados de ocorrências
+│   ├── observations.ts                ← Observações rápidas
+│   ├── photos.ts                      ← Dados de fotografias
+│   ├── reports.ts                     ← Dados de relatórios
+│   └── reuse.tsx                      ← Itens reutilizáveis
 ├── services/
 │   └── pdf-generator.ts              ← Geração de PDF (expo-print)
 ├── constants/
@@ -137,6 +169,7 @@ src/
 │   ├── spacing.ts                     ← Espaçamentos, border radius
 │   ├── shadows.ts                     ← Sombras
 │   ├── database.ts                    ← Nome da DB
+│   ├── statuses.ts                    ← Configs de status (Project, RDO)
 │   └── index.ts
 ├── database/
 │   ├── index.tsx                      ← DatabaseProvider com migrations
@@ -160,6 +193,7 @@ Cores do design dark mode:
 - `textSecondary: #94A3B8`
 - `textTertiary: #64748B`
 - `surfaceCard: rgba(30, 41, 59, 0.7)`
+- `overlay: rgba(0, 0, 0, 0.5)`
 
 Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 
@@ -169,12 +203,15 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - **Animações:** react-native-reanimated (PressableOpacity)
 - **Navegação:** Expo Router Tabs com tabBar customizado
 - **Status bar:** expo-status-bar style="light"
-- **Formulários:** TextInput nativo (nunca Text)
-- **Inputs:** height 48, backgroundColor `rgba(30, 41, 59, 0.6)`, borderRadius lg, borderWidth 1.5, borderColor `rgba(148, 163, 184, 0.12)`, paddingHorizontal 16
+- **Formulários:** Usar componentes de `components/ui/Form/` (Field, TextArea, StepperField, SelectField, SegmentedField)
+- **Inputs:** height 48, backgroundColor `rgba(148, 163, 184, 0.1)`, borderRadius 12, borderWidth 1, borderColor `rgba(148, 163, 184, 0.12)`, paddingHorizontal 14
 - **Modais:** Bottom sheets com overlay + Pressable
 - **Nomes:** Componentes em PascalCase, ficheiros em camelCase
+- **Botões:** PrimaryButton e SecondaryButton com accessibility props
+- **Forms Add/Edit:** Componentes parametrizados com `mode: "add" | "edit"`
+- **RdoContext:** Usar `useRdo()` para aceder ao estado partilhado do RDO
 
-## 6. Estado atual (Fase 1 — Obras)
+## 6. Estado atual
 
 ### Concluído
 - [x] Fase 0: Fundação (Expo, TypeScript, SQLite, migrations, filesystem)
@@ -185,14 +222,25 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Lista de Obras — SearchBar, ProjectCard, filtros
 - [x] Detalhe da Obra — ProjectHeader, InfoCard, RecentRdoList, overflow menu
 - [x] Informações da Obra — Dados, Entidades, Referência, Localização
-- [x] Criar Obra — Formulário multi-secção (Identificação, Localização, Planeamento, Responsabilidade, Entidades)
+- [x] Criar Obra — Formulário multi-secção
 - [x] Editar Obra — Formulário com dados preenchidos
 - [x] Excluir Obra — Confirmação com modal de alerta
 - [x] Fase 2: RDO (todas as secções, review, geração PDF, detalhe RDO)
 - [x] Lista de Relatórios — Search, filtros, FAB com modal de seleção de obra
+- [x] Refatoração Fase 1: Componentes UI partilhados (13 componentes)
+- [x] Refatoração Fase 2: Mock data consolidada (12 ficheiros)
+- [x] Refatoração Fase 3: Tipos unificados (ProjectStatus)
+- [x] Refatoração Fase 4: Forms unificados (12 → 6 formulários)
+- [x] Refatoração Fase 5: Form fields partilhados (5 componentes)
+- [x] Refatoração Fase 6: RdoContext + rotas dinâmicas
+- [x] Refatoração Fase 7: Bugs e erros de estilo corrigidos
+- [x] Refatoração Fase 8: Código morto removido
+- [x] Refatoração Fase 9: Acessibilidade básica
 
-### Pendente (Fase 1)
+### Pendente
 - [ ] Arquivar obra (alternativa a excluir)
+- [ ] Integração com SQLite (substituir mocks)
+- [ ] Testes unitários
 
 ### Próximas fases
 - Fase 3: Reutilização de RDO anterior
@@ -255,3 +303,6 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - Não implementar fora do escopo MVP
 - Verificar design no Pencil antes de implementar
 - Usar Context7 para docs de bibliotecas
+- Usar componentes de `components/ui/` sempre que possível
+- Forms Add/Edit devem usar componentes parametrizados
+- Acessibilidade: accessibilityLabel, accessibilityRole, testID em elementos interativos
