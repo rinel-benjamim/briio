@@ -24,6 +24,7 @@ import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
 import { borderRadius } from "@/constants/spacing";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { useRdo } from "@/contexts/RdoContext";
 
 type FilterType = "all" | "draft" | "generated";
 
@@ -94,6 +95,7 @@ const MOCK_REPORTS: Report[] = [
 
 export default function ReportsScreen() {
   const insets = useSafeAreaInsets();
+  const { rdoId } = useRdo();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [projectModalVisible, setProjectModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -116,9 +118,9 @@ export default function ReportsScreen() {
 
   function handleReportPress(report: Report) {
     if (report.status === "generated") {
-      router.push(`/(tabs)/reports/1/detail`);
+      router.push(`/(tabs)/reports/${rdoId}/detail`);
     } else {
-      router.push(`/(tabs)/reports/1`);
+      router.push(`/(tabs)/reports/${rdoId}`);
     }
   }
 

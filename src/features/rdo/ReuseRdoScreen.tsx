@@ -17,6 +17,7 @@ import {
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { useRdo } from "@/contexts/RdoContext";
 
 const MOCK_CONTEXT = {
   date: "17 Agosto 2026",
@@ -60,6 +61,7 @@ const DAY_SPECIFIC_ITEMS: DaySpecificItem[] = [
 export default function ReuseRdoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { rdoId } = useRdo();
   const [step] = useState(1);
   const totalSteps = 2;
   const [reusableItems, setReusableItems] = useState(INITIAL_REUSABLE_ITEMS);
@@ -162,7 +164,7 @@ export default function ReuseRdoScreen() {
 
         <PressableOpacity
           style={styles.primaryButton}
-          onPress={() => router.push(`/(tabs)/reports/1`)}
+          onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
         >
           <Text style={styles.primaryButtonText}>Continuar</Text>
           <ArrowRight size={18} color={colors.textOnBrand} />

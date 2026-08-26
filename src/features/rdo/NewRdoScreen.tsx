@@ -10,6 +10,7 @@ import {
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { useRdo } from "@/contexts/RdoContext";
 
 const MOCK_CONTEXT = {
   date: "17 Agosto 2026",
@@ -25,6 +26,7 @@ const MOCK_PREVIOUS_RDO = {
 export default function NewRdoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { rdoId } = useRdo();
 
   return (
     <View style={styles.container}>
@@ -92,7 +94,7 @@ export default function NewRdoScreen() {
 
         <PressableOpacity
           style={styles.optionCardSecondary}
-          onPress={() => router.push(`/(tabs)/reports/1`)}
+          onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
         >
           <View style={styles.optionLeftSecondary}>
             <View style={styles.optionIconSecondary}>

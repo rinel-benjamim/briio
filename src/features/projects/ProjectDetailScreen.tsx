@@ -18,6 +18,7 @@ import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { InfoCard } from "@/components/projects/InfoCard";
 import { RecentRdoList } from "@/components/projects/RecentRdoList";
+import { useRdo } from "@/contexts/RdoContext";
 
 const MOCK_PROJECT = {
   id: "1",
@@ -54,6 +55,7 @@ const OVERFLOW_OPTIONS = [
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { rdoId } = useRdo();
   const [overflowVisible, setOverflowVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 
@@ -109,7 +111,7 @@ export default function ProjectDetailScreen() {
 
             <PressableOpacity
               style={styles.ctaButton}
-              onPress={() => router.push("/(tabs)/reports/1")}
+              onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
             >
               <Text style={styles.ctaText}>Continuar RDO</Text>
               <ArrowRight size={18} color={colors.textOnBrand} />

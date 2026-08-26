@@ -11,6 +11,7 @@ import {
 } from "@/components/rdo/ProjectSelector";
 import { RDOCard } from "@/components/rdo/RDOCard";
 import { RecentReports } from "@/components/rdo/RecentReports";
+import { useRdo } from "@/contexts/RdoContext";
 
 type Project = {
   id: string;
@@ -61,6 +62,7 @@ const MOCK_REPORTS = [
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
+  const { rdoId } = useRdo();
   const [selectedProject, setSelectedProject] = useState(PROJECTS[0]);
   const [hasActiveReport] = useState(true);
   const [projectModalVisible, setProjectModalVisible] = useState(false);
@@ -96,7 +98,7 @@ export default function DashboardScreen() {
             progressPercentage={65}
             completedSteps={6}
             totalSteps={9}
-            onContinue={() => router.push("/(tabs)/reports/1")}
+            onContinue={() => router.push(`/(tabs)/reports/${rdoId}`)}
           />
         ) : (
           <View style={styles.newReportSection}>

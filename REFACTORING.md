@@ -11,7 +11,7 @@
 | 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ✅ Concluída |
 | 4 | Unificar Add/Edit screens (12 → 6) | ✅ Concluída |
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ✅ Concluída |
-| 6 | Criar RdoContext + corrigir rotas hardcoded | ⏳ Pendente |
+| 6 | Criar RdoContext + corrigir rotas hardcoded | ✅ Concluída |
 | 7 | Corrigir bugs e erros de estilo | ⏳ Pendente |
 | 8 | Limpar código morto | ⏳ Pendente |
 | 9 | Adicionar acessibilidade básica | ⏳ Pendente |
@@ -146,13 +146,25 @@
 
 ---
 
-## Fase 6 — RdoContext + Rotas ⏳
+## Fase 6 — RdoContext + Rotas ✅
 
 **Objetivo:** Estado partilhado, IDs dinâmicos.
 
-1. Criar `src/contexts/RdoContext.tsx`
-2. Substituir hardcoded IDs por dinâmicos
-3. Todos os sub-ecrãs RDO usam o contexto
+### Alterações
+
+1. Criado `src/contexts/RdoContext.tsx`:
+   - `RdoProvider` com estado partilhado (rdoId, projectId, projectName, date)
+   - `useRdo()` hook para aceder ao contexto
+
+2. Rotas corrigidas (hardcoded → dinâmicas):
+   - `src/app/(tabs)/index.tsx`: Dashboard usa `rdoId` do contexto
+   - `src/features/rdo/ReportsScreen.tsx`: Navegação usa `rdoId`
+   - `src/features/projects/ProjectDetailScreen.tsx`: "Continuar RDO" usa `rdoId`
+   - `src/features/rdo/ReuseRdoScreen.tsx`: "Continuar" usa `rdoId`
+   - `src/features/rdo/NewRdoScreen.tsx`: "Começar do zero" usa `rdoId`
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 
