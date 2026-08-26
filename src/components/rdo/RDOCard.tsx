@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
+import { figma } from "@/constants/figma";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RDOCardProps {
@@ -27,15 +28,28 @@ export function RDOCard({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>RDO DE HOJE</Text>
       <PressableOpacity style={styles.card} onPress={onContinue}>
+        {/* Header: label + status badge */}
         <View style={styles.header}>
-          <Text style={styles.date}>{date}</Text>
-          <Text style={styles.progressPercent}>{progressPercentage}%</Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerLabel}>RDO de hoje</Text>
+            <Text style={styles.headerDate}>{date}</Text>
+          </View>
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusText}>Em andamento</Text>
+          </View>
         </View>
-        <Text style={styles.project}>{projectName}</Text>
 
-        <View style={styles.progressSection}>
+        {/* Completion data */}
+        <View style={styles.completionSection}>
+          <View style={styles.completionRow}>
+            <Text style={styles.completionPercent}>{progressPercentage}%</Text>
+            {progressLabel && (
+              <Text style={styles.completionSteps}>{progressLabel}</Text>
+            )}
+          </View>
+
+          {/* Progress bar */}
           <View style={styles.progressTrack}>
             <View
               style={[
@@ -44,14 +58,12 @@ export function RDOCard({
               ]}
             />
           </View>
-          {progressLabel && (
-            <Text style={styles.progressSteps}>{progressLabel}</Text>
-          )}
         </View>
 
+        {/* CTA Button */}
         <View style={styles.ctaButton}>
           <Text style={styles.ctaText}>Continuar relatório</Text>
-          <ArrowRight size={16} color={colors.primary} />
+          <ArrowRight size={18} color={colors.textOnBrand} />
         </View>
       </PressableOpacity>
     </View>
@@ -62,66 +74,90 @@ const styles = StyleSheet.create({
   container: {
     gap: 12,
   },
-  label: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
   card: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.xl,
+    backgroundColor: figma.heroBg,
+    borderRadius: 24,
     padding: 20,
     gap: 16,
-    ...shadows.hero,
+    shadowColor: "#10201A",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 4,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
-  date: {
+  headerLeft: {
+    gap: 4,
+  },
+  headerLabel: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "rgba(255,255,255,0.7)",
+    fontWeight: typography.fontWeight.bold,
+    color: figma.primaryLight,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
-  progressPercent: {
-    ...typography.presets.h2,
+  headerDate: {
+    ...typography.presets.bodySmall,
     color: colors.textOnBrand,
   },
-  project: {
-    ...typography.presets.h2,
-    color: colors.textOnBrand,
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 9999,
+    backgroundColor: figma.warningBg,
   },
-  progressSection: {
+  statusText: {
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.bold,
+    color: figma.warningText,
+  },
+  completionSection: {
     gap: 8,
+  },
+  completionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+  },
+  completionPercent: {
+    ...figma.heroPercent,
+    color: colors.textOnBrand,
+  },
+  completionSteps: {
+    ...figma.heroSteps,
+    color: figma.primaryLight,
   },
   progressTrack: {
     height: 8,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 4,
+    backgroundColor: figma.progressTrack,
+    borderRadius: 9999,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.textOnBrand,
-    borderRadius: 4,
-  },
-  progressSteps: {
-    ...typography.presets.caption,
-    color: "rgba(255,255,255,0.7)",
+    backgroundColor: figma.primary,
+    borderRadius: 9999,
   },
   ctaButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    height: 44,
-    gap: 8,
+    backgroundColor: figma.primary,
+    borderRadius: 16,
+    height: 56,
+    gap: 10,
+    shadowColor: "#10201A",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 4,
   },
   ctaText: {
-    ...typography.presets.bodyMedium,
-    color: colors.primary,
+    ...typography.presets.h3,
+    color: colors.textOnBrand,
   },
 });
