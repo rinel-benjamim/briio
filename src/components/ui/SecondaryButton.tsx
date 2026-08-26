@@ -1,5 +1,6 @@
 import { Text, StyleSheet, ActivityIndicator } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SecondaryButtonProps {
@@ -17,9 +18,11 @@ export function SecondaryButton({
   disabled,
   loading,
 }: SecondaryButtonProps) {
+  const colors = useThemeColors();
+
   return (
     <PressableOpacity
-      style={[styles.button, disabled && styles.disabled]}
+      style={[styles.button, { borderColor: colors.border, backgroundColor: colors.bgSurface }, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled || loading}
       accessibilityRole="button"
@@ -32,7 +35,7 @@ export function SecondaryButton({
       ) : (
         <>
           {icon}
-          <Text style={styles.label}>{label}</Text>
+          <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>
         </>
       )}
     </PressableOpacity>
@@ -47,14 +50,11 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: borderRadius["2xl"],
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bgSurface,
     gap: 8,
   },
   label: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
   },
   disabled: {
     opacity: 0.5,

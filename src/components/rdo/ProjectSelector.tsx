@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Modal, Pressable, FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChevronDown, Check, X } from "lucide-react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 export interface ProjectOption {
@@ -22,16 +24,18 @@ export function ProjectSelector({
   onSelect,
 }: ProjectSelectorProps) {
   const [visible, setVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
   const selected = projects.find((p) => p.id === selectedId) ?? projects[0];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Obra atual</Text>
-      <PressableOpacity style={styles.button} onPress={() => setVisible(true)}>
+      <Text style={[styles.label, { color: colors.textMuted }]}>Obra atual</Text>
+      <PressableOpacity style={[styles.button, { backgroundColor: colors.bgSurface, borderColor: colors.border }]} onPress={() => setVisible(true)}>
         <View style={styles.info}>
-          <Text style={styles.name}>{selected?.name}</Text>
+          <Text style={[styles.name, { color: colors.textMain }]}>{selected?.name}</Text>
           {selected?.location && (
-            <Text style={styles.location}>{selected.location}</Text>
+            <Text style={[styles.location, { color: colors.textMuted }]}>{selected.location}</Text>
           )}
         </View>
         <ChevronDown size={20} color={colors.textMuted} />
@@ -43,12 +47,12 @@ export function ProjectSelector({
         animationType="fade"
         onRequestClose={() => setVisible(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
-          <View style={styles.sheet}>
-            <View style={styles.sheetHeader}>
-              <Text style={styles.sheetTitle}>Selecionar obra</Text>
+        <Pressable style={[styles.overlay, { backgroundColor: colors.overlay }]} onPress={() => setVisible(false)}>
+          <View style={[styles.sheet, { backgroundColor: colors.bgSurface, paddingBottom: insets.bottom + 16 }]}>
+            <View style={[styles.sheetHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.sheetTitle, { color: colors.textMain }]}>Selecionar obra</Text>
               <PressableOpacity
-                style={styles.closeButton}
+                style={[styles.closeButton, { backgroundColor: colors.bgMain }]}
                 onPress={() => setVisible(false)}
               >
                 <X size={20} color={colors.textMuted} />
@@ -64,7 +68,8 @@ export function ProjectSelector({
                   <PressableOpacity
                     style={[
                       styles.option,
-                      isSelected && styles.optionSelected,
+                      { borderBottomColor: colors.border },
+                      isSelected && { backgroundColor: colors.primaryLight },
                     ]}
                     onPress={() => {
                       onSelect?.(item);
@@ -75,13 +80,14 @@ export function ProjectSelector({
                       <Text
                         style={[
                           styles.optionName,
-                          isSelected && styles.optionNameSelected,
+                          { color: colors.textMain },
+                          isSelected && { fontWeight: typography.fontWeight.semibold, color: colors.primary },
                         ]}
                       >
                         {item.name}
                       </Text>
                       {item.location && (
-                        <Text style={styles.optionLocation}>
+                        <Text style={[styles.optionLocation, { color: colors.textMuted }]}>
                           {item.location}
                         </Text>
                       )}
@@ -107,7 +113,6 @@ const styles = StyleSheet.create({
   label: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textMuted,
     textTransform: "uppercase",
     letterSpacing: 1,
   },
@@ -115,12 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 14,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: colors.border,
     ...shadows.sm,
   },
   info: {
@@ -129,23 +132,18 @@ const styles = StyleSheet.create({
   },
   name: {
     ...typography.presets.bodyMedium,
-    color: colors.textMain,
   },
   location: {
     ...typography.presets.caption,
-    color: colors.textMuted,
   },
   overlay: {
     flex: 1,
-    backgroundColor: colors.overlay,
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
-    paddingBottom: 34,
   },
   sheetHeader: {
     flexDirection: "row",
@@ -153,16 +151,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     paddingBottom: 12,
+    borderBottomWidth: 1,
   },
   sheetTitle: {
     ...typography.presets.h2,
-    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -173,23 +170,14 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingHorizontal: 20,
   },
-  optionSelected: {
-    backgroundColor: colors.primaryLight,
-  },
   optionInfo: {
     flex: 1,
     gap: 2,
   },
   optionName: {
     ...typography.presets.body,
-    color: colors.textMain,
-  },
-  optionNameSelected: {
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
   },
   optionLocation: {
     ...typography.presets.caption,
-    color: colors.textMuted,
   },
 });

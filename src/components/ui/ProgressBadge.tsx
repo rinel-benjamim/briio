@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius } from "@/constants";
 
 interface ProgressBadgeProps {
   current: number;
@@ -7,9 +8,11 @@ interface ProgressBadgeProps {
 }
 
 export function ProgressBadge({ current, total }: ProgressBadgeProps) {
+  const colors = useThemeColors();
+
   return (
-    <View style={styles.badge}>
-      <Text style={styles.text}>
+    <View style={[styles.badge, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}>
+      <Text style={[styles.text, { color: colors.primary }]}>
         {current} de {total}
       </Text>
     </View>
@@ -23,13 +26,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: colors.primary,
   },
   text: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
   },
 });

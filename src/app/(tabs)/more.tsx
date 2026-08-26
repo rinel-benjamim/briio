@@ -1,13 +1,15 @@
 import { View, StyleSheet, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, typography } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography } from "@/constants";
 
 export default function MoreScreen() {
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
-      <Text style={styles.title}>Mais</Text>
+    <View style={[styles.container, { paddingTop: insets.top + 8, backgroundColor: colors.bgMain }]}>
+      <Text style={[styles.title, { color: colors.textMain }]}>Mais</Text>
     </View>
   );
 }
@@ -15,11 +17,9 @@ export default function MoreScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.bgMain,
     paddingHorizontal: 20,
   },
   title: {
     ...typography.presets.h2,
-    color: colors.textMain,
   },
 });

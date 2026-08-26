@@ -1,5 +1,6 @@
 import { Text, StyleSheet, ActivityIndicator } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface PrimaryButtonProps {
@@ -17,9 +18,11 @@ export function PrimaryButton({
   disabled,
   loading,
 }: PrimaryButtonProps) {
+  const colors = useThemeColors();
+
   return (
     <PressableOpacity
-      style={[styles.button, disabled && styles.disabled]}
+      style={[styles.button, { backgroundColor: colors.primary, shadowColor: colors.primary }, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled || loading}
       accessibilityRole="button"
@@ -31,7 +34,7 @@ export function PrimaryButton({
         <ActivityIndicator size="small" color={colors.textOnBrand} />
       ) : (
         <>
-          <Text style={styles.label}>{label}</Text>
+          <Text style={[styles.label, { color: colors.textOnBrand }]}>{label}</Text>
           {icon}
         </>
       )}
@@ -44,11 +47,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary,
     borderRadius: borderRadius["2xl"],
     height: 56,
     gap: 8,
-    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
     shadowRadius: 24,
@@ -56,7 +57,6 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.presets.h3,
-    color: colors.textOnBrand,
   },
   disabled: {
     opacity: 0.5,

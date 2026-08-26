@@ -1,6 +1,7 @@
 import { Text, StyleSheet } from "react-native";
 import { Plus } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface AddItemButtonProps {
@@ -9,10 +10,12 @@ interface AddItemButtonProps {
 }
 
 export function AddItemButton({ label, onPress }: AddItemButtonProps) {
+  const colors = useThemeColors();
+
   return (
-    <PressableOpacity style={styles.button} onPress={onPress}>
+    <PressableOpacity style={[styles.button, { backgroundColor: colors.bgSurface, borderColor: colors.border }]} onPress={onPress}>
       <Plus size={18} color={colors.primary} />
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.primary }]}>{label}</Text>
     </PressableOpacity>
   );
 }
@@ -22,15 +25,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius["2xl"],
     height: 56,
     gap: 8,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   label: {
     ...typography.presets.h3,
-    color: colors.primary,
   },
 });

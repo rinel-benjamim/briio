@@ -1,10 +1,14 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { colors, typography, spacing } from "@/constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography } from "@/constants";
+import { LinearGradient } from "expo-linear-gradient";
 
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  interpolateColor,
 } from "react-native-reanimated";
 
 type TabBarProps = {
@@ -24,14 +28,21 @@ function TabItem({
   isActive: boolean;
   onPress: () => void;
 }) {
+  const colors = useThemeColors();
   const opacity = useSharedValue(1);
+  const bgProgress = useSharedValue(isActive ? 1 : 0);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
+    backgroundColor: interpolateColor(
+      bgProgress.value,
+      [0, 1],
+      ["transparent", colors.activeTabBg]
+    ),
   }));
 
   return (
-    <Animated.View style={[styles.tab, isActive && styles.activeTab, animatedStyle]}>
+    <Animated.View style={[styles.tab, animatedStyle]}>
       <Pressable
         style={styles.tabInner}
         onPress={onPress}
@@ -43,7 +54,7 @@ function TabItem({
         }}
       >
         {icon}
-        <Text style={[styles.label, isActive && styles.activeLabel]}>
+        <Text style={[styles.label, isActive && { color: colors.primary, fontWeight: typography.fontWeight.bold }]}>
           {label}
         </Text>
       </Pressable>
@@ -52,8 +63,16 @@ function TabItem({
 }
 
 export function CustomTabBar({ state, navigation, descriptors }: TabBarProps) {
+  const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
+
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[colors.bgSurface, colors.bgMain]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={[styles.container, { paddingBottom: insets.bottom + 8 }]}
+    >
       <View style={styles.bar}>
         {state.routes.map((route: any, index: number) => {
           const isActive = state.index === index;
@@ -73,7 +92,7 @@ export function CustomTabBar({ state, navigation, descriptors }: TabBarProps) {
           );
         })}
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -81,23 +100,17 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 12,
     paddingTop: 8,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.bgSurface,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: "rgba(0,0,0,0.05)",
   },
   bar: {
     flexDirection: "row",
-    backgroundColor: colors.bgSurface,
     gap: 4,
   },
   tab: {
     flex: 1,
     borderRadius: 16,
     height: 58,
-  },
-  activeTab: {
-    backgroundColor: colors.activeTabBg,
   },
   tabInner: {
     flex: 1,
@@ -108,10 +121,5 @@ const styles = StyleSheet.create({
   label: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.inactiveIcon,
-  },
-  activeLabel: {
-    color: colors.primary,
-    fontWeight: typography.fontWeight.bold,
   },
 });

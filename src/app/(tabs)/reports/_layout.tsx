@@ -1,12 +1,19 @@
 import { Stack } from "expo-router";
+import { useColorScheme } from "react-native";
 
 export default function ReportsLayout() {
+  const scheme = useColorScheme();
+
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: "#F4F6F4" },
+        contentStyle: { backgroundColor: scheme === "dark" ? "#0F172A" : "#F4F6F4" },
       }}
-    />
+    >
+      <Stack.Screen name="index" options={{ animation: "default" }} />
+      <Stack.Screen name="new" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="reuse" options={{ animation: "slide_from_right" }} />
+    </Stack>
   );
 }

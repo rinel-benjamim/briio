@@ -1,6 +1,12 @@
 export { colors } from "./colors";
+export { darkColors } from "./colors-dark";
 export { typography } from "./typography";
 export { spacing, borderRadius, padding } from "./spacing";
 export { shadows } from "./shadows";
 export { PROJECT_STATUS_CONFIG, PROJECT_STATUS_CONFIG_UPPERCASE, RDO_STATUS_CONFIG } from "./statuses";
 export type { StatusConfig, RdoStatus, RdoStatusConfig } from "./statuses";
+export { useThemeColors } from "@/contexts/ThemeContext";
+export { AnimatedFAB } from "@/components/ui/AnimatedFAB";
+export { FadeInView } from "@/components/ui/FadeInView";
+export { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+export { GradientCard } from "@/components/ui/GradientCard";

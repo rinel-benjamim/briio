@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -16,8 +16,11 @@ import {
   X,
   Building2,
 } from "lucide-react-native";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { FadeInView } from "@/components/ui/FadeInView";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { ProjectCard, type ProjectStatus } from "@/components/projects/ProjectCard";
 
 type FilterType = "all" | "active" | "completed" | "archived";
@@ -70,9 +73,18 @@ const MOCK_PROJECTS: Project[] = [
 
 export default function ProjectsScreen() {
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <LoadingScreen />;
 
   const filteredProjects = MOCK_PROJECTS.filter((project) => {
     if (activeFilter === "all") return true;

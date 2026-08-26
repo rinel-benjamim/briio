@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ChevronDown } from "lucide-react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface DropdownProps {
@@ -16,11 +17,13 @@ export function Dropdown({
   placeholder,
   onPress,
 }: DropdownProps) {
+  const colors = useThemeColors();
+
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
-      <PressableOpacity style={styles.dropdown} onPress={onPress}>
-        <Text style={[styles.value, !value && styles.placeholder]}>
+      <Text style={[styles.label, { color: colors.textMain }]}>{label}</Text>
+      <PressableOpacity style={[styles.dropdown, { backgroundColor: colors.bgSurface, borderColor: colors.border }]} onPress={onPress}>
+        <Text style={[styles.value, { color: colors.textMain }, !value && { color: colors.textMuted }]}>
           {value || placeholder || "Selecionar..."}
         </Text>
         <ChevronDown size={20} color={colors.textMuted} />
@@ -40,21 +43,25 @@ export function DropdownOptions({
   selected,
   onSelect,
 }: DropdownOptionsProps) {
+  const colors = useThemeColors();
+
   return (
-    <View style={styles.options}>
+    <View style={[styles.options, { backgroundColor: colors.bgSurface, borderColor: colors.border }]}>
       {options.map((option) => (
         <PressableOpacity
           key={option}
           style={[
             styles.option,
-            option === selected && styles.optionSelected,
+            { borderBottomColor: colors.border },
+            option === selected && { backgroundColor: colors.primaryLight },
           ]}
           onPress={() => onSelect(option)}
         >
           <Text
             style={[
               styles.optionText,
-              option === selected && styles.optionTextSelected,
+              { color: colors.textMain },
+              option === selected && { color: colors.primary, fontWeight: typography.fontWeight.semibold },
             ]}
           >
             {option}
@@ -71,31 +78,22 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.presets.label,
-    color: colors.textMain,
   },
   dropdown: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     height: 48,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   value: {
     ...typography.presets.body,
-    color: colors.textMain,
-  },
-  placeholder: {
-    color: colors.textMuted,
   },
   options: {
-    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
     overflow: "hidden",
     ...shadows.md,
   },
@@ -103,17 +101,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  optionSelected: {
-    backgroundColor: colors.primaryLight,
   },
   optionText: {
     ...typography.presets.body,
-    color: colors.textMain,
-  },
-  optionTextSelected: {
-    color: colors.primary,
-    fontWeight: typography.fontWeight.semibold,
   },
 });

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { View, StyleSheet, Text, Modal, Pressable, FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChevronDown, Check, X } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SelectFieldProps {
@@ -20,18 +22,20 @@ export function SelectField({
   placeholder = "Selecione uma opção",
 }: SelectFieldProps) {
   const [visible, setVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
 
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textMain }]}>{label}</Text>
       <PressableOpacity
-        style={styles.dropdown}
+        style={[styles.dropdown, { backgroundColor: colors.bgSurface, borderColor: colors.border }]}
         onPress={() => setVisible(true)}
         accessibilityRole="combobox"
         accessibilityLabel={`${label}: ${value || placeholder}`}
         testID={`select-${label.toLowerCase().replace(/\s/g, "-")}`}
       >
-        <Text style={[styles.value, !value && styles.placeholder]}>
+        <Text style={[styles.value, { color: colors.textMain }, !value && { color: colors.textMuted }]}>
           {value || placeholder}
         </Text>
         <ChevronDown size={20} color={colors.textMuted} />
@@ -43,12 +47,12 @@ export function SelectField({
         animationType="fade"
         onRequestClose={() => setVisible(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
-          <View style={styles.sheet}>
-            <View style={styles.sheetHeader}>
-              <Text style={styles.sheetTitle}>{label}</Text>
+        <Pressable style={[styles.overlay, { backgroundColor: colors.overlay }]} onPress={() => setVisible(false)}>
+          <View style={[styles.sheet, { backgroundColor: colors.bgSurface, paddingBottom: insets.bottom + 16 }]}>
+            <View style={[styles.sheetHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.sheetTitle, { color: colors.textMain }]}>{label}</Text>
               <PressableOpacity
-                style={styles.closeButton}
+                style={[styles.closeButton, { backgroundColor: colors.bgMain }]}
                 onPress={() => setVisible(false)}
               >
                 <X size={20} color={colors.textMuted} />
@@ -65,7 +69,8 @@ export function SelectField({
                   <PressableOpacity
                     style={[
                       styles.option,
-                      isSelected && styles.optionSelected,
+                      { borderBottomColor: colors.border },
+                      isSelected && { backgroundColor: colors.primaryLight },
                     ]}
                     onPress={() => {
                       onSelect(item);
@@ -78,7 +83,8 @@ export function SelectField({
                     <Text
                       style={[
                         styles.optionText,
-                        isSelected && styles.optionTextSelected,
+                        { color: colors.textMain },
+                        isSelected && { color: colors.primary, fontWeight: typography.fontWeight.semibold },
                       ]}
                     >
                       {item}
@@ -106,37 +112,27 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: typography.fontWeight.medium,
     fontFamily: typography.fontFamily,
-    color: colors.textMain,
   },
   dropdown: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     height: 48,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   value: {
     ...typography.presets.body,
-    color: colors.textMain,
-  },
-  placeholder: {
-    color: colors.textMuted,
   },
   overlay: {
     flex: 1,
-    backgroundColor: colors.overlay,
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
-    paddingBottom: 34,
   },
   sheetHeader: {
     flexDirection: "row",
@@ -145,20 +141,17 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   sheetTitle: {
     fontSize: 17,
     lineHeight: 22,
     fontWeight: typography.fontWeight.bold,
     fontFamily: typography.fontFamily,
-    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.bgMain,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -171,20 +164,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  optionSelected: {
-    backgroundColor: colors.primaryLight,
-    marginHorizontal: -20,
-    paddingHorizontal: 20,
-    borderBottomColor: "transparent",
   },
   optionText: {
     ...typography.presets.body,
-    color: colors.textMain,
-  },
-  optionTextSelected: {
-    color: colors.primary,
-    fontWeight: typography.fontWeight.semibold,
   },
 });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -20,8 +20,11 @@ import {
   Building2,
   FileText,
 } from "lucide-react-native";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { FadeInView } from "@/components/ui/FadeInView";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 
 type FilterType = "all" | "draft" | "generated";
@@ -93,12 +96,21 @@ const MOCK_REPORTS: Report[] = [
 
 export default function ReportsScreen() {
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
   const { rdoId } = useRdo();
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [projectModalVisible, setProjectModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <LoadingScreen />;
 
   const filteredReports = MOCK_REPORTS.filter((report) => {
     if (activeFilter === "all") return true;
