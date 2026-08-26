@@ -10,7 +10,7 @@
 | 2 | Consolidar mock data em `src/mocks/` | ✅ Concluída |
 | 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ✅ Concluída |
 | 4 | Unificar Add/Edit screens (12 → 6) | ✅ Concluída |
-| 5 | Extrair Form Fields (Field, DateField, SelectField) | ⏳ Pendente |
+| 5 | Extrair Form Fields (Field, DateField, SelectField) | ✅ Concluída |
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ⏳ Pendente |
 | 7 | Corrigir bugs e erros de estilo | ⏳ Pendente |
 | 8 | Limpar código morto | ⏳ Pendente |
@@ -126,13 +126,23 @@
 
 ---
 
-## Fase 5 — Extrair Form Fields ⏳
+## Fase 5 — Extrair Form Fields ✅
 
 **Objetivo:** Reutilizar campos de formulário.
 
-- `Field` → `src/components/ui/Form/Field.tsx`
-- `DateField` → `src/components/ui/Form/DateField.tsx`
-- `SelectField` → `src/components/ui/Form/SelectField.tsx`
+### Componentes criados
+
+| Componente | Ficheiro | Descrição |
+|------------|----------|-----------|
+| `Field` | `src/components/ui/Form/Field.tsx` | Label + TextInput (height 48) |
+| `TextArea` | `src/components/ui/Form/TextArea.tsx` | Label + TextInput multiline |
+| `StepperField` | `src/components/ui/Form/StepperField.tsx` | Label + [-] [valor] [+] |
+| `SelectField` | `src/components/ui/Form/SelectField.tsx` | Label + dropdown com opções |
+| `SegmentedField` | `src/components/ui/Form/SegmentedField.tsx` | Label + opções horizontais |
+| `index.ts` | `src/components/ui/Form/index.ts` | Barrel export |
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 
