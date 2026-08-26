@@ -1,10 +1,9 @@
 import { useState } from "react";
 import {
   View,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
-  FlatList,
   Modal,
   Pressable,
   TextInput,
@@ -20,9 +19,7 @@ import {
   Check,
   Building2,
 } from "lucide-react-native";
-import { colors } from "@/constants/colors";
-import { typography } from "@/constants/typography";
-import { borderRadius } from "@/constants/spacing";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 
@@ -173,13 +170,13 @@ export default function ReportsScreen() {
             }}
           >
             {searchVisible ? (
-              <X size={20} color={colors.textSecondary} />
+              <X size={20} color={colors.textMuted} />
             ) : (
-              <Search size={20} color={colors.textSecondary} />
+              <Search size={20} color={colors.textMuted} />
             )}
           </PressableOpacity>
           <PressableOpacity style={styles.iconButton}>
-            <SlidersHorizontal size={20} color={colors.textSecondary} />
+            <SlidersHorizontal size={20} color={colors.textMuted} />
           </PressableOpacity>
         </View>
       </View>
@@ -187,18 +184,18 @@ export default function ReportsScreen() {
       {searchVisible && (
         <View style={styles.searchContainer}>
           <View style={styles.searchInputContainer}>
-            <Search size={18} color={colors.textTertiary} />
+            <Search size={18} color={colors.textMuted} />
             <TextInput
               style={styles.searchInput}
               placeholder="Pesquisar relatórios..."
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={colors.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
               autoFocus
             />
             {searchQuery.length > 0 && (
               <PressableOpacity onPress={() => setSearchQuery("")}>
-                <X size={16} color={colors.textTertiary} />
+                <X size={16} color={colors.textMuted} />
               </PressableOpacity>
             )}
           </View>
@@ -250,7 +247,7 @@ export default function ReportsScreen() {
       <View style={styles.sortRow}>
         <Text style={styles.sortLabel}>{filteredReports.length} relatórios</Text>
         <PressableOpacity style={styles.sortControl}>
-          <ArrowUpDown size={14} color={colors.textTertiary} />
+          <ArrowUpDown size={14} color={colors.textMuted} />
           <Text style={styles.sortValue}>Mais recentes</Text>
         </PressableOpacity>
       </View>
@@ -264,10 +261,10 @@ export default function ReportsScreen() {
       />
 
       <PressableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: insets.bottom + 24 }]}
         onPress={() => setProjectModalVisible(true)}
       >
-        <Plus size={24} color="#FFFFFF" />
+        <Plus size={24} color={colors.textOnBrand} />
       </PressableOpacity>
 
       <Modal
@@ -287,7 +284,7 @@ export default function ReportsScreen() {
                 style={styles.closeButton}
                 onPress={() => setProjectModalVisible(false)}
               >
-                <X size={20} color={colors.textSecondary} />
+                <X size={20} color={colors.textMuted} />
               </PressableOpacity>
             </View>
 
@@ -314,7 +311,7 @@ export default function ReportsScreen() {
                     }}
                   >
                     <View style={styles.projectOptionIcon}>
-                      <Building2 size={20} color={isSelected ? colors.brandPrimary : colors.textSecondary} />
+                      <Building2 size={20} color={isSelected ? colors.primary : colors.textMuted} />
                     </View>
                     <View style={styles.projectOptionInfo}>
                       <Text
@@ -330,7 +327,7 @@ export default function ReportsScreen() {
                       </Text>
                     </View>
                     {isSelected && (
-                      <Check size={18} color={colors.brandPrimary} />
+                      <Check size={18} color={colors.primary} />
                     )}
                   </PressableOpacity>
                 );
@@ -346,18 +343,21 @@ export default function ReportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 12,
+    backgroundColor: colors.bgSurface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   navTitle: {
-    ...typography.presets.h2,
-    color: colors.textPrimary,
+    ...typography.presets.h1,
+    color: colors.textMain,
   },
   topActions: {
     flexDirection: "row",
@@ -367,51 +367,47 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
   },
   filters: {
     flexDirection: "row",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     gap: 8,
     marginBottom: 8,
+    paddingTop: 12,
   },
   filterPill: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     height: 32,
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    backgroundColor: "#F4F6F4",
   },
   filterPillActive: {
-    backgroundColor: colors.brandPrimary,
-    borderWidth: 0,
+    backgroundColor: colors.primary,
   },
   filterText: {
-    ...typography.presets.label,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textMuted,
   },
   filterTextActive: {
-    color: "#FFFFFF",
-    fontWeight: typography.fontWeight.medium,
+    color: colors.textOnBrand,
+    fontWeight: typography.fontWeight.semibold,
   },
   sortRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 8,
   },
   sortLabel: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textTertiary,
+    color: colors.textMuted,
   },
   sortControl: {
     flexDirection: "row",
@@ -420,42 +416,42 @@ const styles = StyleSheet.create({
   },
   sortValue: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textTertiary,
+    color: colors.textMuted,
   },
   searchContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     marginBottom: 8,
   },
   searchInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 48,
-    gap: 8,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: 14,
+    height: 50,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   searchInput: {
     flex: 1,
     ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.textMain,
     padding: 0,
   },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 100,
     gap: 12,
   },
   reportCard: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 16,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
+    ...shadows.sm,
   },
   cardTop: {
     flexDirection: "row",
@@ -463,20 +459,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   reportNumber: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
   },
   statusGenerated: {
-    backgroundColor: "rgba(16, 185, 129, 0.12)",
+    backgroundColor: colors.successBg,
   },
   statusDraft: {
-    backgroundColor: "rgba(245, 158, 11, 0.12)",
+    backgroundColor: colors.warningBg,
   },
   statusText: {
     ...typography.presets.caption,
@@ -484,49 +479,45 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   statusTextGenerated: {
-    color: "#10B981",
+    color: colors.success,
   },
   statusTextDraft: {
-    color: "#F59E0B",
+    color: colors.warning,
   },
   projectName: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   reportDate: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
   reportSummary: {
     ...typography.presets.caption,
-    color: colors.textTertiary,
+    color: colors.textMuted,
   },
   fab: {
     position: "absolute",
     right: 20,
-    bottom: 120,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: colors.brandPrimary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,
-    borderWidth: 1,
-    borderColor: "rgba(99, 102, 241, 0.3)",
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: colors.overlay,
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#1E293B",
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -540,20 +531,20 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textPrimary,
+    ...typography.presets.h2,
+    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
   sheetSubtitle: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.body,
+    color: colors.textMuted,
     paddingHorizontal: 20,
     marginBottom: 8,
   },
@@ -564,18 +555,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    paddingHorizontal: 16,
     gap: 12,
-    borderRadius: 12,
+    borderRadius: borderRadius.lg,
   },
   projectOptionSelected: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
+    backgroundColor: colors.primaryLight,
   },
   projectOptionIcon: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -584,15 +574,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   projectOptionName: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   projectOptionNameSelected: {
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
   projectOptionLocation: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
 });

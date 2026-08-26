@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ChevronDown } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface DropdownProps {
@@ -18,12 +18,12 @@ export function Dropdown({
 }: DropdownProps) {
   return (
     <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+      <Text style={styles.label}>{label}</Text>
       <PressableOpacity style={styles.dropdown} onPress={onPress}>
-        <Text style={[styles.dropdownText, !value && styles.dropdownPlaceholder]}>
+        <Text style={[styles.value, !value && styles.placeholder]}>
           {value || placeholder || "Selecionar..."}
         </Text>
-        <ChevronDown size={18} color={colors.textTertiary} />
+        <ChevronDown size={18} color={colors.textMuted} />
       </PressableOpacity>
     </View>
   );
@@ -41,20 +41,20 @@ export function DropdownOptions({
   onSelect,
 }: DropdownOptionsProps) {
   return (
-    <View style={styles.dropdownOptions}>
+    <View style={styles.options}>
       {options.map((option) => (
         <PressableOpacity
           key={option}
           style={[
-            styles.dropdownOption,
-            option === selected && styles.dropdownOptionSelected,
+            styles.option,
+            option === selected && styles.optionSelected,
           ]}
           onPress={() => onSelect(option)}
         >
           <Text
             style={[
-              styles.dropdownOptionText,
-              option === selected && styles.dropdownOptionTextSelected,
+              styles.optionText,
+              option === selected && styles.optionTextSelected,
             ]}
           >
             {option}
@@ -69,51 +69,51 @@ const styles = StyleSheet.create({
   field: {
     gap: 8,
   },
-  fieldLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+  label: {
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   dropdown: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    height: 48,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
+    height: 50,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
-  dropdownText: {
+  value: {
     ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
-  dropdownPlaceholder: {
-    color: colors.textSecondary,
+  placeholder: {
+    color: colors.textMuted,
   },
-  dropdownOptions: {
-    backgroundColor: "rgba(30, 41, 59, 0.95)",
-    borderRadius: 12,
+  options: {
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
     overflow: "hidden",
+    ...shadows.md,
   },
-  dropdownOption: {
+  option: {
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)",
+    borderBottomColor: colors.border,
   },
-  dropdownOptionSelected: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
+  optionSelected: {
+    backgroundColor: colors.primaryLight,
   },
-  dropdownOptionText: {
+  optionText: {
     ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
-  dropdownOptionTextSelected: {
-    color: colors.brandPrimary,
+  optionTextSelected: {
+    color: colors.primary,
     fontWeight: typography.fontWeight.semibold,
   },
 });

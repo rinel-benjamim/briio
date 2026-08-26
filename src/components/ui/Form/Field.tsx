@@ -1,19 +1,30 @@
+import { useState } from "react";
 import { View, StyleSheet, Text, TextInput, type TextInputProps } from "react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 
 interface FieldProps extends TextInputProps {
   label: string;
 }
 
-export function Field({ label, style, ...props }: FieldProps) {
+export function Field({ label, style, onFocus, onBlur, ...props }: FieldProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, style]}
-        placeholderTextColor={colors.textSecondary}
+        style={[styles.input, isFocused && styles.inputFocused, style]}
+        placeholderTextColor={colors.textMuted}
         accessibilityLabel={label}
         testID={`field-${label.toLowerCase().replace(/\s/g, "-")}`}
+        onFocus={(e) => {
+          setIsFocused(true);
+          onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setIsFocused(false);
+          onBlur?.(e);
+        }}
         {...props}
       />
     </View>
@@ -25,18 +36,25 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   input: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
+    height: 50,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
     ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.textMain,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 0,
   },
 });

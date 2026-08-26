@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RecentReport {
@@ -22,8 +22,8 @@ interface RecentReportsProps {
 const statusConfig = {
   draft: {
     label: "Rascunho",
-    color: colors.textTertiary,
-    bg: "rgba(100, 116, 139, 0.15)",
+    color: colors.warning,
+    bg: colors.warningBg,
   },
   completed: {
     label: "Concluído",
@@ -32,8 +32,8 @@ const statusConfig = {
   },
   generated: {
     label: "Gerado",
-    color: "#15803D",
-    bg: "#DCFCE7",
+    color: colors.success,
+    bg: colors.successBg,
   },
 };
 
@@ -45,7 +45,7 @@ export function RecentReports({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Relatórios recentes</Text>
+        <Text style={styles.title}>RELATÓRIOS RECENTES</Text>
       </View>
 
       <View style={styles.list}>
@@ -95,7 +95,7 @@ export function RecentReports({
 
       <PressableOpacity style={styles.footer} onPress={onViewAll}>
         <Text style={styles.viewAll}>Ver todos</Text>
-        <ArrowRight size={14} color={colors.brandPrimary} />
+        <ArrowRight size={14} color={colors.primary} />
       </PressableOpacity>
     </View>
   );
@@ -113,15 +113,16 @@ const styles = StyleSheet.create({
   title: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   list: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: borderRadius.lg,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.08)",
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
     overflow: "hidden",
+    ...shadows.sm,
   },
   item: {
     flexDirection: "row",
@@ -142,31 +143,29 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   day: {
-    ...typography.presets.h4,
-    color: colors.textPrimary,
+    ...typography.presets.h3,
+    color: colors.textMain,
   },
   month: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   itemDivider: {
     width: 1,
     height: 32,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   info: {
     flex: 1,
     gap: 2,
   },
   reportNumber: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   reportProject: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   badge: {
     flexDirection: "row",
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(229, 231, 235, 0.1)",
+    backgroundColor: colors.border,
   },
   footer: {
     flexDirection: "row",
@@ -198,6 +197,6 @@ const styles = StyleSheet.create({
   viewAll: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
 });

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Plus, X, Check, Building2 } from "lucide-react-native";
-import { colors, spacing, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   ProjectSelector,
@@ -117,10 +117,10 @@ export default function DashboardScreen() {
       </ScrollView>
 
       <PressableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: insets.bottom + 24 }]}
         onPress={() => setProjectModalVisible(true)}
       >
-        <Plus size={24} color="#FFFFFF" />
+        <Plus size={24} color={colors.textOnBrand} />
       </PressableOpacity>
 
       <Modal
@@ -140,7 +140,7 @@ export default function DashboardScreen() {
                 style={styles.closeButton}
                 onPress={() => setProjectModalVisible(false)}
               >
-                <X size={20} color={colors.textSecondary} />
+                <X size={20} color={colors.textMuted} />
               </PressableOpacity>
             </View>
 
@@ -167,7 +167,7 @@ export default function DashboardScreen() {
                     }}
                   >
                     <View style={styles.projectOptionIcon}>
-                      <Building2 size={20} color={isSelected ? colors.brandPrimary : colors.textSecondary} />
+                      <Building2 size={20} color={isSelected ? colors.primary : colors.textMuted} />
                     </View>
                     <View style={styles.projectOptionInfo}>
                       <Text
@@ -183,7 +183,7 @@ export default function DashboardScreen() {
                       </Text>
                     </View>
                     {isSelected && (
-                      <Check size={18} color={colors.brandPrimary} />
+                      <Check size={18} color={colors.primary} />
                     )}
                   </PressableOpacity>
                 );
@@ -199,7 +199,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -219,24 +219,23 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   greeting: {
-    ...typography.presets.h2,
-    color: colors.textPrimary,
+    ...typography.presets.h1,
+    color: colors.textMain,
   },
   subtitle: {
     ...typography.presets.body,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   avatar: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   avatarText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
+    ...typography.presets.bodyMedium,
     color: colors.textOnBrand,
   },
   newReportSection: {
@@ -245,48 +244,44 @@ const styles = StyleSheet.create({
   newReportLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   newReportButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: borderRadius.xl,
-    height: 56,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.lg,
+    height: 52,
     gap: 8,
   },
   newReportButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
+    ...typography.presets.h3,
     color: colors.textOnBrand,
   },
   fab: {
     position: "absolute",
     right: 20,
-    bottom: 120,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: colors.brandPrimary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,
-    borderWidth: 1,
-    borderColor: "rgba(99, 102, 241, 0.3)",
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: colors.overlay,
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#1E293B",
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -300,20 +295,20 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textPrimary,
+    ...typography.presets.h2,
+    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
   sheetSubtitle: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.body,
+    color: colors.textMuted,
     paddingHorizontal: 20,
     marginBottom: 8,
   },
@@ -324,18 +319,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    paddingHorizontal: 16,
     gap: 12,
-    borderRadius: 12,
+    borderRadius: borderRadius.lg,
   },
   projectOptionSelected: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
+    backgroundColor: colors.primaryLight,
   },
   projectOptionIcon: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -344,15 +338,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   projectOptionName: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   projectOptionNameSelected: {
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
   projectOptionLocation: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
 });

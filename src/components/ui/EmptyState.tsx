@@ -31,14 +31,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.h3,
+    color: colors.textMain,
     textAlign: "center",
   },
   description: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.body,
+    color: colors.textMuted,
     textAlign: "center",
   },
   action: {

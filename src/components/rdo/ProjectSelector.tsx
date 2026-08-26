@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Modal, Pressable, FlatList } from "react-native";
 import { ChevronDown, Check, X } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 export interface ProjectOption {
@@ -34,7 +34,7 @@ export function ProjectSelector({
             <Text style={styles.location}>{selected.location}</Text>
           )}
         </View>
-        <ChevronDown size={20} color={colors.textTertiary} />
+        <ChevronDown size={20} color={colors.textMuted} />
       </PressableOpacity>
 
       <Modal
@@ -51,7 +51,7 @@ export function ProjectSelector({
                 style={styles.closeButton}
                 onPress={() => setVisible(false)}
               >
-                <X size={20} color={colors.textSecondary} />
+                <X size={20} color={colors.textMuted} />
               </PressableOpacity>
             </View>
 
@@ -87,7 +87,7 @@ export function ProjectSelector({
                       )}
                     </View>
                     {isSelected && (
-                      <Check size={18} color={colors.brandPrimary} />
+                      <Check size={18} color={colors.primary} />
                     )}
                   </PressableOpacity>
                 );
@@ -102,37 +102,37 @@ export function ProjectSelector({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 6,
+    gap: 8,
   },
   label: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   button: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: borderRadius.lg,
-    padding: 12,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
+    padding: 14,
     paddingHorizontal: 16,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
   },
   info: {
     flex: 1,
     gap: 2,
   },
   name: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   location: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
   overlay: {
     flex: 1,
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.surfaceCardSolid,
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -154,14 +154,14 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textPrimary,
+    ...typography.presets.h2,
+    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
+    backgroundColor: "#F4F6F4",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   optionSelected: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
+    backgroundColor: colors.primaryLight,
   },
   optionInfo: {
     flex: 1,
@@ -181,14 +181,14 @@ const styles = StyleSheet.create({
   },
   optionName: {
     ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   optionNameSelected: {
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
   optionLocation: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
 });

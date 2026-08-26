@@ -1,21 +1,16 @@
 import { useState } from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-} from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ChevronDown, Minus, Plus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
-import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
+import { SelectField } from "@/components/ui/Form/SelectField";
+import { StepperField } from "@/components/ui/Form/StepperField";
+import { TextArea } from "@/components/ui/Form/TextArea";
+import { Field } from "@/components/ui/Form/Field";
 import { MOCK_RDO_CONTEXT, MOCK_ROLES, MOCK_WORKFORCE_DATA } from "@/mocks";
 
 interface WorkforceFormProps {
@@ -24,7 +19,6 @@ interface WorkforceFormProps {
 
 export function WorkforceForm({ mode }: WorkforceFormProps) {
   const { id, workforceId } = useLocalSearchParams<{ id: string; workforceId?: string }>();
-  const insets = useSafeAreaInsets();
 
   const editData = mode === "edit" ? MOCK_WORKFORCE_DATA[workforceId || "1"] : null;
 
@@ -33,7 +27,6 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
   const [peopleCount, setPeopleCount] = useState(editData?.people || 1);
   const [hoursPerPerson, setHoursPerPerson] = useState(editData?.hoursPerPerson || 8);
   const [observation, setObservation] = useState(editData?.observation || "");
-  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
 
   const totalHours = peopleCount * hoursPerPerson;
   const isCustomRole = role === "Outro";
@@ -55,90 +48,39 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>DADOS DA EQUIPA</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Função</Text>
-            <PressableOpacity
-              style={styles.dropdown}
-              onPress={() => setShowRoleDropdown(!showRoleDropdown)}
-            >
-              <Text style={[styles.dropdownText, !role && styles.dropdownPlaceholder]}>
-                {isCustomRole ? customRole || "Inserir nome da função" : role || "Ex.: Mestre de Obras"}
-              </Text>
-              <ChevronDown size={18} color={colors.textTertiary} />
-            </PressableOpacity>
-            {showRoleDropdown && (
-              <View style={styles.dropdownOptions}>
-                {MOCK_ROLES.map((r) => (
-                  <PressableOpacity
-                    key={r}
-                    style={styles.dropdownOption}
-                    onPress={() => {
-                      setRole(r);
-                      setShowRoleDropdown(false);
-                    }}
-                  >
-                    <Text style={styles.dropdownOptionText}>{r}</Text>
-                  </PressableOpacity>
-                ))}
-              </View>
-            )}
-            {isCustomRole && (
-              <TextInput
-                style={styles.customInput}
-                value={customRole}
-                onChangeText={setCustomRole}
-                placeholder="Inserir nome da função"
-                placeholderTextColor={colors.textSecondary}
-              />
-            )}
-          </View>
+          <SelectField
+            label="Função"
+            value={isCustomRole ? customRole || "" : role}
+            options={MOCK_ROLES}
+            onSelect={(v) => {
+              setRole(v);
+              setCustomRole("");
+            }}
+            placeholder="Ex.: Mestre de Obras"
+          />
+          {isCustomRole && (
+            <Field
+              label="Nome da função"
+              value={customRole}
+              onChangeText={setCustomRole}
+              placeholder="Inserir nome da função"
+            />
+          )}
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Número de pessoas</Text>
-            <View style={styles.stepper}>
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setPeopleCount(Math.max(1, peopleCount - 1))}
-              >
-                <Minus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <View style={styles.stepperDivider} />
-              <View style={styles.stepperValue}>
-                <Text style={styles.stepperValueText}>{peopleCount}</Text>
-              </View>
-              <View style={styles.stepperDivider} />
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setPeopleCount(peopleCount + 1)}
-              >
-                <Plus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-            </View>
-          </View>
+          <StepperField
+            label="Número de pessoas"
+            value={peopleCount}
+            onChange={setPeopleCount}
+            min={1}
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Horas por pessoa</Text>
-            <View style={styles.stepper}>
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setHoursPerPerson(Math.max(1, hoursPerPerson - 1))}
-              >
-                <Minus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <View style={styles.stepperDivider} />
-              <View style={styles.stepperValue}>
-                <Text style={styles.stepperValueText}>{hoursPerPerson}</Text>
-              </View>
-              <View style={styles.stepperDivider} />
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setHoursPerPerson(hoursPerPerson + 1)}
-              >
-                <Plus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <Text style={styles.stepperLabel}>horas</Text>
-            </View>
-          </View>
+          <StepperField
+            label="Horas por pessoa"
+            value={hoursPerPerson}
+            onChange={setHoursPerPerson}
+            min={1}
+            suffix="horas"
+          />
         </View>
 
         <View style={styles.summaryCard}>
@@ -151,18 +93,13 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
           <Text style={styles.summaryValue}>{totalHours} h</Text>
         </View>
 
-        <View style={styles.obsSection}>
-          <Text style={styles.obsLabel}>OBSERVAÇÃO</Text>
-          <TextInput
-            style={styles.obsInput}
-            value={observation}
-            onChangeText={setObservation}
-            placeholder="Ex.: Equipa trabalhou no período da manhã."
-            placeholderTextColor={colors.textSecondary}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
+        <TextArea
+          label="OBSERVAÇÃO"
+          value={observation}
+          onChangeText={setObservation}
+          placeholder="Ex.: Equipa trabalhou no período da manhã."
+          height={80}
+        />
 
         <View style={styles.buttonSection}>
           <PrimaryButton
@@ -181,7 +118,7 @@ export function WorkforceForm({ mode }: WorkforceFormProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -198,107 +135,18 @@ const styles = StyleSheet.create({
   sectionLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 0.5,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  dropdown: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  dropdownPlaceholder: {
-    color: colors.textSecondary,
-  },
-  dropdownOptions: {
-    backgroundColor: "rgba(30, 41, 59, 0.95)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  dropdownOption: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownOptionText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  customInput: {
-    height: 48,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    height: 48,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  stepperButton: {
-    width: 48,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: "rgba(148, 163, 184, 0.12)",
-  },
-  stepperValue: {
-    flex: 1,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperValueText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  stepperLabel: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-    marginRight: 14,
   },
   summaryCard: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
   summaryLeft: {
     gap: 2,
@@ -306,35 +154,15 @@ const styles = StyleSheet.create({
   summaryTitle: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   summarySubtitle: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   summaryValue: {
     ...typography.presets.h2,
-    color: colors.brandPrimary,
-  },
-  obsSection: {
-    gap: 8,
-  },
-  obsLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  obsInput: {
-    height: 80,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.primary,
   },
   buttonSection: {
     gap: 12,

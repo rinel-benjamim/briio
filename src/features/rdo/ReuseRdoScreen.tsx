@@ -15,9 +15,25 @@ import {
   Camera,
   ArrowRight,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
+
+const tokens = {
+  bgMain: "#F4F6F4",
+  bgSurface: "#FFFFFF",
+  primary: "#134E32",
+  primaryLight: "#E6F4EA",
+  textMain: "#1A2E22",
+  textMuted: "#5B6E63",
+  textOnBrand: "#FFFFFF",
+  border: "#E0E6E1",
+  success: "#137333",
+  successBg: "#E6F4EA",
+  warning: "#B96A00",
+  warningBg: "#FFF8F0",
+  overlay: "rgba(0, 0, 0, 0.3)",
+};
 
 const MOCK_CONTEXT = {
   date: "17 Agosto 2026",
@@ -45,17 +61,17 @@ interface DaySpecificItem {
 }
 
 const INITIAL_REUSABLE_ITEMS: ReusableItem[] = [
-  { id: "1", title: "Mão de obra", summary: "7 trabalhadores · 56 h", icon: <Users size={18} color={colors.textTertiary} />, selected: true },
-  { id: "2", title: "Atividades", summary: "2 atividades", icon: <ClipboardCheck size={18} color={colors.textTertiary} />, selected: true },
-  { id: "3", title: "Materiais", summary: "3 registos", icon: <Package size={18} color={colors.textTertiary} />, selected: true },
-  { id: "4", title: "Equipamentos", summary: "3 equipamentos", icon: <Wrench size={18} color={colors.textTertiary} />, selected: true },
+  { id: "1", title: "Mão de obra", summary: "7 trabalhadores · 56 h", icon: <Users size={18} color={tokens.textMuted} />, selected: true },
+  { id: "2", title: "Atividades", summary: "2 atividades", icon: <ClipboardCheck size={18} color={tokens.textMuted} />, selected: true },
+  { id: "3", title: "Materiais", summary: "3 registos", icon: <Package size={18} color={tokens.textMuted} />, selected: true },
+  { id: "4", title: "Equipamentos", summary: "3 equipamentos", icon: <Wrench size={18} color={tokens.textMuted} />, selected: true },
 ];
 
 const DAY_SPECIFIC_ITEMS: DaySpecificItem[] = [
-  { id: "5", title: "Condições do dia", summary: "Será preenchido para hoje", icon: <CloudSun size={18} color={colors.textTertiary} /> },
-  { id: "6", title: "Ocorrências", summary: "Será preenchido para hoje", icon: <TriangleAlert size={18} color={colors.textTertiary} /> },
-  { id: "7", title: "Observações", summary: "Será preenchido para hoje", icon: <MessageSquare size={18} color={colors.textTertiary} /> },
-  { id: "8", title: "Fotografias", summary: "Serão adicionadas para hoje", icon: <Camera size={18} color={colors.textTertiary} /> },
+  { id: "5", title: "Condições do dia", summary: "Será preenchido para hoje", icon: <CloudSun size={18} color={tokens.textMuted} /> },
+  { id: "6", title: "Ocorrências", summary: "Será preenchido para hoje", icon: <TriangleAlert size={18} color={tokens.textMuted} /> },
+  { id: "7", title: "Observações", summary: "Será preenchido para hoje", icon: <MessageSquare size={18} color={tokens.textMuted} /> },
+  { id: "8", title: "Fotografias", summary: "Serão adicionadas para hoje", icon: <Camera size={18} color={tokens.textMuted} /> },
 ];
 
 export default function ReuseRdoScreen() {
@@ -78,7 +94,7 @@ export default function ReuseRdoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={tokens.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Usar RDO anterior</Text>
         <View style={styles.progressBadge}>
@@ -124,7 +140,7 @@ export default function ReuseRdoScreen() {
               >
                 <View style={styles.listItemLeft}>
                   <View style={[styles.checkbox, item.selected && styles.checkboxSelected]}>
-                    {item.selected && <Check size={14} color={colors.textOnBrand} />}
+                    {item.selected && <Check size={14} color={tokens.textOnBrand} />}
                   </View>
                   {item.icon}
                   <View style={styles.listItemInfo}>
@@ -167,7 +183,7 @@ export default function ReuseRdoScreen() {
           onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
         >
           <Text style={styles.primaryButtonText}>Continuar</Text>
-          <ArrowRight size={18} color={colors.textOnBrand} />
+          <ArrowRight size={18} color={tokens.textOnBrand} />
         </PressableOpacity>
 
         <View style={styles.note}>
@@ -186,7 +202,7 @@ export default function ReuseRdoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: tokens.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -206,7 +222,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   progressBadge: {
     flexDirection: "row",
@@ -214,13 +230,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 9999,
-    backgroundColor: "#FFFFFF",
-    gap: 4,
+    backgroundColor: tokens.bgSurface,
+    borderWidth: 1,
+    borderColor: tokens.border,
   },
   progressText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
+    color: tokens.primary,
   },
   scrollView: {
     flex: 1,
@@ -238,44 +255,44 @@ const styles = StyleSheet.create({
   contextLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brandPrimary,
+    color: tokens.primary,
   },
   contextDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   contextProject: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   sourceReport: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 16,
     gap: 4,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   sourceLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   sourceNumber: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   sourceDate: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   sourceNote: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   sectionHeader: {
     gap: 2,
@@ -283,18 +300,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
     letterSpacing: 0.5,
   },
   sectionSubtitle: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   list: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: borderRadius.xl,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
     overflow: "hidden",
   },
   listItem: {
@@ -311,13 +328,13 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 6,
     borderWidth: 1.5,
-    borderColor: "#404040",
+    borderColor: tokens.border,
     justifyContent: "center",
     alignItems: "center",
   },
   checkboxSelected: {
-    backgroundColor: colors.brandPrimary,
-    borderColor: colors.brandPrimary,
+    backgroundColor: tokens.primary,
+    borderColor: tokens.primary,
   },
   listItemInfo: {
     flex: 1,
@@ -326,21 +343,21 @@ const styles = StyleSheet.create({
   listItemTitle: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   listItemSummary: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   divider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: tokens.primary,
     borderRadius: borderRadius.xl,
     height: 56,
     gap: 8,
@@ -349,7 +366,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
+    color: tokens.textOnBrand,
   },
   note: {
     alignItems: "center",
@@ -358,7 +375,7 @@ const styles = StyleSheet.create({
   },
   noteText: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
     textAlign: "center",
   },
 });

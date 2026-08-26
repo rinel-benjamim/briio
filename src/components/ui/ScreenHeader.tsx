@@ -7,50 +7,51 @@ import { PressableOpacity } from "@/components/ui/PressableOpacity";
 interface ScreenHeaderProps {
   title: string;
   onBack?: () => void;
-  right?: React.ReactNode;
+  rightSlot?: React.ReactNode;
 }
 
-export function ScreenHeader({ title, onBack, right }: ScreenHeaderProps) {
+export function ScreenHeader({ title, onBack, rightSlot }: ScreenHeaderProps) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       {onBack ? (
-        <PressableOpacity style={styles.navButton} onPress={onBack}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+        <PressableOpacity style={styles.backButton} onPress={onBack}>
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
       ) : (
-        <View style={styles.navSpacer} />
+        <View style={styles.spacer} />
       )}
-      <Text style={styles.navTitle}>{title}</Text>
-      {right ?? <View style={styles.navSpacer} />}
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
+      {rightSlot ?? <View style={styles.spacer} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  topNav: {
+  container: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingBottom: 8,
+    paddingBottom: 12,
     gap: 12,
   },
-  navButton: {
-    width: 48,
-    height: 48,
+  backButton: {
+    width: 40,
+    height: 40,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
-  navTitle: {
+  title: {
     flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.h2,
+    color: colors.textMain,
   },
-  navSpacer: {
-    width: 48,
-    height: 48,
+  spacer: {
+    width: 40,
+    height: 40,
   },
 });

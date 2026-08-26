@@ -13,7 +13,7 @@ import {
   Info,
   ArrowRight as ArrowRightIcon,
 } from "lucide-react-native";
-import { colors, typography, spacing, borderRadius } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { InfoCard } from "@/components/projects/InfoCard";
@@ -46,10 +46,10 @@ const MOCK_RECENT_RDOS = [
 ];
 
 const OVERFLOW_OPTIONS = [
-  { key: "info", label: "Informações da obra", icon: Info, color: colors.textPrimary },
-  { key: "new-rdo", label: "Novo RDO", icon: Plus, color: colors.textPrimary },
-  { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textPrimary },
-  { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.danger },
+  { key: "info", label: "Informações da obra", icon: Info, color: colors.textMain },
+  { key: "new-rdo", label: "Novo RDO", icon: Plus, color: colors.textMain },
+  { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textMain },
+  { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.warning },
 ];
 
 export default function ProjectDetailScreen() {
@@ -63,7 +63,7 @@ export default function ProjectDetailScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle} numberOfLines={1}>
           {MOCK_PROJECT.name}
@@ -72,7 +72,7 @@ export default function ProjectDetailScreen() {
           style={styles.navButton}
           onPress={() => setOverflowVisible(true)}
         >
-          <Ellipsis size={20} color={colors.textPrimary} />
+          <Ellipsis size={20} color={colors.textMain} />
         </PressableOpacity>
       </View>
 
@@ -127,7 +127,7 @@ export default function ProjectDetailScreen() {
               onPress={() => router.push(`/(tabs)/projects/${id}/info`)}
             >
               <Text style={styles.viewMoreText}>Ver mais</Text>
-              <ArrowRightIcon size={14} color={colors.brandPrimary} />
+              <ArrowRightIcon size={14} color={colors.primary} />
             </PressableOpacity>
           </View>
           <InfoCard
@@ -149,7 +149,7 @@ export default function ProjectDetailScreen() {
           style={styles.editAction}
           onPress={() => router.push(`/(tabs)/projects/${id}/edit`)}
         >
-          <Pencil size={14} color={colors.textSecondary} />
+          <Pencil size={14} color={colors.textMuted} />
           <Text style={styles.editText}>Editar informações da obra</Text>
         </PressableOpacity>
       </ScrollView>
@@ -171,7 +171,7 @@ export default function ProjectDetailScreen() {
                 style={styles.closeButton}
                 onPress={() => setOverflowVisible(false)}
               >
-                <X size={20} color={colors.textSecondary} />
+                <X size={20} color={colors.textMuted} />
               </PressableOpacity>
             </View>
 
@@ -244,7 +244,7 @@ export default function ProjectDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   scrollView: {
     flex: 1,
@@ -280,49 +280,49 @@ const styles = StyleSheet.create({
   sectionLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   rdoCard: {
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     padding: 20,
     gap: 16,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
   },
   rdoDate: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   rdoStatus: {
     ...typography.presets.h4,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   progressSection: {
     gap: 8,
   },
   progressTrack: {
     height: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.border,
     borderRadius: 4,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: 4,
   },
   progressSteps: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   ctaButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.lg,
     height: 50,
     gap: 8,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   viewMoreText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
   recentSection: {
     gap: 12,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   editText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   overlay: {
     flex: 1,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.surfaceCardSolid,
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,
@@ -385,13 +385,13 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     ...typography.presets.h4,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
+    backgroundColor: colors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     ...typography.presets.body,
   },
   confirmSheet: {
-    backgroundColor: colors.surfaceCardSolid,
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
@@ -415,11 +415,11 @@ const styles = StyleSheet.create({
   },
   confirmTitle: {
     ...typography.presets.h4,
-    color: colors.danger,
+    color: colors.warning,
   },
   confirmText: {
     ...typography.presets.body,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     marginBottom: 8,
   },
   confirmActions: {
@@ -432,12 +432,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 48,
     borderRadius: 12,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
+    backgroundColor: colors.border,
   },
   cancelButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   deleteButton: {
     flex: 1,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 48,
     borderRadius: 12,
-    backgroundColor: colors.danger,
+    backgroundColor: colors.warning,
   },
   deleteButtonText: {
     ...typography.presets.body,

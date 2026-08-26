@@ -26,7 +26,6 @@ import {
   Share2,
   Download,
 } from "lucide-react-native";
-import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
@@ -35,6 +34,22 @@ import {
   openRdoPdf,
   getMockRdoData,
 } from "@/services/pdf-generator";
+
+const tokens = {
+  bgMain: "#F4F6F4",
+  bgSurface: "#FFFFFF",
+  primary: "#134E32",
+  primaryLight: "#E6F4EA",
+  textMain: "#1A2E22",
+  textMuted: "#5B6E63",
+  textOnBrand: "#FFFFFF",
+  border: "#E0E6E1",
+  success: "#137333",
+  successBg: "#E6F4EA",
+  warning: "#B96A00",
+  warningBg: "#FFF8F0",
+  overlay: "rgba(0, 0, 0, 0.3)",
+};
 
 type SectionItem = {
   id: string;
@@ -46,13 +61,13 @@ type SectionItem = {
 };
 
 const RDO_SECTIONS: SectionItem[] = [
-  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: colors.brandPrimary, route: "weather" },
-  { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: colors.brandPrimary, route: "workforce" },
-  { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: colors.brandPrimary, route: "materials" },
-  { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: colors.brandPrimary, route: "equipment" },
-  { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: colors.brandPrimary, route: "tasks" },
-  { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: "#B45309", route: "occurrences" },
-  { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: colors.brandPrimary, route: "observations" },
+  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: tokens.primary, route: "weather" },
+  { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: tokens.primary, route: "workforce" },
+  { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: tokens.primary, route: "materials" },
+  { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: tokens.primary, route: "equipment" },
+  { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: tokens.primary, route: "tasks" },
+  { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: tokens.warning, route: "occurrences" },
+  { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: tokens.primary, route: "observations" },
 ];
 
 const MOCK_PHOTOS = [
@@ -124,11 +139,11 @@ export default function RdoDetailScreen() {
           style={styles.navButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={tokens.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>RDO #032</Text>
         <PressableOpacity style={styles.navButton}>
-          <Ellipsis size={20} color={colors.textPrimary} />
+          <Ellipsis size={20} color={tokens.textMain} />
         </PressableOpacity>
       </View>
 
@@ -141,7 +156,7 @@ export default function RdoDetailScreen() {
           <View style={styles.rhTop}>
             <Text style={styles.rhNumber}>RDO #032</Text>
             <View style={styles.rhStatus}>
-              <CircleCheck size={14} color="#15803D" />
+              <CircleCheck size={14} color={tokens.success} />
               <Text style={styles.rhStatusText}>Gerado</Text>
             </View>
           </View>
@@ -196,7 +211,7 @@ export default function RdoDetailScreen() {
                     <Text style={styles.sectionSummary}>{section.summary}</Text>
                   </View>
                 </View>
-                <ChevronRight size={18} color={colors.textTertiary} />
+                <ChevronRight size={18} color={tokens.textMuted} />
               </PressableOpacity>
               {index < RDO_SECTIONS.length - 1 && <View style={styles.sectionDivider} />}
             </View>
@@ -215,7 +230,7 @@ export default function RdoDetailScreen() {
           </View>
           <PressableOpacity style={styles.viewAllLink} onPress={handleViewAllPhotos}>
             <Text style={styles.viewAllText}>Ver todas</Text>
-            <ArrowRight size={14} color={colors.brandPrimary} />
+            <ArrowRight size={14} color={tokens.primary} />
           </PressableOpacity>
         </View>
 
@@ -241,10 +256,10 @@ export default function RdoDetailScreen() {
             disabled={pdfLoading}
           >
             {pdfLoading ? (
-              <ActivityIndicator size="small" color={colors.textSecondary} />
+              <ActivityIndicator size="small" color={tokens.textMuted} />
             ) : (
               <>
-                <Share2 size={16} color={colors.textSecondary} />
+                <Share2 size={16} color={tokens.textMuted} />
                 <Text style={styles.secondaryButtonText}>Partilhar</Text>
               </>
             )}
@@ -255,10 +270,10 @@ export default function RdoDetailScreen() {
             disabled={pdfLoading}
           >
             {pdfLoading ? (
-              <ActivityIndicator size="small" color={colors.textSecondary} />
+              <ActivityIndicator size="small" color={tokens.textMuted} />
             ) : (
               <>
-                <Download size={16} color={colors.textSecondary} />
+                <Download size={16} color={tokens.textMuted} />
                 <Text style={styles.secondaryButtonText}>Guardar</Text>
               </>
             )}
@@ -272,7 +287,7 @@ export default function RdoDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: tokens.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -291,7 +306,7 @@ const styles = StyleSheet.create({
   navTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: tokens.textMain,
     flex: 1,
     textAlign: "center",
   },
@@ -305,12 +320,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   reportHeader: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     padding: 16,
     gap: 2,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   rhTop: {
     flexDirection: "row",
@@ -319,13 +334,13 @@ const styles = StyleSheet.create({
   },
   rhNumber: {
     ...typography.presets.h3,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   rhStatus: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: tokens.successBg,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -333,29 +348,29 @@ const styles = StyleSheet.create({
   rhStatusText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: "#15803D",
+    color: tokens.success,
     fontSize: 12,
   },
   rhDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   rhProject: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   rhLocation: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   summary: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   summaryRow: {
     flexDirection: "row",
@@ -368,23 +383,23 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     ...typography.presets.h3,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   summaryLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   summaryDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
     marginVertical: 4,
   },
   sectionList: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
     overflow: "hidden",
   },
   sectionItem: {
@@ -406,15 +421,15 @@ const styles = StyleSheet.create({
   sectionName: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   sectionSummary: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   sectionDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
   },
   photos: {
     gap: 4,
@@ -427,12 +442,12 @@ const styles = StyleSheet.create({
   photoTitle: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
     letterSpacing: 0.5,
   },
   photoCount: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   photoStrip: {
     flexDirection: "row",
@@ -442,7 +457,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 10,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
   },
   viewAllLink: {
     flexDirection: "row",
@@ -454,13 +469,13 @@ const styles = StyleSheet.create({
   viewAllText: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
+    color: tokens.primary,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: tokens.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
@@ -468,7 +483,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: "#FFFFFF",
+    color: tokens.textOnBrand,
   },
   secondaryActions: {
     flexDirection: "row",
@@ -479,16 +494,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 12,
-    height: 34,
+    height: 44,
     gap: 6,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: tokens.border,
   },
   secondaryButtonText: {
     ...typography.presets.label,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
 });

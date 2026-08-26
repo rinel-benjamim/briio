@@ -15,11 +15,11 @@ export default function MoreScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
     paddingHorizontal: 20,
   },
   title: {
     ...typography.presets.h2,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
 });

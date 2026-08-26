@@ -9,12 +9,12 @@ const fontFamily = Platform.select({
 export const typography = {
   fontFamily,
 
-  // Font sizes
+  // Font sizes — Master Design System scale
   fontSize: {
-    xs: 10,
+    xs: 12,
     sm: 12,
     md: 14,
-    lg: 16,
+    lg: 15,
     xl: 18,
     "2xl": 20,
     "3xl": 24,
@@ -23,13 +23,13 @@ export const typography = {
 
   // Line heights
   lineHeight: {
-    xs: 14,
+    xs: 16,
     sm: 16,
     md: 20,
-    lg: 24,
-    xl: 28,
-    "2xl": 32,
-    "3xl": 36,
+    lg: 18,
+    xl: 22,
+    "2xl": 28,
+    "3xl": 28,
     "4xl": 42,
   },
 
@@ -41,32 +41,37 @@ export const typography = {
     bold: "700" as const,
   },
 
-  // Preset styles
+  // Preset styles — Master Design System
   presets: {
     h1: {
-      fontSize: 30 as const,
-      lineHeight: 42 as const,
+      fontSize: 24 as const,
+      lineHeight: 28 as const,
       fontWeight: "700" as const,
     },
     h2: {
-      fontSize: 24 as const,
-      lineHeight: 36 as const,
-      fontWeight: "700" as const,
+      fontSize: 18 as const,
+      lineHeight: 22 as const,
+      fontWeight: "600" as const,
     },
     h3: {
-      fontSize: 20 as const,
-      lineHeight: 32 as const,
+      fontSize: 15 as const,
+      lineHeight: 18 as const,
       fontWeight: "600" as const,
     },
     h4: {
       fontSize: 18 as const,
-      lineHeight: 28 as const,
+      lineHeight: 22 as const,
       fontWeight: "600" as const,
     },
     body: {
-      fontSize: 16 as const,
-      lineHeight: 24 as const,
+      fontSize: 14 as const,
+      lineHeight: 20 as const,
       fontWeight: "400" as const,
+    },
+    bodyMedium: {
+      fontSize: 14 as const,
+      lineHeight: 20 as const,
+      fontWeight: "500" as const,
     },
     bodySmall: {
       fontSize: 14 as const,
@@ -74,14 +79,14 @@ export const typography = {
       fontWeight: "400" as const,
     },
     label: {
+      fontSize: 13 as const,
+      lineHeight: 18 as const,
+      fontWeight: "600" as const,
+    },
+    caption: {
       fontSize: 12 as const,
       lineHeight: 16 as const,
       fontWeight: "500" as const,
-    },
-    caption: {
-      fontSize: 10 as const,
-      lineHeight: 14 as const,
-      fontWeight: "400" as const,
     },
   },
 } as const;

@@ -131,24 +131,24 @@ export function generateHtml(data: RdoData): string {
   <meta charset="UTF-8">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 11px; color: #1a1a1a; padding: 24px; }
-    .header { margin-bottom: 24px; border-bottom: 2px solid #6366F1; padding-bottom: 16px; }
-    .header h1 { font-size: 20px; font-weight: 700; color: #6366F1; margin-bottom: 4px; }
-    .header p { font-size: 12px; color: #666; margin-bottom: 4px; }
-    .header .info { font-size: 11px; color: #666; }
-    .header .info strong { color: #1a1a1a; }
+    body { font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 11px; color: #1A2E22; padding: 24px; }
+    .header { margin-bottom: 24px; border-bottom: 2px solid #134E32; padding-bottom: 16px; }
+    .header h1 { font-size: 20px; font-weight: 700; color: #134E32; margin-bottom: 4px; }
+    .header p { font-size: 12px; color: #5B6E63; margin-bottom: 4px; }
+    .header .info { font-size: 11px; color: #5B6E63; }
+    .header .info strong { color: #1A2E22; }
     .section { margin-bottom: 16px; }
-    .section-title { font-size: 12px; font-weight: 700; color: #6366F1; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+    .section-title { font-size: 12px; font-weight: 700; color: #134E32; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px solid #E0E6E1; padding-bottom: 4px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    th, td { padding: 6px 8px; text-align: left; border: 1px solid #e5e7eb; font-size: 10px; }
-    th { background: #f3f4f6; font-weight: 600; color: #374151; }
-    td.label { font-weight: 600; color: #374151; width: 40%; }
-    .observations { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; font-size: 11px; line-height: 1.5; }
-    .footer { margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 12px; }
+    th, td { padding: 6px 8px; text-align: left; border: 1px solid #E0E6E1; font-size: 10px; }
+    th { background: #E6F4EA; font-weight: 600; color: #1A2E22; }
+    td.label { font-weight: 600; color: #1A2E22; width: 40%; }
+    .observations { background: #E6F4EA; border: 1px solid #E0E6E1; border-radius: 6px; padding: 10px; font-size: 11px; line-height: 1.5; }
+    .footer { margin-top: 24px; border-top: 1px solid #E0E6E1; padding-top: 12px; }
     .signature { text-align: center; width: 45%; display: inline-block; vertical-align: top; }
-    .signature .line { border-bottom: 1px solid #1a1a1a; margin-bottom: 4px; height: 30px; }
-    .signature p { font-size: 10px; color: #666; }
-    .signature strong { font-size: 11px; color: #1a1a1a; }
+    .signature .line { border-bottom: 1px solid #1A2E22; margin-bottom: 4px; height: 30px; }
+    .signature p { font-size: 10px; color: #5B6E63; }
+    .signature strong { font-size: 11px; color: #1A2E22; }
   </style>
 </head>
 <body>

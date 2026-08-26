@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 
 interface SummaryCardProps {
   leftLabel: string;
@@ -15,44 +15,43 @@ export function SummaryCard({
   rightValue,
 }: SummaryCardProps) {
   return (
-    <View style={styles.summaryCard}>
-      <View style={styles.summaryLeft}>
-        <Text style={styles.summaryLabel}>{leftLabel}</Text>
-        <Text style={styles.summaryValue}>{leftValue}</Text>
+    <View style={styles.card}>
+      <View style={styles.left}>
+        <Text style={styles.label}>{leftLabel}</Text>
+        <Text style={styles.value}>{leftValue}</Text>
       </View>
-      <View style={styles.summaryRight}>
-        <Text style={styles.summaryLabel}>{rightLabel}</Text>
-        <Text style={styles.summaryValue}>{rightValue}</Text>
+      <View style={styles.right}>
+        <Text style={styles.label}>{rightLabel}</Text>
+        <Text style={styles.value}>{rightValue}</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  summaryCard: {
+  card: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
     padding: 16,
-    paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
+    ...shadows.sm,
   },
-  summaryLeft: {
+  left: {
     gap: 4,
   },
-  summaryRight: {
+  right: {
     alignItems: "flex-end",
     gap: 4,
   },
-  summaryLabel: {
+  label: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
-  summaryValue: {
-    ...typography.presets.h1,
-    color: colors.brandPrimary,
+  value: {
+    ...typography.presets.h2,
+    color: colors.textMain,
   },
 });

@@ -55,11 +55,11 @@ export default function ProjectInfoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Informações da obra</Text>
         <PressableOpacity style={styles.navButton}>
-          <Ellipsis size={20} color={colors.textPrimary} />
+          <Ellipsis size={20} color={colors.textMain} />
         </PressableOpacity>
       </View>
 
@@ -72,7 +72,7 @@ export default function ProjectInfoScreen() {
           <Text style={styles.projectName}>{MOCK_PROJECT.name}</Text>
           <View style={styles.statusRow}>
             <View style={styles.statusBadge}>
-              <CircleCheck size={14} color="#15803D" />
+              <CircleCheck size={14} color={colors.success} />
               <Text style={styles.statusText}>{MOCK_PROJECT.status}</Text>
             </View>
           </View>
@@ -86,7 +86,7 @@ export default function ProjectInfoScreen() {
           <InfoRow
             label="Localização"
             value={MOCK_PROJECT.location}
-            icon={<MapPin size={16} color={colors.textTertiary} />}
+            icon={<MapPin size={16} color={colors.textMuted} />}
           />
           <Divider />
           <InfoRow label="Data de início" value={MOCK_PROJECT.startDate} />
@@ -112,7 +112,7 @@ export default function ProjectInfoScreen() {
           <InfoRow
             label="Referência da obra"
             value={MOCK_PROJECT.reference}
-            icon={<Copy size={18} color={colors.textTertiary} />}
+            icon={<Copy size={18} color={colors.textMuted} />}
           />
         </View>
 
@@ -124,7 +124,7 @@ export default function ProjectInfoScreen() {
             <Text style={styles.addressText}>{MOCK_PROJECT.location}</Text>
           </View>
           <View style={styles.mapPlaceholder}>
-            <Map size={32} color={colors.textTertiary} />
+            <Map size={32} color={colors.textMuted} />
             <Text style={styles.mapText}>Zango 1, Icolo e Bengo, Luanda</Text>
           </View>
         </View>
@@ -136,7 +136,7 @@ export default function ProjectInfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   scrollView: {
     flex: 1,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   projectName: {
     ...typography.presets.h2,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   statusRow: {
     flexDirection: "row",
@@ -185,19 +185,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successBg,
     gap: 6,
   },
   statusText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: "#15803D",
+    color: colors.success,
   },
   section: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
     overflow: "hidden",
   },
   sectionHeader: {
@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 0.5,
   },
   divider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginHorizontal: 16,
   },
   row: {
@@ -229,12 +229,12 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   rowValue: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   addressRow: {
     paddingHorizontal: 16,
@@ -243,11 +243,11 @@ const styles = StyleSheet.create({
   addressText: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   mapPlaceholder: {
     height: 120,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   mapText: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     textAlign: "center",
   },
 });

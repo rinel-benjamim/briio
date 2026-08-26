@@ -53,7 +53,7 @@ export default function ConfigureRdoScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Configurar RDO</Text>
         <View style={styles.progressBadge}>
@@ -88,7 +88,7 @@ export default function ConfigureRdoScreen() {
               <Text style={styles.responsibleName}>Kiali Rodrigues</Text>
               <Text style={styles.responsibleRole}>Responsável técnico</Text>
             </View>
-            <CircleCheck size={20} color={colors.brandPrimary} />
+            <CircleCheck size={20} color={colors.primary} />
           </View>
         </View>
 
@@ -115,18 +115,18 @@ export default function ConfigureRdoScreen() {
           <Text style={styles.sectionTitle}>Modelo do RDO</Text>
           <View style={styles.modelRow}>
             <View style={styles.modelIcon}>
-              <FileText size={20} color={colors.textTertiary} />
+              <FileText size={20} color={colors.textMuted} />
             </View>
             <View style={styles.modelInfo}>
               <Text style={styles.modelName}>RDO Diário de Obras</Text>
               <Text style={styles.modelType}>Modelo padrão</Text>
             </View>
-            <Lock size={16} color={colors.textTertiary} />
+            <Lock size={16} color={colors.textMuted} />
           </View>
         </View>
 
         <View style={styles.note}>
-          <Info size={16} color={colors.textTertiary} />
+          <Info size={16} color={colors.textMuted} />
           <Text style={styles.noteText}>
             Estas definições serão usadas como padrão nos próximos RDOs desta
             obra. Poderá alterá-las quando necessário.
@@ -149,7 +149,7 @@ export default function ConfigureRdoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   progressBadge: {
     flexDirection: "row",
@@ -177,15 +177,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 9999,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.primaryLight,
     gap: 4,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.primary,
   },
   scrollView: {
     flex: 1,
@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   projectName: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   projectDescription: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   section: {
     gap: 10,
@@ -214,30 +214,30 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   sectionDescription: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   responsibleRow: {
     flexDirection: "row",
     alignItems: "center",
     height: 56,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
     borderWidth: 2,
-    borderColor: "#1B3A5C",
+    borderColor: colors.primary,
     gap: 12,
   },
   avatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -248,25 +248,25 @@ const styles = StyleSheet.create({
   responsibleName: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   responsibleRole: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   radioOption: {
     flexDirection: "row",
     alignItems: "center",
     height: 56,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
     gap: 12,
   },
   radioOptionSelected: {
-    borderColor: "#1B3A5C",
+    borderColor: colors.primary,
     borderWidth: 2,
   },
   radio: {
@@ -274,19 +274,19 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: "#404040",
+    borderColor: colors.textMuted,
     justifyContent: "center",
     alignItems: "center",
   },
   radioSelected: {
-    backgroundColor: colors.brandPrimary,
-    borderColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   radioDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.textPrimary,
+    backgroundColor: colors.textOnBrand,
   },
   radioInfo: {
     flex: 1,
@@ -295,21 +295,21 @@ const styles = StyleSheet.create({
   radioLabel: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   radioSublabel: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   modelRow: {
     flexDirection: "row",
     alignItems: "center",
     height: 52,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
     gap: 12,
   },
   modelIcon: {
@@ -325,11 +325,11 @@ const styles = StyleSheet.create({
   modelName: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   modelType: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   note: {
     flexDirection: "row",
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   noteText: {
     flex: 1,
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   spacer: {
     height: 16,
@@ -347,9 +347,9 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: 24,
-    height: 48,
+    height: 50,
   },
   primaryButtonText: {
     ...typography.presets.body,

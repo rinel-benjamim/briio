@@ -4,7 +4,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   Pressable,
   Modal,
   Platform,
@@ -13,16 +12,16 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ArrowLeft,
-  MapPin,
   ChevronDown,
   Calendar,
-  User,
 } from "lucide-react-native";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { Field } from "@/components/ui/Form/Field";
+import { SelectField } from "@/components/ui/Form/SelectField";
 
 const MOCK_PROJECT = {
   name: "Reabilitação Pedrinhas",
@@ -43,51 +42,6 @@ const PROVINCES = [
   "Icolo e Bengo", "Luanda", "Lunda Norte", "Lunda Sul",
   "Malanje", "Moxico", "Namibe", "Uíge", "Zaire",
 ];
-
-interface FieldProps {
-  label: string;
-  value: string;
-  placeholder: string;
-  required?: boolean;
-  optional?: boolean;
-  onChangeText: (text: string) => void;
-  icon?: React.ReactNode;
-  rightAction?: React.ReactNode;
-}
-
-function Field({
-  label,
-  value,
-  placeholder,
-  required,
-  optional,
-  onChangeText,
-  icon,
-  rightAction,
-}: FieldProps) {
-  return (
-    <View style={styles.field}>
-      <View style={styles.fieldLabel}>
-        <Text style={styles.fieldLabelText}>{label}</Text>
-        {optional && <Text style={styles.fieldOptional}>Opcional</Text>}
-      </View>
-      <View style={styles.inputContainer}>
-        <View style={styles.inputLeft}>
-          {icon}
-          <TextInput
-            style={[styles.input, icon && styles.inputWithIcon]}
-            value={value}
-            onChangeText={onChangeText}
-            placeholder={placeholder}
-            placeholderTextColor={colors.textSecondary}
-          />
-        </View>
-        {rightAction}
-      </View>
-      {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
-    </View>
-  );
-}
 
 interface DateFieldProps {
   label: string;
@@ -133,12 +87,12 @@ function DateField({
       </View>
       <Pressable style={styles.inputContainer} onPress={() => setShow(true)}>
         <View style={styles.inputLeft}>
-          <Calendar size={16} color={colors.textTertiary} />
+          <Calendar size={16} color={colors.textMuted} />
           <Text style={[styles.input, value && styles.inputText]}>
             {value ? formatDate(value) : placeholder}
           </Text>
         </View>
-        <ChevronDown size={18} color={colors.textTertiary} />
+        <ChevronDown size={18} color={colors.textMuted} />
       </Pressable>
       {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
 
@@ -166,83 +120,6 @@ function DateField({
   );
 }
 
-interface SelectFieldProps {
-  label: string;
-  value: string;
-  placeholder: string;
-  required?: boolean;
-  options: string[];
-  onSelect: (value: string) => void;
-}
-
-function SelectField({
-  label,
-  value,
-  placeholder,
-  required,
-  options,
-  onSelect,
-}: SelectFieldProps) {
-  const [visible, setVisible] = useState(false);
-
-  return (
-    <View style={styles.field}>
-      <View style={styles.fieldLabel}>
-        <Text style={styles.fieldLabelText}>{label}</Text>
-      </View>
-      <Pressable style={styles.inputContainer} onPress={() => setVisible(true)}>
-        <Text style={[styles.input, !value && styles.placeholder]}>
-          {value || placeholder}
-        </Text>
-        <ChevronDown size={18} color={colors.textTertiary} />
-      </Pressable>
-      {required && <Text style={styles.fieldRequired}>Obrigatório</Text>}
-
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setVisible(false)}
-      >
-        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
-          <View style={styles.sheet}>
-            <View style={styles.sheetHeader}>
-              <Text style={styles.sheetTitle}>{label}</Text>
-              <Pressable onPress={() => setVisible(false)}>
-                <Text style={styles.sheetClose}>Fechar</Text>
-              </Pressable>
-            </View>
-            <ScrollView style={styles.sheetContent}>
-              {options.map((option) => (
-                <Pressable
-                  key={option}
-                  style={[
-                    styles.sheetOption,
-                    option === value && styles.sheetOptionActive,
-                  ]}
-                  onPress={() => {
-                    onSelect(option);
-                    setVisible(false);
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.sheetOptionText,
-                      option === value && styles.sheetOptionTextActive,
-                    ]}
-                  >
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </Pressable>
-      </Modal>
-    </View>
-  );
-}
-
 export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
@@ -262,7 +139,7 @@ export default function EditProjectScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Editar obra</Text>
       </View>
@@ -279,15 +156,16 @@ export default function EditProjectScreen() {
             value={name}
             onChangeText={setName}
             placeholder="Ex.: Reabilitação Pedrinhas"
-            required
           />
-          <Field
-            label="Referência"
-            value={reference}
-            onChangeText={setReference}
-            placeholder="Ex.: OBR-2026-032"
-            optional
-          />
+          <View style={styles.optionalField}>
+            <Field
+              label="Referência"
+              value={reference}
+              onChangeText={setReference}
+              placeholder="Ex.: OBR-2026-032"
+            />
+            <Text style={styles.fieldOptional}>Opcional</Text>
+          </View>
         </View>
 
         <View style={styles.section}>
@@ -296,24 +174,14 @@ export default function EditProjectScreen() {
             label="Localização da obra"
             value={location}
             onChangeText={setLocation}
-            placeholder=""
-            required
-            icon={<MapPin size={16} color={colors.textTertiary} />}
-            rightAction={
-              <Pressable style={styles.locationAction}>
-                <Text style={styles.locationActionText}>
-                  Usar localização atual
-                </Text>
-              </Pressable>
-            }
+            placeholder="Introduza a localização"
           />
           <SelectField
             label="Província"
             value={province}
-            placeholder="Selecionar província"
-            required
             options={PROVINCES}
             onSelect={setProvince}
+            placeholder="Selecionar província"
           />
         </View>
 
@@ -341,9 +209,7 @@ export default function EditProjectScreen() {
             label="Responsável pela obra"
             value={responsible}
             onChangeText={setResponsible}
-            placeholder=""
-            required
-            icon={<User size={16} color={colors.textTertiary} />}
+            placeholder="Nome do responsável"
           />
         </View>
 
@@ -387,7 +253,7 @@ export default function EditProjectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -407,7 +273,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   scrollView: {
     flex: 1,
@@ -428,11 +294,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   sectionOptional: {
     ...typography.presets.caption,
-    color: colors.textTertiary,
+    color: colors.textMuted,
   },
   field: {
     gap: 6,
@@ -443,24 +309,27 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   fieldLabelText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   fieldOptional: {
     ...typography.presets.caption,
-    color: colors.textTertiary,
+    color: colors.textMuted,
+    marginLeft: 6,
+  },
+  optionalField: {
+    gap: 4,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 48,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    height: 50,
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
-    paddingHorizontal: 16,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   inputLeft: {
     flexDirection: "row",
@@ -470,35 +339,27 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.body,
+    color: colors.textMain,
     padding: 0,
   },
   inputText: {
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   inputWithIcon: {
     marginLeft: 4,
   },
   placeholder: {
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   fieldRequired: {
     ...typography.presets.caption,
-    color: colors.textTertiary,
-  },
-  locationAction: {
-    paddingVertical: 4,
-  },
-  locationActionText: {
-    ...typography.presets.caption,
-    color: colors.brandPrimary,
-    fontWeight: typography.fontWeight.medium,
+    color: colors.textMuted,
   },
   datePickerConfirm: {
     alignItems: "center",
     paddingVertical: 12,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.lg,
     marginTop: 8,
   },
@@ -510,9 +371,9 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.lg,
-    height: 48,
+    height: 50,
   },
   primaryButtonText: {
     ...typography.presets.body,
@@ -521,7 +382,7 @@ const styles = StyleSheet.create({
   },
   supportingText: {
     ...typography.presets.caption,
-    color: colors.textTertiary,
+    color: colors.textMuted,
     textAlign: "center",
   },
   overlay: {
@@ -530,7 +391,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: colors.surfaceCardSolid,
+    backgroundColor: colors.bgSurface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "60%",
@@ -542,15 +403,15 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.1)",
+    borderBottomColor: colors.border,
   },
   sheetTitle: {
     ...typography.presets.h4,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   sheetClose: {
     ...typography.presets.bodySmall,
-    color: colors.brandPrimary,
+    color: colors.primary,
     fontWeight: typography.fontWeight.medium,
   },
   sheetContent: {
@@ -560,16 +421,16 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.05)",
+    borderBottomColor: colors.border,
   },
   sheetOptionActive: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
+    backgroundColor: colors.primaryLight,
   },
   sheetOptionText: {
     ...typography.presets.bodySmall,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   sheetOptionTextActive: {
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
 });

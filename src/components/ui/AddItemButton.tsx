@@ -10,28 +10,27 @@ interface AddItemButtonProps {
 
 export function AddItemButton({ label, onPress }: AddItemButtonProps) {
   return (
-    <PressableOpacity style={styles.addButton} onPress={onPress}>
-      <Plus size={18} color={colors.brandPrimary} />
-      <Text style={styles.addButtonText}>{label}</Text>
+    <PressableOpacity style={styles.button} onPress={onPress}>
+      <Plus size={18} color={colors.primary} />
+      <Text style={styles.label}>{label}</Text>
     </PressableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  addButton: {
+  button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
-    height: 56,
+    height: 52,
     gap: 8,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
   },
-  addButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.brandPrimary,
+  label: {
+    ...typography.presets.h3,
+    color: colors.primary,
   },
 });

@@ -19,7 +19,7 @@ export function PrimaryButton({
 }: PrimaryButtonProps) {
   return (
     <PressableOpacity
-      style={[styles.primaryButton, disabled && styles.disabled]}
+      style={[styles.button, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled || loading}
       accessibilityRole="button"
@@ -31,7 +31,7 @@ export function PrimaryButton({
         <ActivityIndicator size="small" color={colors.textOnBrand} />
       ) : (
         <>
-          <Text style={styles.primaryButtonText}>{label}</Text>
+          <Text style={styles.label}>{label}</Text>
           {icon}
         </>
       )}
@@ -40,18 +40,17 @@ export function PrimaryButton({
 }
 
 const styles = StyleSheet.create({
-  primaryButton: {
+  button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: borderRadius.xl,
-    height: 56,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.lg,
+    height: 52,
     gap: 8,
   },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
+  label: {
+    ...typography.presets.h3,
     color: colors.textOnBrand,
   },
   disabled: {

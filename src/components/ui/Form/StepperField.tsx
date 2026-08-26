@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import { Minus, Plus } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface StepperFieldProps {
@@ -33,11 +33,11 @@ export function StepperField({
           accessibilityLabel={`Diminuir ${label}`}
           testID={`stepper-decrease-${label.toLowerCase().replace(/\s/g, "-")}`}
         >
-          <Minus size={18} color={colors.textTertiary} />
+          <Minus size={18} color={colors.primary} />
         </PressableOpacity>
         <View style={styles.divider} />
         <View style={styles.valueContainer}>
-          <Text style={styles.valueText}>{value}</Text>
+          <Text style={styles.value}>{value}</Text>
         </View>
         <View style={styles.divider} />
         <PressableOpacity
@@ -47,7 +47,7 @@ export function StepperField({
           accessibilityLabel={`Aumentar ${label}`}
           testID={`stepper-increase-${label.toLowerCase().replace(/\s/g, "-")}`}
         >
-          <Plus size={18} color={colors.textTertiary} />
+          <Plus size={18} color={colors.primary} />
         </PressableOpacity>
         {suffix && <Text style={styles.suffix}>{suffix}</Text>}
       </View>
@@ -60,44 +60,44 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   stepper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    height: 48,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
+    height: 50,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
   button: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius.lg,
   },
   divider: {
     width: 1,
     height: 28,
-    backgroundColor: "rgba(148, 163, 184, 0.12)",
+    backgroundColor: colors.border,
   },
   valueContainer: {
     flex: 1,
-    height: 48,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
-  valueText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+  value: {
+    ...typography.presets.h3,
+    color: colors.textMain,
   },
   suffix: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     marginRight: 14,
   },
 });

@@ -1,5 +1,5 @@
 import { Text, StyleSheet } from "react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SecondaryButtonProps {
@@ -10,26 +10,29 @@ interface SecondaryButtonProps {
 export function SecondaryButton({ label, onPress }: SecondaryButtonProps) {
   return (
     <PressableOpacity
-      style={styles.secondaryButton}
+      style={styles.button}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       testID={`secondary-button-${label.toLowerCase().replace(/\s/g, "-")}`}
     >
-      <Text style={styles.secondaryButtonText}>{label}</Text>
+      <Text style={styles.label}>{label}</Text>
     </PressableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  secondaryButton: {
+  button: {
     alignItems: "center",
     justifyContent: "center",
-    height: 44,
+    height: 52,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: "transparent",
   },
-  secondaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+  label: {
+    ...typography.presets.h3,
+    color: colors.primary,
   },
 });

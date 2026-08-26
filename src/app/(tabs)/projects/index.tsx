@@ -49,7 +49,7 @@ export default function ProjectsScreen() {
           style={styles.addButton}
           onPress={() => router.push("/(tabs)/projects/create")}
         >
-          <Plus size={20} color={colors.textPrimary} />
+          <Plus size={20} color={colors.textOnBrand} />
         </PressableOpacity>
       </View>
 
@@ -78,7 +78,7 @@ export default function ProjectsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   content: {
     paddingHorizontal: 20,
@@ -96,37 +96,35 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.presets.h2,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   subtitle: {
     ...typography.presets.body,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   addButton: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
   },
   sectionLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 1,
   },
   projectList: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.08)",
+    borderWidth: 1,
+    borderColor: colors.border,
     overflow: "hidden",
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(229, 231, 235, 0.1)",
+    backgroundColor: colors.border,
   },
 });

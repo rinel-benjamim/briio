@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import type { ProjectStatus } from "@/types";
 import { PROJECT_STATUS_CONFIG_UPPERCASE } from "@/constants/statuses";
 
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 9999,
+    borderRadius: borderRadius.full,
     gap: 4,
   },
   dot: {
@@ -50,11 +50,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   name: {
-    ...typography.presets.h2,
-    color: colors.textPrimary,
+    ...typography.presets.h1,
+    color: colors.textMain,
   },
   location: {
     ...typography.presets.body,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
 });

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import { router } from "expo-router";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import type { ProjectStatus } from "@/types";
 import { PROJECT_STATUS_CONFIG } from "@/constants/statuses";
@@ -52,7 +52,7 @@ export function ProjectCard({
             {config.label}
           </Text>
         </View>
-        <ChevronRight size={16} color={colors.textTertiary} />
+        <ChevronRight size={16} color={colors.textMuted} />
       </View>
     </PressableOpacity>
   );
@@ -64,25 +64,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
   },
   left: {
     flex: 1,
   },
   info: {
-    gap: 6,
+    gap: 4,
   },
   name: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   location: {
-    ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
   meta: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   right: {
     flexDirection: "row",

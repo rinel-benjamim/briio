@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionLabel: {
-    ...typography.presets.overline,
+    ...typography.presets.caption,
     color: colors.textSecondary,
     letterSpacing: 0.5,
   },

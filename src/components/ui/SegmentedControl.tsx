@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SegmentedControlProps {
@@ -14,7 +14,7 @@ export function SegmentedControl({
   onSelect,
 }: SegmentedControlProps) {
   return (
-    <View style={styles.segmentedControl}>
+    <View style={styles.container}>
       {options.map((option) => (
         <PressableOpacity
           key={option}
@@ -26,8 +26,8 @@ export function SegmentedControl({
         >
           <Text
             style={[
-              styles.segmentText,
-              option === selected && styles.segmentTextActive,
+              styles.text,
+              option === selected && styles.textActive,
             ]}
           >
             {option}
@@ -39,10 +39,10 @@ export function SegmentedControl({
 }
 
 const styles = StyleSheet.create({
-  segmentedControl: {
+  container: {
     flexDirection: "row",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: borderRadius.md,
+    backgroundColor: "#F4F6F4",
+    borderRadius: borderRadius.lg,
     padding: 3,
     gap: 3,
   },
@@ -51,18 +51,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 10,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.md,
   },
   segmentActive: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.bgSurface,
+    ...shadows.sm,
   },
-  segmentText: {
-    ...typography.presets.caption,
+  text: {
+    ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
-  segmentTextActive: {
-    color: "#FFFFFF",
+  textActive: {
+    color: colors.primary,
     fontWeight: typography.fontWeight.semibold,
   },
 });

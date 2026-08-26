@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RecentRdoItem {
@@ -19,8 +19,8 @@ interface RecentRdoListProps {
 const statusConfig = {
   draft: {
     label: "Rascunho",
-    color: colors.textTertiary,
-    bg: "rgba(100, 116, 139, 0.15)",
+    color: colors.warning,
+    bg: colors.warningBg,
   },
   completed: {
     label: "Concluído",
@@ -29,8 +29,8 @@ const statusConfig = {
   },
   generated: {
     label: "Gerado",
-    color: "#15803D",
-    bg: "#DCFCE7",
+    color: colors.success,
+    bg: colors.successBg,
   },
 };
 
@@ -76,7 +76,7 @@ export function RecentRdoList({ items, onViewAll, onItemPress }: RecentRdoListPr
 
       <PressableOpacity style={styles.footer} onPress={onViewAll}>
         <Text style={styles.viewAll}>Ver todos</Text>
-        <ArrowRight size={14} color={colors.brandPrimary} />
+        <ArrowRight size={14} color={colors.primary} />
       </PressableOpacity>
     </View>
   );
@@ -87,11 +87,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   list: {
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
     overflow: "hidden",
+    ...shadows.sm,
   },
   item: {
     flexDirection: "row",
@@ -101,16 +102,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   itemText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
   badge: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 9999,
+    borderRadius: borderRadius.full,
     gap: 4,
   },
   dot: {
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(229, 231, 235, 0.1)",
+    backgroundColor: colors.border,
   },
   footer: {
     flexDirection: "row",
@@ -135,6 +135,6 @@ const styles = StyleSheet.create({
   viewAll: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brandPrimary,
+    color: colors.primary,
   },
 });

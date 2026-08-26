@@ -19,7 +19,7 @@ export default function ProjectCreatedScreen() {
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>{MOCK_PROJECT.name}</Text>
       </View>
@@ -27,7 +27,7 @@ export default function ProjectCreatedScreen() {
       <View style={styles.content}>
         <View style={styles.success}>
           <View style={styles.successIcon}>
-            <CircleCheck size={22} color="#15803D" />
+            <CircleCheck size={22} color={colors.success} />
           </View>
           <View style={styles.successInfo}>
             <Text style={styles.successTitle}>Obra criada com sucesso</Text>
@@ -75,7 +75,7 @@ export default function ProjectCreatedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   content: {
     flex: 1,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successBg,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -123,19 +123,19 @@ const styles = StyleSheet.create({
   successTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   successText: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   projectCard: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.xl,
     padding: 16,
     gap: 8,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   badge: {
     flexDirection: "row",
@@ -146,21 +146,21 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#15803D",
+    backgroundColor: colors.success,
   },
   badgeText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: "#15803D",
+    color: colors.success,
   },
   projectName: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   projectLocation: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   nextSection: {
     gap: 6,
@@ -168,18 +168,18 @@ const styles = StyleSheet.create({
   nextLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   nextText: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   nextDate: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   spacer: {
     flex: 1,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.lg,
     height: 56,
   },
@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
 });

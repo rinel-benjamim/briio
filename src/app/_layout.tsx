@@ -5,11 +5,11 @@ import { DatabaseProvider } from "@/database";
 export default function RootLayout() {
   return (
     <DatabaseProvider>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#0F172A" },
+          contentStyle: { backgroundColor: "#F4F6F4" },
         }}
       />
     </DatabaseProvider>

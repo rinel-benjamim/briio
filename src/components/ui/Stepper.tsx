@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Minus, Plus } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface StepperProps {
@@ -19,64 +19,65 @@ export function Stepper({
   label,
 }: StepperProps) {
   return (
-    <View style={styles.stepper}>
+    <View style={styles.container}>
       <PressableOpacity
-        style={styles.stepperButton}
+        style={styles.button}
         onPress={() => onChange(Math.max(min, value - 1))}
       >
-        <Minus size={18} color={colors.textTertiary} />
+        <Minus size={18} color={colors.primary} />
       </PressableOpacity>
-      <View style={styles.stepperDivider} />
-      <View style={styles.stepperValue}>
-        <Text style={styles.stepperValueText}>{value}</Text>
+      <View style={styles.divider} />
+      <View style={styles.valueContainer}>
+        <Text style={styles.value}>{value}</Text>
       </View>
-      <View style={styles.stepperDivider} />
+      <View style={styles.divider} />
       <PressableOpacity
-        style={styles.stepperButton}
+        style={styles.button}
         onPress={() => onChange(Math.min(max, value + 1))}
       >
-        <Plus size={18} color={colors.textTertiary} />
+        <Plus size={18} color={colors.primary} />
       </PressableOpacity>
-      {label && <Text style={styles.stepperLabel}>{label}</Text>}
+      {label && <Text style={styles.label}>{label}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  stepper: {
+  container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 12,
-    height: 48,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
+    height: 50,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
-  stepperButton: {
-    width: 48,
-    height: 48,
+  button: {
+    width: 50,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius.lg,
   },
-  stepperDivider: {
+  divider: {
     width: 1,
     height: 28,
-    backgroundColor: "rgba(148, 163, 184, 0.12)",
+    backgroundColor: colors.border,
   },
-  stepperValue: {
+  valueContainer: {
     flex: 1,
-    height: 48,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
-  stepperValueText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+  value: {
+    ...typography.presets.h3,
+    color: colors.textMain,
   },
-  stepperLabel: {
+  label: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     marginRight: 14,
   },
 });

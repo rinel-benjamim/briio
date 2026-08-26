@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text } from "react-native";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SegmentOption {
@@ -56,34 +56,33 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   container: {
     flexDirection: "row",
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
+    height: 44,
+    borderRadius: borderRadius.lg,
+    backgroundColor: "#F4F6F4",
+    padding: 3,
+    gap: 3,
   },
   option: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    borderRadius: borderRadius.md,
   },
   optionSelected: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.bgSurface,
   },
   optionText: {
-    ...typography.presets.caption,
+    ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   optionTextSelected: {
-    color: colors.textPrimary,
+    color: colors.primary,
     fontWeight: typography.fontWeight.semibold,
   },
 });

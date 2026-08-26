@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { colors, typography, borderRadius, shadows } from "@/constants";
 
 interface InfoField {
   label: string;
@@ -40,11 +40,12 @@ export function InfoCard({ fields }: InfoCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
     overflow: "hidden",
+    ...shadows.sm,
   },
   row: {
     flexDirection: "row",
@@ -58,17 +59,15 @@ const styles = StyleSheet.create({
   },
   verticalDivider: {
     width: 1,
-    backgroundColor: "rgba(229, 231, 235, 0.3)",
+    backgroundColor: colors.border,
     marginVertical: 14,
   },
   label: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   value: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
 });

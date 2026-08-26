@@ -1,21 +1,17 @@
 import { useState } from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-} from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ChevronDown, Minus, Plus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
-import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
+import { SelectField } from "@/components/ui/Form/SelectField";
+import { StepperField } from "@/components/ui/Form/StepperField";
+import { SegmentedField } from "@/components/ui/Form/SegmentedField";
+import { TextArea } from "@/components/ui/Form/TextArea";
+import { Field } from "@/components/ui/Form/Field";
 import {
   MOCK_RDO_CONTEXT,
   MOCK_EQUIPMENT_OPTIONS,
@@ -31,7 +27,6 @@ interface EquipmentFormProps {
 
 export function EquipmentForm({ mode }: EquipmentFormProps) {
   const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId?: string }>();
-  const insets = useSafeAreaInsets();
 
   const editData = mode === "edit" ? MOCK_EQUIPMENT_DATA[equipmentId || "1"] : null;
 
@@ -41,7 +36,6 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
   const [hours, setHours] = useState(editData?.hours || 8);
   const [status, setStatus] = useState<EquipmentStatusOption>(editData?.status || "em_operacao");
   const [observation, setObservation] = useState(editData?.observation || "");
-  const [showEquipmentDropdown, setShowEquipmentDropdown] = useState(false);
 
   const isCustomEquipment = equipment === "Outro";
 
@@ -62,116 +56,47 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>DADOS DO EQUIPAMENTO</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Equipamento</Text>
-            <PressableOpacity
-              style={styles.dropdown}
-              onPress={() => setShowEquipmentDropdown(!showEquipmentDropdown)}
-            >
-              <Text style={[styles.dropdownText, !equipment && styles.dropdownPlaceholder]}>
-                {isCustomEquipment ? customEquipment || "Inserir nome do equipamento" : equipment || "Ex.: Retroescavadora"}
-              </Text>
-              <ChevronDown size={18} color={colors.textTertiary} />
-            </PressableOpacity>
-            {showEquipmentDropdown && (
-              <View style={styles.dropdownOptions}>
-                {MOCK_EQUIPMENT_OPTIONS.map((e) => (
-                  <PressableOpacity
-                    key={e}
-                    style={styles.dropdownOption}
-                    onPress={() => {
-                      setEquipment(e);
-                      setShowEquipmentDropdown(false);
-                    }}
-                  >
-                    <Text style={styles.dropdownOptionText}>{e}</Text>
-                  </PressableOpacity>
-                ))}
-              </View>
-            )}
-            {isCustomEquipment && (
-              <TextInput
-                style={styles.customInput}
-                value={customEquipment}
-                onChangeText={setCustomEquipment}
-                placeholder="Inserir nome do equipamento"
-                placeholderTextColor={colors.textSecondary}
-              />
-            )}
-          </View>
+          <SelectField
+            label="Equipamento"
+            value={isCustomEquipment ? customEquipment || "" : equipment}
+            options={MOCK_EQUIPMENT_OPTIONS}
+            onSelect={(v) => {
+              setEquipment(v);
+              setCustomEquipment("");
+            }}
+            placeholder="Ex.: Retroescavadora"
+          />
+          {isCustomEquipment && (
+            <Field
+              label="Nome do equipamento"
+              value={customEquipment}
+              onChangeText={setCustomEquipment}
+              placeholder="Inserir nome do equipamento"
+            />
+          )}
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Quantidade</Text>
-            <View style={styles.stepper}>
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              >
-                <Minus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <View style={styles.stepperDivider} />
-              <View style={styles.stepperValue}>
-                <Text style={styles.stepperValueText}>{quantity}</Text>
-              </View>
-              <View style={styles.stepperDivider} />
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setQuantity(quantity + 1)}
-              >
-                <Plus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-            </View>
-          </View>
+          <StepperField
+            label="Quantidade"
+            value={quantity}
+            onChange={setQuantity}
+            min={1}
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Horas de utilização</Text>
-            <View style={styles.stepper}>
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setHours(Math.max(1, hours - 1))}
-              >
-                <Minus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <View style={styles.stepperDivider} />
-              <View style={styles.stepperValue}>
-                <Text style={styles.stepperValueText}>{hours}</Text>
-              </View>
-              <View style={styles.stepperDivider} />
-              <PressableOpacity
-                style={styles.stepperButton}
-                onPress={() => setHours(hours + 1)}
-              >
-                <Plus size={18} color={colors.textTertiary} />
-              </PressableOpacity>
-              <Text style={styles.stepperLabel}>horas</Text>
-            </View>
-          </View>
+          <StepperField
+            label="Horas de utilização"
+            value={hours}
+            onChange={setHours}
+            min={1}
+            suffix="horas"
+          />
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>ESTADO</Text>
-          <View style={styles.segmentedControl}>
-            {EQUIPMENT_STATUS_OPTIONS.map((option) => (
-              <PressableOpacity
-                key={option.value}
-                style={[
-                  styles.segmentOption,
-                  status === option.value && styles.segmentOptionSelected,
-                ]}
-                onPress={() => setStatus(option.value)}
-              >
-                <Text
-                  style={[
-                    styles.segmentOptionText,
-                    status === option.value && styles.segmentOptionTextSelected,
-                  ]}
-                >
-                  {option.label}
-                </Text>
-              </PressableOpacity>
-            ))}
-          </View>
-        </View>
+        <SegmentedField
+          label="ESTADO"
+          value={status}
+          options={EQUIPMENT_STATUS_OPTIONS}
+          onChange={(v) => setStatus(v as EquipmentStatusOption)}
+        />
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryText}>
@@ -181,18 +106,13 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
           <Text style={styles.summaryStatus}>{EQUIPMENT_STATUS_LABELS[status]}</Text>
         </View>
 
-        <View style={styles.obsSection}>
-          <Text style={styles.obsLabel}>OBSERVAÇÃO</Text>
-          <TextInput
-            style={styles.obsInput}
-            value={observation}
-            onChangeText={setObservation}
-            placeholder="Ex.: Equipamento utilizado na preparação do terreno."
-            placeholderTextColor={colors.textSecondary}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
+        <TextArea
+          label="OBSERVAÇÃO"
+          value={observation}
+          onChangeText={setObservation}
+          placeholder="Ex.: Equipamento utilizado na preparação do terreno."
+          height={80}
+        />
 
         <View style={styles.buttonSection}>
           <PrimaryButton
@@ -211,7 +131,7 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -228,165 +148,30 @@ const styles = StyleSheet.create({
   sectionLabel: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     letterSpacing: 0.5,
   },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  dropdown: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  dropdownPlaceholder: {
-    color: colors.textSecondary,
-  },
-  dropdownOptions: {
-    backgroundColor: "rgba(30, 41, 59, 0.95)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  dropdownOption: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownOptionText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  customInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    height: 48,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  stepperButton: {
-    width: 48,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: "rgba(148, 163, 184, 0.12)",
-  },
-  stepperValue: {
-    flex: 1,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperValueText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  stepperLabel: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-    marginRight: 14,
-  },
-  segmentedControl: {
-    flexDirection: "row",
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  segmentOption: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-  },
-  segmentOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-  },
-  segmentOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  segmentOptionTextSelected: {
-    color: colors.textPrimary,
-    fontWeight: typography.fontWeight.semibold,
-  },
   summaryCard: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     padding: 14,
     gap: 6,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
   summaryText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.textMain,
   },
   summaryMeta: {
     ...typography.presets.bodySmall,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   summaryStatus: {
     ...typography.presets.bodySmall,
     fontWeight: typography.fontWeight.medium,
-    color: "#15803D",
-  },
-  obsSection: {
-    gap: 8,
-  },
-  obsLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  obsInput: {
-    height: 80,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    color: colors.success,
   },
   buttonSection: {
     gap: 12,

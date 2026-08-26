@@ -4,22 +4,23 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   Platform,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Clock, ChevronDown } from "lucide-react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
+import { SegmentedField } from "@/components/ui/Form/SegmentedField";
+import { TextArea } from "@/components/ui/Form/TextArea";
+import { Field } from "@/components/ui/Form/Field";
 import {
   MOCK_RDO_CONTEXT,
   IMPACT_OPTIONS,
@@ -33,7 +34,6 @@ interface OccurrenceFormProps {
 
 export function OccurrenceForm({ mode }: OccurrenceFormProps) {
   const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
-  const insets = useSafeAreaInsets();
 
   const editData = mode === "edit" ? MOCK_OCCURRENCES_DATA[occId || "1"] : null;
 
@@ -84,16 +84,12 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>DETALHES DA OCORRÊNCIA</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Título</Text>
-            <TextInput
-              style={styles.textInput}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Ex.: Chuva intensa"
-              placeholderTextColor={colors.textSecondary}
-            />
-          </View>
+          <Field
+            label="Título"
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Ex.: Chuva intensa"
+          />
 
           <View style={styles.field}>
             <Text style={styles.fieldLabel}>Hora</Text>
@@ -101,9 +97,9 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
               style={styles.timeField}
               onPress={() => setShowTimePicker(true)}
             >
-              <Clock size={18} color={colors.textTertiary} />
+              <Clock size={18} color={colors.textMuted} />
               <Text style={styles.timeValue}>{formatTime(timeDate)}</Text>
-              <ChevronDown size={18} color={colors.textTertiary} />
+              <ChevronDown size={18} color={colors.textMuted} />
             </PressableOpacity>
             {showTimePicker && (
               <DateTimePicker
@@ -115,68 +111,36 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
             )}
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Local / frente</Text>
-            <TextInput
-              style={styles.textInput}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Ex.: Área externa"
-              placeholderTextColor={colors.textSecondary}
-            />
-          </View>
+          <Field
+            label="Local / frente"
+            value={location}
+            onChangeText={setLocation}
+            placeholder="Ex.: Área externa"
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Descrição</Text>
-            <TextInput
-              style={styles.textArea}
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Descreva o que aconteceu e como afetou os trabalhos."
-              placeholderTextColor={colors.textSecondary}
-              multiline
-              textAlignVertical="top"
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>IMPACTO</Text>
-          <View style={styles.segmentedControl}>
-            {IMPACT_OPTIONS.map((option) => (
-              <PressableOpacity
-                key={option.value}
-                style={[
-                  styles.segmentOption,
-                  impact === option.value && styles.segmentOptionSelected,
-                ]}
-                onPress={() => setImpact(option.value)}
-              >
-                <Text
-                  style={[
-                    styles.segmentOptionText,
-                    impact === option.value && styles.segmentOptionTextSelected,
-                  ]}
-                >
-                  {option.label}
-                </Text>
-              </PressableOpacity>
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>MEDIDA TOMADA</Text>
-          <TextInput
-            style={styles.textArea}
-            value={actionTaken}
-            onChangeText={setActionTaken}
-            placeholder="Ex.: Trabalhos exteriores interrompidos durante aproximadamente 1 hora."
-            placeholderTextColor={colors.textSecondary}
-            multiline
-            textAlignVertical="top"
+          <TextArea
+            label="Descrição"
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Descreva o que aconteceu e como afetou os trabalhos."
+            height={88}
           />
         </View>
+
+        <SegmentedField
+          label="IMPACTO"
+          value={impact}
+          options={IMPACT_OPTIONS}
+          onChange={(v) => setImpact(v as ImpactOption)}
+        />
+
+        <TextArea
+          label="MEDIDA TOMADA"
+          value={actionTaken}
+          onChangeText={setActionTaken}
+          placeholder="Ex.: Trabalhos exteriores interrompidos durante aproximadamente 1 hora."
+          height={88}
+        />
 
         <View style={styles.buttonSection}>
           <PrimaryButton
@@ -195,7 +159,7 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -210,81 +174,33 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionLabel: {
-    ...typography.presets.overline,
-    color: colors.textSecondary,
+    ...typography.presets.caption,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textMuted,
     letterSpacing: 0.5,
   },
   field: {
     gap: 8,
   },
   fieldLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    ...typography.presets.label,
+    color: colors.textMain,
   },
   timeField: {
     flexDirection: "row",
     alignItems: "center",
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
+    height: 50,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
     justifyContent: "space-between",
   },
   timeValue: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textArea: {
-    height: 88,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  segmentedControl: {
-    flexDirection: "row",
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  segmentOption: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-  },
-  segmentOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-  },
-  segmentOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  segmentOptionTextSelected: {
-    color: colors.textPrimary,
-    fontWeight: typography.fontWeight.semibold,
+    color: colors.textMain,
   },
   buttonSection: {
     gap: 12,

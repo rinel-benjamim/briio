@@ -21,7 +21,6 @@ import {
   PenLine,
   FileText,
 } from "lucide-react-native";
-import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
@@ -34,6 +33,22 @@ import {
   getMockRdoData,
   type RdoData,
 } from "@/services/pdf-generator";
+
+const tokens = {
+  bgMain: "#F4F6F4",
+  bgSurface: "#FFFFFF",
+  primary: "#134E32",
+  primaryLight: "#E6F4EA",
+  textMain: "#1A2E22",
+  textMuted: "#5B6E63",
+  textOnBrand: "#FFFFFF",
+  border: "#E0E6E1",
+  success: "#137333",
+  successBg: "#E6F4EA",
+  warning: "#B96A00",
+  warningBg: "#FFF8F0",
+  overlay: "rgba(0, 0, 0, 0.3)",
+};
 
 export default function RdoGeneratedScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -120,7 +135,7 @@ export default function RdoGeneratedScreen() {
           style={styles.navButton}
           onPress={() => router.replace(`/(tabs)/reports/${id}`)}
         >
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={tokens.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>RDO Gerado</Text>
         <View style={styles.spacer} />
@@ -132,7 +147,7 @@ export default function RdoGeneratedScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.successCard}>
-          <CircleCheck size={22} color="#15803D" />
+          <CircleCheck size={22} color={tokens.success} />
           <View style={styles.successInfo}>
             <Text style={styles.successTitle}>RDO gerado com sucesso</Text>
             <Text style={styles.successSubtitle}>
@@ -147,7 +162,7 @@ export default function RdoGeneratedScreen() {
           <Text style={styles.reportProject}>Reabilitação Pedrinhas</Text>
           <Text style={styles.reportLocation}>Zango 1 — Icolo e Bengo</Text>
           <View style={styles.reportFile}>
-            <FileText size={14} color={colors.textTertiary} />
+            <FileText size={14} color={tokens.textMuted} />
             <Text style={styles.fileText}>PDF · {pdfSize}</Text>
           </View>
         </View>
@@ -180,7 +195,7 @@ export default function RdoGeneratedScreen() {
           onPress={handleOpenPdf}
           disabled={isGenerating}
         >
-          <FileSearch size={16} color="#FFFFFF" />
+          <FileSearch size={16} color={tokens.textOnBrand} />
           <Text style={styles.openButtonText}>Abrir PDF</Text>
         </PressableOpacity>
 
@@ -204,9 +219,9 @@ export default function RdoGeneratedScreen() {
             disabled={isGenerating || isPrinting}
           >
             {isPrinting ? (
-              <ActivityIndicator size="small" color={colors.textSecondary} />
+              <ActivityIndicator size="small" color={tokens.textMuted} />
             ) : (
-              <Printer size={16} color={colors.textSecondary} />
+              <Printer size={16} color={tokens.textMuted} />
             )}
             <Text style={styles.secondaryButtonText}>Imprimir</Text>
           </PressableOpacity>
@@ -214,11 +229,11 @@ export default function RdoGeneratedScreen() {
 
         <View style={styles.reportStatus}>
           <View style={styles.statusRow}>
-            <Clock size={14} color={colors.textTertiary} />
+            <Clock size={14} color={tokens.textMuted} />
             <Text style={styles.statusText}>Gerado hoje às {generationTime}</Text>
           </View>
           <View style={styles.statusRow}>
-            <PenLine size={14} color="#B45309" />
+            <PenLine size={14} color={tokens.warning} />
             <Text style={styles.statusWarning}>Assinatura física pendente</Text>
           </View>
         </View>
@@ -228,7 +243,7 @@ export default function RdoGeneratedScreen() {
           onPress={handleViewHistory}
         >
           <Text style={styles.historyText}>Ver RDOs da obra</Text>
-          <ArrowRight size={16} color={colors.brandPrimary} />
+          <ArrowRight size={16} color={tokens.primary} />
         </PressableOpacity>
       </ScrollView>
     </View>
@@ -238,7 +253,7 @@ export default function RdoGeneratedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: tokens.bgMain,
   },
   topNav: {
     flexDirection: "row",
@@ -257,7 +272,7 @@ const styles = StyleSheet.create({
   navTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
+    color: tokens.textMain,
     flex: 1,
   },
   spacer: {
@@ -275,13 +290,13 @@ const styles = StyleSheet.create({
   successCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(16, 185, 129, 0.12)",
+    backgroundColor: tokens.successBg,
     borderRadius: 16,
     padding: 12,
     paddingHorizontal: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.2)",
+    borderColor: tokens.success,
   },
   successInfo: {
     gap: 2,
@@ -290,38 +305,38 @@ const styles = StyleSheet.create({
   successTitle: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: "#15803D",
+    color: tokens.success,
   },
   successSubtitle: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   reportIdentity: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     padding: 12,
     paddingHorizontal: 16,
     gap: 4,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   reportNumber: {
     ...typography.presets.h2,
-    color: colors.textPrimary,
+    color: tokens.textMain,
   },
   reportDate: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   reportProject: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   reportLocation: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   reportFile: {
     flexDirection: "row",
@@ -332,37 +347,37 @@ const styles = StyleSheet.create({
   fileText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   pdfPreview: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     height: 200,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
     overflow: "hidden",
   },
   pdfPage: {
     width: 180,
     height: 190,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 6,
     padding: 10,
     gap: 4,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   pdfHeader: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: tokens.primary,
   },
   pdfLine: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
   },
   pdfSpacer: {
     height: 4,
@@ -373,9 +388,9 @@ const styles = StyleSheet.create({
   pdfTableRow: {
     height: 10,
     borderRadius: 2,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: tokens.bgSurface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: tokens.border,
   },
   pdfPhotos: {
     flexDirection: "row",
@@ -385,35 +400,33 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 3,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: tokens.border,
   },
   pdfSignature: {
     height: 12,
     borderRadius: 2,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: tokens.border,
   },
   openButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
   },
   openButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: "#FFFFFF",
+    color: tokens.textOnBrand,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: tokens.primary,
     borderRadius: 16,
     height: 56,
     gap: 8,
@@ -421,7 +434,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.semibold,
-    color: "#FFFFFF",
+    color: tokens.textOnBrand,
   },
   secondaryActions: {
     flexDirection: "row",
@@ -432,26 +445,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 12,
     height: 44,
     gap: 6,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: tokens.border,
   },
   secondaryButtonText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   reportStatus: {
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     padding: 12,
     paddingHorizontal: 16,
     gap: 4,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   statusRow: {
     flexDirection: "row",
@@ -460,26 +473,26 @@ const styles = StyleSheet.create({
   },
   statusText: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: tokens.textMuted,
   },
   statusWarning: {
     ...typography.presets.caption,
-    color: "#B45309",
+    color: tokens.warning,
   },
   historyLink: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
+    backgroundColor: tokens.bgSurface,
     borderRadius: 16,
     height: 56,
     gap: 6,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: tokens.border,
   },
   historyText: {
     ...typography.presets.body,
     fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
+    color: tokens.primary,
   },
 });

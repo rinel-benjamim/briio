@@ -4,22 +4,22 @@ import { colors, typography } from "@/constants";
 
 export function AutosaveStatus() {
   return (
-    <View style={styles.autosaveStatus}>
-      <Check size={14} color={colors.textTertiary} />
-      <Text style={styles.autosaveText}>Salvo automaticamente</Text>
+    <View style={styles.container}>
+      <Check size={14} color={colors.success} />
+      <Text style={styles.text}>Salvo automaticamente</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  autosaveStatus: {
+  container: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
   },
-  autosaveText: {
+  text: {
     ...typography.presets.caption,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
 });

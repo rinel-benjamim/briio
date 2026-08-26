@@ -4,20 +4,19 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   Image,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
-import { colors, typography } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
+import { Field } from "@/components/ui/Form/Field";
 import {
   MOCK_RDO_CONTEXT,
   PHOTO_TYPES,
@@ -31,7 +30,6 @@ interface PhotoFormProps {
 
 export function PhotoForm({ mode }: PhotoFormProps) {
   const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
-  const insets = useSafeAreaInsets();
 
   const editData = mode === "edit" ? MOCK_PHOTOS_DATA[photoId || "1"] : null;
 
@@ -86,11 +84,11 @@ export function PhotoForm({ mode }: PhotoFormProps) {
         {!photoUri ? (
           <View style={styles.photoArea}>
             <PressableOpacity style={styles.photoButton} onPress={takePhoto}>
-              <Camera size={28} color={colors.brandPrimary} />
+              <Camera size={28} color={colors.primary} />
               <Text style={styles.photoButtonText}>Tirar fotografia</Text>
             </PressableOpacity>
             <PressableOpacity style={styles.photoButton} onPress={pickImage}>
-              <ImageIcon size={28} color={colors.brandPrimary} />
+              <ImageIcon size={28} color={colors.primary} />
               <Text style={styles.photoButtonText}>Escolher da galeria</Text>
             </PressableOpacity>
           </View>
@@ -106,27 +104,19 @@ export function PhotoForm({ mode }: PhotoFormProps) {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>IDENTIFICAÇÃO DA FOTOGRAFIA</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Legenda</Text>
-            <TextInput
-              style={styles.textInput}
-              value={caption}
-              onChangeText={setCaption}
-              placeholder="Ex.: Armadura para os pilares."
-              placeholderTextColor={colors.textSecondary}
-            />
-          </View>
+          <Field
+            label="Legenda"
+            value={caption}
+            onChangeText={setCaption}
+            placeholder="Ex.: Armadura para os pilares."
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Local / frente de trabalho</Text>
-            <TextInput
-              style={styles.textInput}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Ex.: Bloco A — Piso 2"
-              placeholderTextColor={colors.textSecondary}
-            />
-          </View>
+          <Field
+            label="Local / frente de trabalho"
+            value={location}
+            onChangeText={setLocation}
+            placeholder="Ex.: Bloco A — Piso 2"
+          />
         </View>
 
         <View style={styles.section}>
@@ -171,7 +161,7 @@ export function PhotoForm({ mode }: PhotoFormProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfaceBg,
+    backgroundColor: colors.bgMain,
   },
   scrollView: {
     flex: 1,
@@ -185,10 +175,10 @@ const styles = StyleSheet.create({
   photoArea: {
     flexDirection: "row",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 16,
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius.xl,
     borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: colors.border,
     padding: 12,
     gap: 12,
     height: 140,
@@ -197,8 +187,8 @@ const styles = StyleSheet.create({
   photoButton: {
     width: 140,
     height: 110,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius.lg,
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
@@ -206,7 +196,7 @@ const styles = StyleSheet.create({
   photoButtonText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
+    color: colors.textMain,
     textAlign: "center",
   },
   previewSection: {
@@ -215,41 +205,23 @@ const styles = StyleSheet.create({
   previewImage: {
     width: "100%",
     height: 180,
-    borderRadius: 12,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.border,
   },
   changePhotoText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brandPrimary,
+    color: colors.primary,
     textAlign: "center",
   },
   section: {
     gap: 12,
   },
   sectionLabel: {
-    ...typography.presets.overline,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textMuted,
+    letterSpacing: 0.5,
   },
   typeRow: {
     flexDirection: "row",
@@ -260,23 +232,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
+    borderColor: colors.border,
   },
   typeOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-    borderColor: colors.brandPrimary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   typeOptionText: {
     ...typography.presets.caption,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   typeOptionTextSelected: {
-    color: colors.textPrimary,
+    color: colors.textOnBrand,
   },
   buttonSection: {
     gap: 12,

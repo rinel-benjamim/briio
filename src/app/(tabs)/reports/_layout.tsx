@@ -5,7 +5,7 @@ export default function ReportsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: "#0F172A" },
+        contentStyle: { backgroundColor: "#F4F6F4" },
       }}
     />
   );

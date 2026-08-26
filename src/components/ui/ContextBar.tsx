@@ -8,25 +8,23 @@ interface ContextBarProps {
 
 export function ContextBar({ date, projectName }: ContextBarProps) {
   return (
-    <View style={styles.context}>
-      <Text style={styles.contextDate}>{date}</Text>
-      <Text style={styles.contextProject}>{projectName}</Text>
+    <View style={styles.container}>
+      <Text style={styles.date}>{date}</Text>
+      <Text style={styles.project}>{projectName}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  context: {
+  container: {
     gap: 2,
   },
-  contextDate: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+  date: {
+    ...typography.presets.caption,
+    color: colors.textMuted,
   },
-  contextProject: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
+  project: {
+    ...typography.presets.bodyMedium,
+    color: colors.textMain,
   },
 });

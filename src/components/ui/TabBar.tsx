@@ -25,9 +25,7 @@ function TabItem({
   }));
 
   return (
-    <Animated.View
-      style={[styles.tab, isActive && styles.activeTab, animatedStyle]}
-    >
+    <Animated.View style={[styles.tab, isActive && styles.activeTab, animatedStyle]}>
       <Pressable
         style={styles.tabInner}
         onPress={onPress}
@@ -50,19 +48,19 @@ function TabItem({
 export function CustomTabBar({ state, navigation, descriptors }: BottomTabBarProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.pill}>
+      <View style={styles.bar}>
         {state.routes.map((route, index) => {
           const isActive = state.index === index;
           const options = descriptors[route.key]?.options;
           const label = options?.title ?? route.name;
-          const iconColor = isActive ? colors.textOnBrand : colors.textTertiary;
+          const iconColor = isActive ? colors.primary : "#7F8C83";
           const Icon = options?.tabBarIcon;
 
           return (
             <TabItem
               key={route.key}
               label={label}
-              icon={Icon ? <Icon color={iconColor} focused={isActive} size={18} /> : null}
+              icon={Icon ? <Icon color={iconColor} focused={isActive} size={20} /> : null}
               isActive={isActive}
               onPress={() => navigation.navigate(route.name)}
             />
@@ -77,23 +75,24 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xs,
-    paddingBottom: spacing.lg,
-    backgroundColor: "transparent",
+    paddingBottom: spacing.sm,
+    backgroundColor: colors.bgSurface,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  pill: {
+  bar: {
     flexDirection: "row",
-    backgroundColor: "rgba(30, 41, 59, 0.8)",
-    borderRadius: 28,
+    backgroundColor: colors.bgSurface,
+    borderRadius: 16,
     padding: 4,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    gap: 4,
   },
   tab: {
     flex: 1,
-    borderRadius: 26,
+    borderRadius: 12,
   },
   activeTab: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.primaryLight,
   },
   tabInner: {
     alignItems: "center",
@@ -103,12 +102,11 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
+    color: "#7F8C83",
+    letterSpacing: 0.3,
   },
   activeLabel: {
-    color: colors.textOnBrand,
+    color: colors.primary,
     fontWeight: typography.fontWeight.semibold,
   },
 });

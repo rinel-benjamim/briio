@@ -32,8 +32,8 @@ export const TASK_STATUS_LABELS: Record<TaskStatusOption, string> = {
 };
 
 export const TASK_SCREEN_STATUS_LABELS: Record<string, { label: string; color: string; bgColor: string }> = {
-  em_curso: { label: "Em curso", color: "#92400E", bgColor: "#FEF3C7" },
-  concluido: { label: "Concluído", color: "#15803D", bgColor: "#DCFCE7" },
+  em_curso: { label: "Em curso", color: "#B96A00", bgColor: "#FFF8F0" },
+  concluido: { label: "Concluído", color: "#137333", bgColor: "#E6F4EA" },
 };
 
 export const MOCK_TASKS_DATA: Record<string, { description: string; location: string; quantity: number; unit: string; status: TaskStatusOption; observation: string; progress: number }> = {};
