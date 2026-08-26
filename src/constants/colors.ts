@@ -38,6 +38,9 @@ export const colors = {
   // Shadows (for reference)
   shadowCard: "0 10px 25px -5px rgba(0,0,0,0.3)",
   shadowElevated: "0 20px 40px -10px rgba(0,0,0,0.4)",
+
+  // Overlay
+  overlay: "rgba(0, 0, 0, 0.5)",
 } as const;
 
 export type ColorToken = keyof typeof colors;

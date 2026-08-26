@@ -73,8 +73,9 @@ export default function RdoDetailScreen() {
       const data = getMockRdoData();
       const pdfUri = await generateRdoPdf(data);
       await openRdoPdf(pdfUri);
-    } catch (error: any) {
-      Alert.alert("Erro", `Não foi possível abrir o PDF.\n\n${error.message || "Erro desconhecido"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      Alert.alert("Erro", `Não foi possível abrir o PDF.\n\n${message}`);
     } finally {
       setPdfLoading(false);
     }
@@ -86,8 +87,9 @@ export default function RdoDetailScreen() {
       const data = getMockRdoData();
       const pdfUri = await generateRdoPdf(data);
       await shareRdoPdf(pdfUri);
-    } catch (error: any) {
-      Alert.alert("Erro", `Não foi possível partilhar.\n\n${error.message || "Erro desconhecido"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      Alert.alert("Erro", `Não foi possível partilhar.\n\n${message}`);
     } finally {
       setPdfLoading(false);
     }
@@ -99,8 +101,9 @@ export default function RdoDetailScreen() {
       const data = getMockRdoData();
       const pdfUri = await generateRdoPdf(data);
       Alert.alert("Guardado", `PDF guardado em:\n${pdfUri}`);
-    } catch (error: any) {
-      Alert.alert("Erro", `Não foi possível guardar o PDF.\n\n${error.message || "Erro desconhecido"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      Alert.alert("Erro", `Não foi possível guardar o PDF.\n\n${message}`);
     } finally {
       setPdfLoading(false);
     }

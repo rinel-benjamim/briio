@@ -279,8 +279,7 @@ const styles = StyleSheet.create({
   occurrenceDesc: {
     ...typography.presets.caption,
     color: colors.textSecondary,
-    textGrowth: "fixed-width",
-    width: "fill_container",
+    flex: 1,
   },
   divider: {
     height: 1,

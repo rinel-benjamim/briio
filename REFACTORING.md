@@ -12,7 +12,7 @@
 | 4 | Unificar Add/Edit screens (12 → 6) | ✅ Concluída |
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ✅ Concluída |
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ✅ Concluída |
-| 7 | Corrigir bugs e erros de estilo | ⏳ Pendente |
+| 7 | Corrigir bugs e erros de estilo | ✅ Concluída |
 | 8 | Limpar código morto | ⏳ Pendente |
 | 9 | Adicionar acessibilidade básica | ⏳ Pendente |
 | 10 | Atualizar AGENTS.md | ⏳ Pendente |
@@ -168,15 +168,35 @@
 
 ---
 
-## Fase 7 — Bugs e Estilo ⏳
+## Fase 7 — Bugs e Estilo ✅
 
 **Objetivo:** Corrigir erros existentes.
 
-- Adicionar `colors.overlay` ao `colors.ts`
-- Corrigir `textGrowth` / `width: "fill_container"` em OccurrencesScreen
-- Remover `console.log` de pdf-generator.ts
-- Remover imports não usados
-- Substituir `error: any` por `error: unknown`
+### Alterações
+
+1. `src/constants/colors.ts`:
+   - Adicionado `overlay: "rgba(0, 0, 0, 0.5)"` — resolve erros `Property 'overlay' does not exist`
+
+2. `src/features/rdo/OccurrencesScreen.tsx`:
+   - Removido `textGrowth: "fixed-width"` e `width: "fill_container"` (propriedades inválidas)
+   - Substituído por `flex: 1`
+
+3. `src/services/pdf-generator.ts`:
+   - Removidos 3 `console.log` em `generateRdoPdf`
+
+4. `src/features/rdo/RdoDetailScreen.tsx`:
+   - Substituídos 3 `error: any` por `error: unknown` com type guard
+
+5. `src/features/rdo/RdoGeneratedScreen.tsx`:
+   - Substituídos 3 `error: any` por `error: unknown` com type guard
+   - Removidos 3 `console.error`
+
+### Erros restantes (pré-existentes, fora do escopo)
+- CreateProjectScreen/EditProjectScreen: DateTimePicker type mismatch
+- Criar projeto: estilo TextInput com `0` no array
+
+### Testes
+- ✅ TypeScript compilation: erros `overlay` resolvidos
 - Corrigir PanResponder stale closure
 - Adicionar `useMemo` / `useCallback`
 

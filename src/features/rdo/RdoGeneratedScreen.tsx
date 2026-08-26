@@ -63,11 +63,11 @@ export default function RdoGeneratedScreen() {
       setPdfUri(uri);
       const size = await getRdoPdfSize(uri);
       setPdfSize(size);
-    } catch (error: any) {
-      console.error("PDF generation error:", error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
       Alert.alert(
         "Erro",
-        `Não foi possível gerar o PDF.\n\n${error.message || "Erro desconhecido"}`
+        `Não foi possível gerar o PDF.\n\n${message}`
       );
     } finally {
       setIsGenerating(false);
@@ -91,9 +91,9 @@ export default function RdoGeneratedScreen() {
     try {
       setIsPrinting(true);
       await printRdoPdf(pdfHtml);
-    } catch (error: any) {
-      console.error("Print error:", error);
-      Alert.alert("Erro", `Não foi possível imprimir o PDF.\n\n${error.message || "Erro desconhecido"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      Alert.alert("Erro", `Não foi possível imprimir o PDF.\n\n${message}`);
     } finally {
       setIsPrinting(false);
     }
@@ -103,9 +103,9 @@ export default function RdoGeneratedScreen() {
     if (!pdfUri) return;
     try {
       await openRdoPdf(pdfUri);
-    } catch (error: any) {
-      console.error("Open PDF error:", error);
-      Alert.alert("Erro", `Não foi possível abrir o PDF.\n\n${error.message || "Erro desconhecido"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      Alert.alert("Erro", `Não foi possível abrir o PDF.\n\n${message}`);
     }
   }
 

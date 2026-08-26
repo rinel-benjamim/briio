@@ -267,13 +267,11 @@ export function generateHtml(data: RdoData): string {
 
 export async function generateRdoPdf(data: RdoData): Promise<string> {
   const html = generateHtml(data);
-  console.log("Generating PDF with HTML length:", html.length);
 
   const { base64, numberOfPages } = await Print.printToFileAsync({
     html,
     base64: true,
   });
-  console.log("PDF generated, pages:", numberOfPages, "base64 length:", base64?.length);
 
   if (!base64) {
     throw new Error("Não foi possível gerar o PDF");
@@ -285,7 +283,6 @@ export async function generateRdoPdf(data: RdoData): Promise<string> {
   await FileSystem.writeAsStringAsync(destUri, base64, {
     encoding: FileSystem.EncodingType.Base64,
   });
-  console.log("PDF saved to:", destUri);
 
   return destUri;
 }
