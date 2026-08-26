@@ -7,7 +7,7 @@
 | Fase | Descrição | Estado |
 |------|-----------|--------|
 | 1 | Extrair componentes UI partilhados | ✅ Concluída |
-| 2 | Consolidar mock data em `src/mocks/` | ⏳ Pendente |
+| 2 | Consolidar mock data em `src/mocks/` | ✅ Concluída |
 | 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ⏳ Pendente |
 | 4 | Unificar Add/Edit screens (12 → 6) | ⏳ Pendente |
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ⏳ Pendente |
@@ -50,28 +50,30 @@
 
 ---
 
-## Fase 2 — Consolidar Mock Data ⏳
+## Fase 2 — Consolidar Mock Data ✅
 
 **Objetivo:** Ficheiro único para cada tipo de dado, eliminar duplicação.
 
-### Estrutura pretendida
+### Ficheiros criados
 
-```
-src/mocks/
-├── index.ts
-├── projects.ts        ← MOCK_PROJECTS, PROJECTS
-├── rdo-context.ts     ← MOCK_CONTEXT
-├── rdo-sections.ts    ← RDO_SECTIONS, SECTION_ROUTES
-├── workforce.ts       ← MOCK_WORKFORCE, MOCK_ROLES, MOCK_SUMMARY
-├── materials.ts       ← MOCK_MATERIALS, MOCK_UNITS, MOCK_SUMMARY
-├── equipment.ts       ← MOCK_EQUIPMENT, MOCK_SUMMARY
-├── tasks.ts           ← MOCK_ACTIVITIES, STATUS_LABELS
-├── occurrences.ts     ← MOCK_OCCURRENCES, IMPACT_OPTIONS
-├── observations.ts    ← QUICK_SUGGESTIONS
-├── photos.ts          ← MOCK_PHOTOS, PHOTO_TYPES
-├── reports.ts         ← MOCK_REPORTS
-└── pdf-data.ts        ← getMockRdoData (movido de pdf-generator)
-```
+| Ficheiro | Conteúdo |
+|----------|----------|
+| `src/mocks/projects.ts` | PROJECTS, MOCK_PROJECTS, MOCK_PROJECT_DETAIL, MOCK_PROJECT_INFO, MOCK_PROJECT_EDIT, MOCK_PROJECT_CREATED, MOCK_CONFIGURE_RDO, PROVINCES |
+| `src/mocks/rdo-context.ts` | MOCK_RDO_CONTEXT, MOCK_RDO, MOCK_RDO_REVIEW, MOCK_PREVIOUS_RDO, MOCK_SOURCE_RDO, MOCK_RDO_ACTIVE |
+| `src/mocks/rdo-sections.ts` | RDO_SECTIONS, RDO_SECTIONS_WITH_ROUTES, SECTION_ROUTES |
+| `src/mocks/workforce.ts` | MOCK_WORKFORCE, MOCK_WORKFORCE_SUMMARY, MOCK_ROLES, MOCK_WORKFORCE_DATA |
+| `src/mocks/materials.ts` | MOCK_MATERIALS_LIST, MOCK_MATERIALS_SUMMARY, MOCK_MATERIALS_OPTIONS, MOCK_UNITS, MATERIAL_STATUS_OPTIONS, MATERIAL_STATUS_LABELS, MOCK_MATERIALS_DATA |
+| `src/mocks/equipment.ts` | MOCK_EQUIPMENT, MOCK_EQUIPMENT_SUMMARY, MOCK_EQUIPMENT_OPTIONS, EQUIPMENT_STATUS_OPTIONS, EQUIPMENT_STATUS_LABELS, MOCK_EQUIPMENT_DATA |
+| `src/mocks/tasks.ts` | MOCK_ACTIVITIES, MOCK_TASKS_SUMMARY, MOCK_TASK_UNITS, TASK_STATUS_OPTIONS, TASK_STATUS_LABELS, TASK_SCREEN_STATUS_LABELS, MOCK_TASKS_DATA |
+| `src/mocks/occurrences.ts` | MOCK_OCCURRENCES, IMPACT_OPTIONS, MOCK_OCCURRENCES_DATA |
+| `src/mocks/observations.ts` | QUICK_SUGGESTIONS |
+| `src/mocks/photos.ts` | MOCK_PHOTOS, PHOTO_TYPES, MOCK_PHOTOS_DATA |
+| `src/mocks/reports.ts` | MOCK_REPORTS, MOCK_DASHBOARD_REPORTS, MOCK_RECENT_RDOS |
+| `src/mocks/reuse.tsx` | INITIAL_REUSABLE_ITEMS |
+| `src/mocks/index.ts` | Barrel export com todos os tipos |
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 
