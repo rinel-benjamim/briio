@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import { CirclePlus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { SecondaryButton } from "@/components/ui/SecondaryButton";
+import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SelectField } from "@/components/ui/Form/SelectField";
-import { StepperField } from "@/components/ui/Form/StepperField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
@@ -23,9 +23,11 @@ import type { EquipmentStatusOption } from "@/mocks";
 
 interface EquipmentFormProps {
   mode: "add" | "edit";
+  currentStep?: number;
+  totalSteps?: number;
 }
 
-export function EquipmentForm({ mode }: EquipmentFormProps) {
+export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: EquipmentFormProps) {
   const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId?: string }>();
 
   const editData = mode === "edit" ? MOCK_EQUIPMENT_DATA[equipmentId || "1"] : null;
@@ -39,11 +41,20 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
 
   const isCustomEquipment = equipment === "Outro";
 
+  const stepBadge = (
+    <View style={styles.stepBadge}>
+      <Text style={styles.stepBadgeText}>
+        {currentStep} de {totalSteps}
+      </Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <ScreenHeader
         title={mode === "add" ? "Adicionar equipamento" : "Editar equipamento"}
         onBack={() => router.back()}
+        rightSlot={stepBadge}
       />
 
       <ScrollView
@@ -54,8 +65,6 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
         <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>DADOS DO EQUIPAMENTO</Text>
-
           <SelectField
             label="Equipamento"
             value={isCustomEquipment ? customEquipment || "" : equipment}
@@ -75,54 +84,72 @@ export function EquipmentForm({ mode }: EquipmentFormProps) {
             />
           )}
 
-          <StepperField
-            label="Quantidade"
-            value={quantity}
-            onChange={setQuantity}
-            min={1}
-          />
-
-          <StepperField
-            label="Horas de utilização"
-            value={hours}
-            onChange={setHours}
-            min={1}
-            suffix="horas"
-          />
+          <View style={styles.fieldRow}>
+            <View style={styles.fieldHalf}>
+              <Field
+                label="Quantidade"
+                value={String(quantity)}
+                onChangeText={(v) => setQuantity(Number(v) || 1)}
+                keyboardType="numeric"
+                placeholder="1"
+              />
+            </View>
+            <View style={styles.fieldHalf}>
+              <Field
+                label="Horas de utilização"
+                value={String(hours)}
+                onChangeText={(v) => setHours(Number(v) || 1)}
+                keyboardType="numeric"
+                placeholder="8"
+              />
+            </View>
+          </View>
         </View>
 
         <SegmentedField
-          label="ESTADO"
+          label="Estado"
           value={status}
           options={EQUIPMENT_STATUS_OPTIONS}
           onChange={(v) => setStatus(v as EquipmentStatusOption)}
         />
 
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryText}>
-            {quantity} {quantity === 1 ? "unidade" : "unidades"}
-          </Text>
-          <Text style={styles.summaryMeta}>{hours} h de utilização</Text>
+          <View style={styles.summaryLeft}>
+            <Text style={styles.summaryTitle}>
+              {quantity} {quantity === 1 ? "unidade" : "unidades"}
+            </Text>
+            <Text style={styles.summarySubtitle}>{hours} h de utilização</Text>
+          </View>
           <Text style={styles.summaryStatus}>{EQUIPMENT_STATUS_LABELS[status]}</Text>
         </View>
 
         <TextArea
-          label="OBSERVAÇÃO"
+          label="Observação"
           value={observation}
           onChangeText={setObservation}
           placeholder="Ex.: Equipamento utilizado na preparação do terreno."
           height={80}
         />
 
-        <View style={styles.buttonSection}>
-          <PrimaryButton
-            label={mode === "add" ? "Guardar" : "Guardar alterações"}
-            onPress={() => router.back()}
-          />
-          <SecondaryButton label="Cancelar" onPress={() => router.back()} />
+        <View style={styles.saveReassurance}>
+          <AutosaveStatus />
         </View>
 
-        <AutosaveStatus />
+        <View style={styles.buttonSection}>
+          <PrimaryButton
+            label={mode === "add" ? "Adicionar equipamento" : "Guardar alterações"}
+            onPress={() => router.back()}
+            icon={<CirclePlus size={18} color={colors.textOnBrand} />}
+          />
+          <PressableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Cancelar"
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </PressableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -140,40 +167,79 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 8,
-    gap: 20,
+    gap: 18,
+  },
+  stepBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.progressTrack,
+  },
+  stepBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
   section: {
-    gap: 10,
+    gap: 7,
   },
-  sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+  fieldRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  fieldHalf: {
+    flex: 1,
   },
   summaryCard: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    padding: 14,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: colors.border,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius["2xl"],
+    padding: 16,
   },
-  summaryText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
+  summaryLeft: {
+    gap: 3,
   },
-  summaryMeta: {
-    ...typography.presets.bodySmall,
+  summaryTitle: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily,
+    color: colors.primaryHover,
+  },
+  summarySubtitle: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
   summaryStatus: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.success,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
+    color: colors.primary,
+  },
+  saveReassurance: {
+    alignItems: "flex-start",
   },
   buttonSection: {
-    gap: 12,
+    gap: 10,
+  },
+  cancelButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 48,
+  },
+  cancelText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
 });

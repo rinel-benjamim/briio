@@ -40,6 +40,7 @@ export interface OccurrenceData {
   location: string;
   description: string;
   impact: ImpactOption;
+  actionTaken: string;
 }
 
 export const MOCK_OCCURRENCES_DATA: Record<string, OccurrenceData> = {};

@@ -23,7 +23,9 @@ export const PHOTO_TYPES: { value: PhotoType; label: string }[] = [
 ];
 
 export interface PhotoData {
+  uri: string;
   caption: string;
+  location: string;
   type: PhotoType;
 }
 

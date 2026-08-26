@@ -7,7 +7,7 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Clock, ChevronDown } from "lucide-react-native";
+import { CirclePlus, Clock, ChevronDown } from "lucide-react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -16,7 +16,6 @@ import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
@@ -30,9 +29,11 @@ import type { ImpactOption } from "@/mocks";
 
 interface OccurrenceFormProps {
   mode: "add" | "edit";
+  currentStep?: number;
+  totalSteps?: number;
 }
 
-export function OccurrenceForm({ mode }: OccurrenceFormProps) {
+export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: OccurrenceFormProps) {
   const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
 
   const editData = mode === "edit" ? MOCK_OCCURRENCES_DATA[occId || "1"] : null;
@@ -67,11 +68,20 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
     }
   };
 
+  const stepBadge = (
+    <View style={styles.stepBadge}>
+      <Text style={styles.stepBadgeText}>
+        {currentStep} de {totalSteps}
+      </Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <ScreenHeader
         title={mode === "add" ? "Registar ocorrência" : "Editar ocorrência"}
         onBack={() => router.back()}
+        rightSlot={stepBadge}
       />
 
       <ScrollView
@@ -82,8 +92,6 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
         <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>DETALHES DA OCORRÊNCIA</Text>
-
           <Field
             label="Título"
             value={title}
@@ -128,29 +136,39 @@ export function OccurrenceForm({ mode }: OccurrenceFormProps) {
         </View>
 
         <SegmentedField
-          label="IMPACTO"
+          label="Impacto"
           value={impact}
           options={IMPACT_OPTIONS}
           onChange={(v) => setImpact(v as ImpactOption)}
         />
 
         <TextArea
-          label="MEDIDA TOMADA"
+          label="Medida tomada"
           value={actionTaken}
           onChangeText={setActionTaken}
           placeholder="Ex.: Trabalhos exteriores interrompidos durante aproximadamente 1 hora."
           height={88}
         />
 
-        <View style={styles.buttonSection}>
-          <PrimaryButton
-            label={mode === "add" ? "Guardar" : "Guardar alterações"}
-            onPress={() => router.back()}
-          />
-          <SecondaryButton label="Cancelar" onPress={() => router.back()} />
+        <View style={styles.saveReassurance}>
+          <AutosaveStatus />
         </View>
 
-        <AutosaveStatus />
+        <View style={styles.buttonSection}>
+          <PrimaryButton
+            label={mode === "add" ? "Registar ocorrência" : "Guardar alterações"}
+            onPress={() => router.back()}
+            icon={<CirclePlus size={18} color={colors.textOnBrand} />}
+          />
+          <PressableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Cancelar"
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </PressableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -168,28 +186,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 8,
-    gap: 20,
+    gap: 18,
+  },
+  stepBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.progressTrack,
+  },
+  stepBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
   section: {
-    gap: 12,
-  },
-  sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    gap: 7,
   },
   field: {
     gap: 8,
   },
   fieldLabel: {
-    ...typography.presets.label,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily,
     color: colors.textMain,
   },
   timeField: {
     flexDirection: "row",
     alignItems: "center",
-    height: 50,
+    height: 48,
     backgroundColor: colors.bgSurface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: 14,
@@ -202,7 +230,22 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     color: colors.textMain,
   },
+  saveReassurance: {
+    alignItems: "flex-start",
+  },
   buttonSection: {
-    gap: 12,
+    gap: 10,
+  },
+  cancelButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 48,
+  },
+  cancelText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
 });

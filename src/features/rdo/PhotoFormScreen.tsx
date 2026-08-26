@@ -7,14 +7,13 @@ import {
   Image,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Camera, Image as ImageIcon } from "lucide-react-native";
+import { CirclePlus, Camera, Image as ImageIcon } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { Field } from "@/components/ui/Form/Field";
 import {
@@ -26,9 +25,11 @@ import type { PhotoType } from "@/mocks";
 
 interface PhotoFormProps {
   mode: "add" | "edit";
+  currentStep?: number;
+  totalSteps?: number;
 }
 
-export function PhotoForm({ mode }: PhotoFormProps) {
+export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormProps) {
   const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
 
   const editData = mode === "edit" ? MOCK_PHOTOS_DATA[photoId || "1"] : null;
@@ -67,11 +68,20 @@ export function PhotoForm({ mode }: PhotoFormProps) {
     }
   };
 
+  const stepBadge = (
+    <View style={styles.stepBadge}>
+      <Text style={styles.stepBadgeText}>
+        {currentStep} de {totalSteps}
+      </Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <ScreenHeader
         title={mode === "add" ? "Adicionar fotografia" : "Editar fotografia"}
         onBack={() => router.back()}
+        rightSlot={stepBadge}
       />
 
       <ScrollView
@@ -102,8 +112,6 @@ export function PhotoForm({ mode }: PhotoFormProps) {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>IDENTIFICAÇÃO DA FOTOGRAFIA</Text>
-
           <Field
             label="Legenda"
             value={caption}
@@ -120,7 +128,7 @@ export function PhotoForm({ mode }: PhotoFormProps) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>TIPO</Text>
+          <Text style={styles.sectionLabel}>Tipo</Text>
           <View style={styles.typeRow}>
             {PHOTO_TYPES.map((type) => (
               <PressableOpacity
@@ -144,15 +152,25 @@ export function PhotoForm({ mode }: PhotoFormProps) {
           </View>
         </View>
 
+        <View style={styles.saveReassurance}>
+          <AutosaveStatus />
+        </View>
+
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar fotografia" : "Guardar alterações"}
             onPress={() => router.back()}
+            icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
-          <SecondaryButton label="Cancelar" onPress={() => router.back()} />
+          <PressableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Cancelar"
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </PressableOpacity>
         </View>
-
-        <AutosaveStatus />
       </ScrollView>
     </View>
   );
@@ -170,7 +188,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 8,
-    gap: 20,
+    gap: 18,
+  },
+  stepBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.progressTrack,
+  },
+  stepBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
   photoArea: {
     flexDirection: "row",
@@ -215,13 +246,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   section: {
-    gap: 12,
+    gap: 7,
   },
   sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily,
+    color: colors.textMain,
   },
   typeRow: {
     flexDirection: "row",
@@ -250,7 +282,22 @@ const styles = StyleSheet.create({
   typeOptionTextSelected: {
     color: colors.textOnBrand,
   },
+  saveReassurance: {
+    alignItems: "flex-start",
+  },
   buttonSection: {
-    gap: 12,
+    gap: 10,
+  },
+  cancelButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 48,
+  },
+  cancelText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
   },
 });
