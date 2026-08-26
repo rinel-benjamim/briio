@@ -25,10 +25,13 @@ export function StepperField({
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
-      <View style={styles.stepper}>
+      <View style={styles.stepper} accessibilityRole="adjustable" accessibilityLabel={`${label}: ${value}`}>
         <PressableOpacity
           style={styles.button}
           onPress={() => onChange(Math.max(min, value - step))}
+          accessibilityRole="button"
+          accessibilityLabel={`Diminuir ${label}`}
+          testID={`stepper-decrease-${label.toLowerCase().replace(/\s/g, "-")}`}
         >
           <Minus size={18} color={colors.textTertiary} />
         </PressableOpacity>
@@ -40,6 +43,9 @@ export function StepperField({
         <PressableOpacity
           style={styles.button}
           onPress={() => onChange(Math.min(max, value + step))}
+          accessibilityRole="button"
+          accessibilityLabel={`Aumentar ${label}`}
+          testID={`stepper-increase-${label.toLowerCase().replace(/\s/g, "-")}`}
         >
           <Plus size={18} color={colors.textTertiary} />
         </PressableOpacity>

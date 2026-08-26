@@ -9,7 +9,13 @@ interface SecondaryButtonProps {
 
 export function SecondaryButton({ label, onPress }: SecondaryButtonProps) {
   return (
-    <PressableOpacity style={styles.secondaryButton} onPress={onPress}>
+    <PressableOpacity
+      style={styles.secondaryButton}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      testID={`secondary-button-${label.toLowerCase().replace(/\s/g, "-")}`}
+    >
       <Text style={styles.secondaryButtonText}>{label}</Text>
     </PressableOpacity>
   );

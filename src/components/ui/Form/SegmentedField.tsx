@@ -23,7 +23,7 @@ export function SegmentedField({
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
-      <View style={styles.container}>
+      <View style={styles.container} accessibilityRole="radiogroup" accessibilityLabel={label}>
         {options.map((option) => (
           <PressableOpacity
             key={option.value}
@@ -32,6 +32,9 @@ export function SegmentedField({
               value === option.value && styles.optionSelected,
             ]}
             onPress={() => onChange(option.value)}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: value === option.value }}
+            testID={`segmented-${label.toLowerCase().replace(/\s/g, "-")}-${option.value}`}
           >
             <Text
               style={[

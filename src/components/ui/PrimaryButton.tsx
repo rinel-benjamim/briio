@@ -22,6 +22,10 @@ export function PrimaryButton({
       style={[styles.primaryButton, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: disabled || loading }}
+      testID={`primary-button-${label.toLowerCase().replace(/\s/g, "-")}`}
     >
       {loading ? (
         <ActivityIndicator size="small" color={colors.textOnBrand} />

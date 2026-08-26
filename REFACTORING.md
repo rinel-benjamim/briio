@@ -14,7 +14,7 @@
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ✅ Concluída |
 | 7 | Corrigir bugs e erros de estilo | ✅ Concluída |
 | 8 | Limpar código morto | ✅ Concluída |
-| 9 | Adicionar acessibilidade básica | ⏳ Pendente |
+| 9 | Adicionar acessibilidade básica | ✅ Concluída |
 | 10 | Atualizar AGENTS.md | ⏳ Pendente |
 
 ---
@@ -221,14 +221,46 @@
 
 ---
 
-## Fase 9 — Acessibilidade ⏳
+## Fase 9 — Acessibilidade ✅
 
 **Objetivo:** Nível mínimo para App Store.
 
-- `accessibilityLabel` em todos os elementos interativos
-- `accessibilityRole` (button, link, search)
-- `accessibilityState` (selected, disabled)
-- `testID` para testes
+### Alterações
+
+1. `PrimaryButton`:
+   - `accessibilityRole="button"`
+   - `accessibilityLabel={label}`
+   - `accessibilityState={{ disabled }}`
+   - `testID` gerado a partir do label
+
+2. `SecondaryButton`:
+   - `accessibilityRole="button"`
+   - `accessibilityLabel={label}`
+   - `testID` gerado a partir do label
+
+3. `Field`:
+   - `accessibilityLabel={label}`
+   - `testID` gerado a partir do label
+
+4. `StepperField`:
+   - `accessibilityRole="adjustable"` no container
+   - `accessibilityLabel` com valor atual
+   - Botões +/- com `accessibilityRole="button"` e labels descritivos
+   - `testID` em cada botão
+
+5. `SelectField`:
+   - `accessibilityRole="combobox"` no dropdown
+   - `accessibilityState={{ expanded }}`
+   - Opções com `accessibilityRole="button"` e `accessibilityState={{ selected }}`
+   - `testID` no dropdown e em cada opção
+
+6. `SegmentedField`:
+   - `accessibilityRole="radiogroup"` no container
+   - Opções com `accessibilityRole="radio"` e `accessibilityState={{ checked }}`
+   - `testID` em cada opção
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 

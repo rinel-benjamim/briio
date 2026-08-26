@@ -24,7 +24,14 @@ export function SelectField({
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
-      <PressableOpacity style={styles.dropdown} onPress={() => setIsOpen(!isOpen)}>
+      <PressableOpacity
+        style={styles.dropdown}
+        onPress={() => setIsOpen(!isOpen)}
+        accessibilityRole="combobox"
+        accessibilityLabel={`${label}: ${value || placeholder}`}
+        accessibilityState={{ expanded: isOpen }}
+        testID={`select-${label.toLowerCase().replace(/\s/g, "-")}`}
+      >
         <Text style={[styles.value, !value && styles.placeholder]}>
           {value || placeholder}
         </Text>
@@ -40,6 +47,9 @@ export function SelectField({
                 onSelect(option);
                 setIsOpen(false);
               }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: value === option }}
+              testID={`select-option-${option.toLowerCase().replace(/\s/g, "-")}`}
             >
               <Text style={styles.optionText}>{option}</Text>
             </PressableOpacity>

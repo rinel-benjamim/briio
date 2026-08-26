@@ -12,6 +12,8 @@ export function Field({ label, style, ...props }: FieldProps) {
       <TextInput
         style={[styles.input, style]}
         placeholderTextColor={colors.textSecondary}
+        accessibilityLabel={label}
+        testID={`field-${label.toLowerCase().replace(/\s/g, "-")}`}
         {...props}
       />
     </View>
