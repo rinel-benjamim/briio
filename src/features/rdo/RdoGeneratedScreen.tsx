@@ -112,7 +112,9 @@ export default function RdoGeneratedScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.successCard}>
-          <CheckCircle size={20} color={colors.success} />
+          <View style={styles.successIconContainer}>
+            <CheckCircle size={20} color="#FFFFFF" />
+          </View>
           <View style={styles.successInfo}>
             <Text style={styles.successTitle}>Relatório concluído</Text>
             <Text style={styles.successSubtitle}>
@@ -155,14 +157,6 @@ export default function RdoGeneratedScreen() {
         </View>
 
         <PrimaryButton
-          label={isGenerating ? "A gerar..." : "Abrir PDF"}
-          onPress={handleOpenPdf}
-          disabled={isGenerating}
-          loading={isGenerating}
-          icon={!isGenerating ? <FileSearch size={18} color={colors.textOnBrand} /> : undefined}
-        />
-
-        <PrimaryButton
           label={isSharing ? "A partilhar..." : "Partilhar PDF"}
           onPress={handleShare}
           disabled={isGenerating || isSharing}
@@ -170,13 +164,33 @@ export default function RdoGeneratedScreen() {
           icon={!isSharing ? <Share2 size={18} color={colors.textOnBrand} /> : undefined}
         />
 
-        <PrimaryButton
-          label={isPrinting ? "A imprimir..." : "Imprimir PDF"}
-          onPress={handlePrint}
-          disabled={isGenerating || isPrinting}
-          loading={isPrinting}
-          icon={!isPrinting ? <Printer size={18} color={colors.textOnBrand} /> : undefined}
-        />
+        <View style={styles.buttonRow}>
+          <PressableOpacity
+            style={styles.secondaryButton}
+            onPress={handleOpenPdf}
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <ActivityIndicator size="small" color={colors.textMuted} />
+            ) : (
+              <FileSearch size={16} color={colors.textMuted} />
+            )}
+            <Text style={styles.secondaryButtonText}>Abrir PDF</Text>
+          </PressableOpacity>
+
+          <PressableOpacity
+            style={styles.secondaryButton}
+            onPress={handlePrint}
+            disabled={isGenerating || isPrinting}
+          >
+            {isPrinting ? (
+              <ActivityIndicator size="small" color={colors.textMuted} />
+            ) : (
+              <Printer size={16} color={colors.textMuted} />
+            )}
+            <Text style={styles.secondaryButtonText}>Imprimir</Text>
+          </PressableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -203,6 +217,14 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius["2xl"],
     padding: 18,
     gap: 12,
+  },
+  successIconContainer: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.success,
+    justifyContent: "center",
+    alignItems: "center",
   },
   successInfo: {
     gap: 2,
@@ -313,5 +335,26 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  secondaryButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.bgSurface,
+    borderRadius: borderRadius["2xl"],
+    height: 56,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  secondaryButtonText: {
+    ...typography.presets.body,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textMuted,
   },
 });
