@@ -8,7 +8,7 @@
 |------|-----------|--------|
 | 1 | Extrair componentes UI partilhados | ✅ Concluída |
 | 2 | Consolidar mock data em `src/mocks/` | ✅ Concluída |
-| 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ⏳ Pendente |
+| 3 | Corrigir tipos (`ProjectStatus`, `statusConfig`) | ✅ Concluída |
 | 4 | Unificar Add/Edit screens (12 → 6) | ⏳ Pendente |
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ⏳ Pendente |
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ⏳ Pendente |
@@ -77,13 +77,32 @@
 
 ---
 
-## Fase 3 — Corrigir Tipos ⏳
+## Fase 3 — Corrigir Tipos ✅
 
 **Objetivo:** Type safety consistente.
 
-1. Remover `ProjectStatus` de `ProjectCard.tsx` — usar `types/database.ts`
-2. Criar `src/constants/statuses.ts` com configs partilhados
-3. Criar `StatusBadge` atualizado para usar status configs
+### Alterações
+
+1. Criado `src/constants/statuses.ts` com:
+   - `PROJECT_STATUS_CONFIG` (active/completed/archived)
+   - `PROJECT_STATUS_CONFIG_UPPERCASE` (ATIVA/CONCLUÍDA/ARQUIVADA)
+   - `RDO_STATUS_CONFIG` (draft/generated)
+   - Tipos `StatusConfig`, `RdoStatus`, `RdoStatusConfig`
+
+2. `ProjectCard.tsx`:
+   - Removido `ProjectStatus` local ("paused" → "archived")
+   - Importa de `@/types` (database type)
+   - Usa `PROJECT_STATUS_CONFIG` de `@/constants/statuses`
+
+3. `ProjectHeader.tsx`:
+   - Importa `ProjectStatus` de `@/types` (não de ProjectCard)
+   - Usa `PROJECT_STATUS_CONFIG_UPPERCASE`
+
+4. `src/constants/index.ts`:
+   - Adicionados exports de `statuses.ts`
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 

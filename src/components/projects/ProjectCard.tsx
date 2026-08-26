@@ -3,8 +3,10 @@ import { ChevronRight } from "lucide-react-native";
 import { router } from "expo-router";
 import { colors, typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import type { ProjectStatus } from "@/types";
+import { PROJECT_STATUS_CONFIG } from "@/constants/statuses";
 
-export type ProjectStatus = "active" | "completed" | "paused";
+export type { ProjectStatus };
 
 interface ProjectCardProps {
   id: string;
@@ -15,30 +17,6 @@ interface ProjectCardProps {
   onPress?: () => void;
 }
 
-const statusConfig: Record<
-  ProjectStatus,
-  { label: string; dotColor: string; bgColor: string; textColor: string }
-> = {
-  active: {
-    label: "Em andamento",
-    dotColor: "#16A34A",
-    bgColor: "#DCFCE7",
-    textColor: "#15803D",
-  },
-  completed: {
-    label: "Concluído",
-    dotColor: colors.textTertiary,
-    bgColor: "#F3F4F6",
-    textColor: colors.textSecondary,
-  },
-  paused: {
-    label: "Pausada",
-    dotColor: colors.warning,
-    bgColor: colors.warningBg,
-    textColor: colors.warning,
-  },
-};
-
 export function ProjectCard({
   id,
   name,
@@ -47,7 +25,7 @@ export function ProjectCard({
   status,
   onPress,
 }: ProjectCardProps) {
-  const config = statusConfig[status];
+  const config = PROJECT_STATUS_CONFIG[status];
 
   return (
     <PressableOpacity

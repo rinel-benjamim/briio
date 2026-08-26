@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { colors, typography } from "@/constants";
-import type { ProjectStatus } from "@/components/projects/ProjectCard";
+import type { ProjectStatus } from "@/types";
+import { PROJECT_STATUS_CONFIG_UPPERCASE } from "@/constants/statuses";
 
 interface ProjectHeaderProps {
   name: string;
@@ -8,32 +9,8 @@ interface ProjectHeaderProps {
   status: ProjectStatus;
 }
 
-const statusConfig: Record<
-  ProjectStatus,
-  { label: string; dotColor: string; bgColor: string; textColor: string }
-> = {
-  active: {
-    label: "ATIVA",
-    dotColor: "#16A34A",
-    bgColor: "#DCFCE7",
-    textColor: "#15803D",
-  },
-  completed: {
-    label: "CONCLUÍDA",
-    dotColor: colors.textTertiary,
-    bgColor: "#F3F4F6",
-    textColor: colors.textSecondary,
-  },
-  paused: {
-    label: "PAUSADA",
-    dotColor: colors.warning,
-    bgColor: colors.warningBg,
-    textColor: colors.warning,
-  },
-};
-
 export function ProjectHeader({ name, location, status }: ProjectHeaderProps) {
-  const config = statusConfig[status];
+  const config = PROJECT_STATUS_CONFIG_UPPERCASE[status];
 
   return (
     <View style={styles.container}>
