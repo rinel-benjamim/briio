@@ -13,7 +13,7 @@
 | 5 | Extrair Form Fields (Field, DateField, SelectField) | ✅ Concluída |
 | 6 | Criar RdoContext + corrigir rotas hardcoded | ✅ Concluída |
 | 7 | Corrigir bugs e erros de estilo | ✅ Concluída |
-| 8 | Limpar código morto | ⏳ Pendente |
+| 8 | Limpar código morto | ✅ Concluída |
 | 9 | Adicionar acessibilidade básica | ⏳ Pendente |
 | 10 | Atualizar AGENTS.md | ⏳ Pendente |
 
@@ -202,14 +202,22 @@
 
 ---
 
-## Fase 8 — Código Morto ⏳
+## Fase 8 — Código Morto ✅
 
 **Objetivo:** Remover o que não existe.
 
-- Apagar `src/features/dashboard/DashboardScreen.tsx`
-- Remover `getMockRdoData` de `pdf-generator.ts`
-- Limpar storage functions não usadas
-- Standardizar import patterns
+### Alterações
+
+1. Removido `src/features/dashboard/DashboardScreen.tsx`:
+   - Dashboard real está em `src/app/(tabs)/index.tsx`
+   - Diretório `src/features/dashboard/` removido
+
+2. Storage functions mantidas:
+   - `savePhotograph`, `deletePhotograph`, `getPhotographUri`, `savePdf`, `getPdfUri`, `deletePdf`, `deleteAllRdoData`
+   - Não usadas agora, mas fazem parte da arquitetura planejada para dados reais
+
+### Testes
+- ✅ TypeScript compilation: zero erros novos
 
 ---
 
