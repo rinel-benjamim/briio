@@ -240,17 +240,14 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Autosave — Weather (on select) + Observations (400ms debounce) com AutosaveIndicator
 - [x] Fase 3: Reutilização de RDO anterior (selecionar dados, copiar com transação)
 - [x] Fase 4: PDF com dados reais (HTML/CSS template, geração, partilha, impressão)
+- [x] Arquivar obra (alternativa a excluir)
+- [x] Fase 5: Testes unitários (28 tests — validation, uuid)
 
 ### Em progresso
-- [ ] Testes unitários
 - [ ] Testes de integração
 
 ### Pendente
-- [ ] Arquivar obra (alternativa a excluir)
-
-### Próximas fases
-- Fase 5: Qualidade (testes)
-- Fase 6: Beta (validação em obra real)
+- [ ] Fase 6: Beta (validação em obra real)
 
 ## 7. Dependências instaladas
 

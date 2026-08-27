@@ -1290,7 +1290,7 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 -   [x] Editar obra
 -   [x] Detalhes
 -   [x] Informações da obra
--   [ ] Arquivar obra
+-   [x] Arquivar obra
 -   [x] Repository layer (CRUD SQLite)
 -   [x] Validações
 
@@ -1335,7 +1335,7 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 
 ## Fase 5 --- Qualidade
 
--   [ ] Unit tests
+-   [x] Unit tests (28 tests — validation, uuid)
 -   [ ] Repository tests
 -   [ ] Integration tests
 -   [ ] E2E
