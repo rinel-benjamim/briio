@@ -16,6 +16,7 @@ import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -121,6 +122,7 @@ function DateField({
 }
 
 export default function EditProjectScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [name, setName] = useState(MOCK_PROJECT.name);

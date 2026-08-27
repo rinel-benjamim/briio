@@ -7,8 +7,9 @@ import {
   CheckCircle,
   FileDown,
 } from "lucide-react-native";
-import { typography } from "@/constants/typography";
 import { colors } from "@/constants";
+import { typography } from "@/constants/typography";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_RDO = {
@@ -38,6 +39,7 @@ const RDO_SECTIONS: SectionItem[] = [
 ];
 
 export default function ReviewRdoScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(9);

@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Plus, ChevronRight, Copy } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -28,16 +29,17 @@ const MOCK_ACTIVITIES: ActivityItem[] = [
   { id: "2", name: "Assentamento de revestimento", location: "Piso 1 — Bloco B", quantity: "85 m²", status: "concluido" },
 ];
 
-const STATUS_LABELS: Record<string, { label: string; color: string; bgColor: string }> = {
-  em_curso: { label: "Em curso", color: colors.warning, bgColor: colors.warningBg },
-  concluido: { label: "Concluído", color: colors.success, bgColor: colors.successBg },
-};
-
 export default function TasksScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(5);
   const totalSteps = 9;
   const fromReview = from === "review";
+
+  const STATUS_LABELS: Record<string, { label: string; color: string; bgColor: string }> = {
+    em_curso: { label: "Em curso", color: colors.warning, bgColor: colors.warningBg },
+    concluido: { label: "Concluído", color: colors.success, bgColor: colors.successBg },
+  };
 
   const handleContinue = () => {
     if (fromReview) {

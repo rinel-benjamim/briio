@@ -18,6 +18,7 @@ import {
   Percent,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -47,6 +48,7 @@ const MOCK_TASKS_DATA: Record<string, { description: string; location: string; q
 };
 
 export default function EditTaskScreen() {
+  const colors = useThemeColors();
   const { id, taskId } = useLocalSearchParams<{ id: string; taskId: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(5);

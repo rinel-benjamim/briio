@@ -3,6 +3,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeftCircle, CheckCircle } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_PROJECT = {
@@ -12,6 +13,7 @@ const MOCK_PROJECT = {
 };
 
 export default function ProjectCreatedScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
 

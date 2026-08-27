@@ -16,6 +16,7 @@ import {
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
 import { colors, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
@@ -31,6 +32,7 @@ import {
 } from "@/services/pdf-generator";
 
 export default function RdoGeneratedScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfHtml, setPdfHtml] = useState<string>("");

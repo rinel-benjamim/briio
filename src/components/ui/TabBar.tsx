@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography } from "@/constants";
-import { LinearGradient } from "expo-linear-gradient";
 
 import Animated, {
   useSharedValue,
@@ -29,11 +29,13 @@ function TabItem({
   onPress: () => void;
 }) {
   const colors = useThemeColors();
-  const opacity = useSharedValue(1);
   const bgProgress = useSharedValue(isActive ? 1 : 0);
 
+  useEffect(() => {
+    bgProgress.value = withTiming(isActive ? 1 : 0, { duration: 150 });
+  }, [isActive]);
+
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
     backgroundColor: interpolateColor(
       bgProgress.value,
       [0, 1],
@@ -43,16 +45,7 @@ function TabItem({
 
   return (
     <Animated.View style={[styles.tab, animatedStyle]}>
-      <Pressable
-        style={styles.tabInner}
-        onPress={onPress}
-        onPressIn={() => {
-          opacity.value = withTiming(0.7, { duration: 100 });
-        }}
-        onPressOut={() => {
-          opacity.value = withTiming(1, { duration: 200 });
-        }}
-      >
+      <Pressable style={styles.tabInner} onPress={onPress}>
         {icon}
         <Text style={[styles.label, isActive && { color: colors.primary, fontWeight: typography.fontWeight.bold }]}>
           {label}
@@ -67,12 +60,7 @@ export function CustomTabBar({ state, navigation, descriptors }: TabBarProps) {
   const colors = useThemeColors();
 
   return (
-    <LinearGradient
-      colors={[colors.bgSurface, colors.bgMain]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      style={[styles.container, { paddingBottom: insets.bottom + 8 }]}
-    >
+    <View style={[styles.container, { paddingBottom: insets.bottom + 8, backgroundColor: colors.bgSurface, borderTopColor: colors.border }]}>
       <View style={styles.bar}>
         {state.routes.map((route: any, index: number) => {
           const isActive = state.index === index;
@@ -92,7 +80,7 @@ export function CustomTabBar({ state, navigation, descriptors }: TabBarProps) {
           );
         })}
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -101,7 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(0,0,0,0.05)",
   },
   bar: {
     flexDirection: "row",

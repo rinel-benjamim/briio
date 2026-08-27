@@ -17,6 +17,7 @@ import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -108,6 +109,7 @@ function DateField({
 }
 
 export default function CreateProjectScreen() {
+  const colors = useThemeColors();
   const stepBadge = (
     <View style={styles.stepBadge}>
       <Text style={styles.stepBadgeText}>1 de 2</Text>

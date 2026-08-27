@@ -11,7 +11,8 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeft, Camera, Image as ImageIcon, Check } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
-import { colors } from "@/constants/colors";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
@@ -77,6 +78,7 @@ const MOCK_PHOTOS_DATA: Record<string, PhotoData> = {
 };
 
 export default function EditPhotoScreen() {
+  const colors = useThemeColors();
   const { id, photoId } = useLocalSearchParams<{ id: string; photoId: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(8);

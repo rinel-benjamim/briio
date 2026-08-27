@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -29,6 +30,7 @@ interface MaterialFormProps {
 }
 
 export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: MaterialFormProps) {
+  const colors = useThemeColors();
   const { id, materialId } = useLocalSearchParams<{ id: string; materialId?: string }>();
 
   const editData = mode === "edit" ? MOCK_MATERIALS_DATA[materialId || "1"] : null;

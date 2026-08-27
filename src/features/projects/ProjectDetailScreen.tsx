@@ -14,6 +14,7 @@ import {
   ArrowRight as ArrowRightIcon,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { InfoCard } from "@/components/projects/InfoCard";
@@ -45,19 +46,20 @@ const MOCK_RECENT_RDOS = [
   { id: "3", date: "09 Ago", number: 29, status: "generated" as const },
 ];
 
-const OVERFLOW_OPTIONS = [
-  { key: "info", label: "Informações da obra", icon: Info, color: colors.textMain },
-  { key: "new-rdo", label: "Novo RDO", icon: Plus, color: colors.textMain },
-  { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textMain },
-  { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.warning },
-];
-
 export default function ProjectDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { rdoId } = useRdo();
   const [overflowVisible, setOverflowVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+
+  const OVERFLOW_OPTIONS = [
+    { key: "info", label: "Informações da obra", icon: Info, color: colors.textMain },
+    { key: "new-rdo", label: "Novo RDO", icon: Plus, color: colors.textMain },
+    { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textMain },
+    { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.warning },
+  ];
 
   return (
     <View style={styles.container}>

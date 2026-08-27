@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -34,6 +35,7 @@ const MOCK_ROLES = [
 ];
 
 export default function AddWorkforceScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(2);

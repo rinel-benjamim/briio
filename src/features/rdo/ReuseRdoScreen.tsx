@@ -15,7 +15,8 @@ import {
   Camera,
   ArrowRight,
 } from "lucide-react-native";
-import { typography, borderRadius, colors } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 
@@ -44,26 +45,28 @@ interface DaySpecificItem {
   icon: React.ReactNode;
 }
 
-const INITIAL_REUSABLE_ITEMS: ReusableItem[] = [
-  { id: "1", title: "Mão de obra", summary: "7 trabalhadores · 56 h", icon: <Users size={18} color={colors.textMuted} />, selected: true },
-  { id: "2", title: "Atividades", summary: "2 atividades", icon: <ClipboardCheck size={18} color={colors.textMuted} />, selected: true },
-  { id: "3", title: "Materiais", summary: "3 registos", icon: <Package size={18} color={colors.textMuted} />, selected: true },
-  { id: "4", title: "Equipamentos", summary: "3 equipamentos", icon: <Wrench size={18} color={colors.textMuted} />, selected: true },
-];
-
-const DAY_SPECIFIC_ITEMS: DaySpecificItem[] = [
-  { id: "5", title: "Condições do dia", summary: "Será preenchido para hoje", icon: <CloudSun size={18} color={colors.textMuted} /> },
-  { id: "6", title: "Ocorrências", summary: "Será preenchido para hoje", icon: <TriangleAlert size={18} color={colors.textMuted} /> },
-  { id: "7", title: "Observações", summary: "Será preenchido para hoje", icon: <MessageSquare size={18} color={colors.textMuted} /> },
-  { id: "8", title: "Fotografias", summary: "Serão adicionadas para hoje", icon: <Camera size={18} color={colors.textMuted} /> },
-];
-
 export default function ReuseRdoScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { rdoId } = useRdo();
   const [step] = useState(1);
   const totalSteps = 2;
+
+  const INITIAL_REUSABLE_ITEMS: ReusableItem[] = [
+    { id: "1", title: "Mão de obra", summary: "7 trabalhadores · 56 h", icon: <Users size={18} color={colors.textMuted} />, selected: true },
+    { id: "2", title: "Atividades", summary: "2 atividades", icon: <ClipboardCheck size={18} color={colors.textMuted} />, selected: true },
+    { id: "3", title: "Materiais", summary: "3 registos", icon: <Package size={18} color={colors.textMuted} />, selected: true },
+    { id: "4", title: "Equipamentos", summary: "3 equipamentos", icon: <Wrench size={18} color={colors.textMuted} />, selected: true },
+  ];
+
+  const DAY_SPECIFIC_ITEMS: DaySpecificItem[] = [
+    { id: "5", title: "Condições do dia", summary: "Será preenchido para hoje", icon: <CloudSun size={18} color={colors.textMuted} /> },
+    { id: "6", title: "Ocorrências", summary: "Será preenchido para hoje", icon: <TriangleAlert size={18} color={colors.textMuted} /> },
+    { id: "7", title: "Observações", summary: "Será preenchido para hoje", icon: <MessageSquare size={18} color={colors.textMuted} /> },
+    { id: "8", title: "Fotografias", summary: "Serão adicionadas para hoje", icon: <Camera size={18} color={colors.textMuted} /> },
+  ];
+
   const [reusableItems, setReusableItems] = useState(INITIAL_REUSABLE_ITEMS);
 
   const toggleItem = (itemId: string) => {

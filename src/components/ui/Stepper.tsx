@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Minus, Plus } from "lucide-react-native";
-import * as Haptics from "expo-haptics";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography, borderRadius } from "@/constants";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
@@ -24,14 +23,12 @@ export function Stepper({
 
   const handleDecrement = () => {
     if (value > min) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       onChange(value - 1);
     }
   };
 
   const handleIncrement = () => {
     if (value < max) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       onChange(value + 1);
     }
   };

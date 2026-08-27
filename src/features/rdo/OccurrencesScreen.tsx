@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Plus, ChevronRight } from "lucide-react-native";
 import { colors, typography } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -39,6 +40,7 @@ const MOCK_OCCURRENCES: OccurrenceItem[] = [
 ];
 
 export default function OccurrencesScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(6);
   const totalSteps = 9;

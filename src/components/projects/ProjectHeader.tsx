@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import type { ProjectStatus } from "@/types";
 import { PROJECT_STATUS_CONFIG_UPPERCASE } from "@/constants/statuses";
 
@@ -10,6 +11,7 @@ interface ProjectHeaderProps {
 }
 
 export function ProjectHeader({ name, location, status }: ProjectHeaderProps) {
+  const colors = useThemeColors();
   const config = PROJECT_STATUS_CONFIG_UPPERCASE[status];
 
   return (

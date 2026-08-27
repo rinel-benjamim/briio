@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -28,6 +29,7 @@ interface EquipmentFormProps {
 }
 
 export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: EquipmentFormProps) {
+  const colors = useThemeColors();
   const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId?: string }>();
 
   const editData = mode === "edit" ? MOCK_EQUIPMENT_DATA[equipmentId || "1"] : null;

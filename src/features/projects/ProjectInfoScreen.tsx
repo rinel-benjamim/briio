@@ -10,6 +10,7 @@ import {
   CircleCheck,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_PROJECT = {
@@ -48,6 +49,7 @@ function Divider() {
 }
 
 export default function ProjectInfoScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
 

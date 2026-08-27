@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronRight, Plus, Copy } from "lucide-react-native";
 import { colors, typography, shadows } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -30,6 +31,7 @@ const MOCK_WORKFORCE: WorkforceItem[] = [
 ];
 
 export default function WorkforceScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(2);
   const totalSteps = 9;

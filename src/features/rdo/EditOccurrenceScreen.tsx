@@ -13,7 +13,8 @@ import { ArrowLeft, Clock, Check, ChevronDown } from "lucide-react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { colors } from "@/constants/colors";
+import { useThemeColors } from "@/contexts/ThemeContext";
+import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
@@ -64,6 +65,7 @@ const MOCK_OCCURRENCES_DATA: Record<string, OccurrenceData> = {
 };
 
 export default function EditOccurrenceScreen() {
+  const colors = useThemeColors();
   const { id, occId } = useLocalSearchParams<{ id: string; occId: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(6);

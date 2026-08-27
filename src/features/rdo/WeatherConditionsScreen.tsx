@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Sun, Cloud, CloudRain } from "lucide-react-native";
 import { colors, typography } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
@@ -84,6 +85,7 @@ function WeatherPeriod({ label, selected, onSelect }: WeatherPeriodProps) {
 }
 
 export default function WeatherConditionsScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(1);
   const totalSteps = 9;

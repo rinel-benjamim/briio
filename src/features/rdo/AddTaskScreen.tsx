@@ -18,6 +18,7 @@ import {
   Percent,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -42,6 +43,7 @@ const STATUS_LABELS: Record<StatusOption, string> = {
 };
 
 export default function AddTaskScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(5);

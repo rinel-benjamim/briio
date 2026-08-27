@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -20,6 +21,7 @@ interface WorkforceFormProps {
 }
 
 export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: WorkforceFormProps) {
+  const colors = useThemeColors();
   const { id, workforceId } = useLocalSearchParams<{ id: string; workforceId?: string }>();
 
   const editData = mode === "edit" ? MOCK_WORKFORCE_DATA[workforceId || "1"] : null;

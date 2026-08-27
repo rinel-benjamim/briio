@@ -26,8 +26,9 @@ import {
   Share2,
   Download,
 } from "lucide-react-native";
-import { typography } from "@/constants/typography";
 import { colors } from "@/constants";
+import { typography } from "@/constants/typography";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   generateRdoPdf,
@@ -45,16 +46,6 @@ type SectionItem = {
   route: string;
 };
 
-const RDO_SECTIONS: SectionItem[] = [
-  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: colors.primary, route: "weather" },
-  { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: colors.primary, route: "workforce" },
-  { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: colors.primary, route: "materials" },
-  { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: colors.primary, route: "equipment" },
-  { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: colors.primary, route: "tasks" },
-  { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: colors.warning, route: "occurrences" },
-  { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: colors.primary, route: "observations" },
-];
-
 const MOCK_PHOTOS = [
   { id: "1", caption: "Vista geral" },
   { id: "2", caption: "Fundação" },
@@ -63,9 +54,20 @@ const MOCK_PHOTOS = [
 ];
 
 export default function RdoDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [pdfLoading, setPdfLoading] = useState(false);
+
+  const RDO_SECTIONS: SectionItem[] = [
+    { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: colors.primary, route: "weather" },
+    { id: "2", name: "Mão de obra", summary: "7 trabalhadores", icon: Users, iconColor: colors.primary, route: "workforce" },
+    { id: "3", name: "Materiais", summary: "3 registos", icon: Package, iconColor: colors.primary, route: "materials" },
+    { id: "4", name: "Equipamentos", summary: "3 equipamentos", icon: Wrench, iconColor: colors.primary, route: "equipment" },
+    { id: "5", name: "Tarefas", summary: "2 atividades", icon: ClipboardCheck, iconColor: colors.primary, route: "tasks" },
+    { id: "6", name: "Ocorrências", summary: "2 ocorrências", icon: TriangleAlert, iconColor: colors.warning, route: "occurrences" },
+    { id: "7", name: "Observações", summary: "Preenchido", icon: MessageSquare, iconColor: colors.primary, route: "observations" },
+  ];
 
   async function handleOpenPdf() {
     try {

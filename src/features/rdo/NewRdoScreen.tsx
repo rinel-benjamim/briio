@@ -8,7 +8,8 @@ import {
   ArrowRight,
   Info,
 } from "lucide-react-native";
-import { typography, borderRadius, colors } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 
@@ -24,6 +25,7 @@ const MOCK_PREVIOUS_RDO = {
 };
 
 export default function NewRdoScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { rdoId } = useRdo();

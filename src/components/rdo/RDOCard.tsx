@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-import { GradientCard } from "@/components/ui/GradientCard";
 
 interface RDOCardProps {
   date: string;
@@ -31,48 +30,39 @@ export function RDOCard({
 
   return (
     <View style={styles.container}>
-      <PressableOpacity onPress={onContinue}>
-        <GradientCard
-          colors={[colors.heroBg, colors.bgElevated]}
-          style={styles.card}
-        >
-          {/* Header: label + status badge */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <Text style={[styles.headerLabel, { color: colors.primaryLight }]}>RDO de hoje</Text>
-              <Text style={[styles.headerDate, { color: colors.textOnBrand }]}>{date}</Text>
-            </View>
-            <View style={[styles.statusBadge, { backgroundColor: colors.warningBg }]}>
-              <Text style={[styles.statusText, { color: colors.warning }]}>Em andamento</Text>
-            </View>
+      <PressableOpacity style={[styles.card, { backgroundColor: colors.heroBg }]} onPress={onContinue}>
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.headerLabel, { color: colors.primary }]}>RDO de hoje</Text>
+            <Text style={[styles.headerDate, { color: colors.textMain }]}>{date}</Text>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: colors.warningBg }]}>
+            <Text style={[styles.statusText, { color: colors.warning }]}>Em andamento</Text>
+          </View>
+        </View>
+
+        <View style={styles.completionSection}>
+          <View style={styles.completionRow}>
+            <Text style={[styles.completionPercent, { color: colors.textMain }]}>{progressPercentage}%</Text>
+            {progressLabel && (
+              <Text style={[styles.completionSteps, { color: colors.primary }]}>{progressLabel}</Text>
+            )}
           </View>
 
-          {/* Completion data */}
-          <View style={styles.completionSection}>
-            <View style={styles.completionRow}>
-              <Text style={[styles.completionPercent, { color: colors.textOnBrand }]}>{progressPercentage}%</Text>
-              {progressLabel && (
-                <Text style={[styles.completionSteps, { color: colors.primaryLight }]}>{progressLabel}</Text>
-              )}
-            </View>
-
-            {/* Progress bar */}
-            <View style={[styles.progressTrack, { backgroundColor: colors.progressTrack }]}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${progressPercentage}%`, backgroundColor: colors.primary },
-                ]}
-              />
-            </View>
+          <View style={[styles.progressTrack, { backgroundColor: colors.progressTrack }]}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${progressPercentage}%`, backgroundColor: colors.primary },
+              ]}
+            />
           </View>
+        </View>
 
-          {/* CTA Button */}
-          <View style={[styles.ctaButton, { backgroundColor: colors.primary }]}>
-            <Text style={[styles.ctaText, { color: colors.textOnBrand }]}>Continuar relatório</Text>
-            <ArrowRight size={18} color={colors.textOnBrand} />
-          </View>
-        </GradientCard>
+        <View style={[styles.ctaButton, { backgroundColor: colors.primary }]}>
+          <Text style={[styles.ctaText, { color: colors.textOnBrand }]}>Continuar relatório</Text>
+          <ArrowRight size={18} color={colors.textOnBrand} />
+        </View>
       </PressableOpacity>
     </View>
   );
@@ -83,13 +73,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
+    borderRadius: 24,
     padding: 20,
     gap: 16,
-    shadowColor: "#10201A",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
   },
   header: {
     flexDirection: "row",
@@ -149,11 +135,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     height: 56,
     gap: 10,
-    shadowColor: "#10201A",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
   },
   ctaText: {
     ...typography.presets.h3,

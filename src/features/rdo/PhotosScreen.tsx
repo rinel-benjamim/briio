@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Camera, X } from "lucide-react-native";
 import { colors, typography } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -26,6 +27,7 @@ const INITIAL_PHOTOS: PhotoItem[] = [
 ];
 
 export default function PhotosScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(8);
   const totalSteps = 9;

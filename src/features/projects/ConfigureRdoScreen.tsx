@@ -11,6 +11,7 @@ import {
   Info,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_PROJECT = {
@@ -42,6 +43,7 @@ function RadioOption({ selected, label, sublabel, onPress }: RadioOptionProps) {
 }
 
 export default function ConfigureRdoScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(2);

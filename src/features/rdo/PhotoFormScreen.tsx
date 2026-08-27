@@ -10,6 +10,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus, Camera, Image as ImageIcon } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -30,6 +31,7 @@ interface PhotoFormProps {
 }
 
 export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormProps) {
+  const colors = useThemeColors();
   const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
 
   const editData = mode === "edit" ? MOCK_PHOTOS_DATA[photoId || "1"] : null;

@@ -10,7 +10,8 @@ import {
   ArrowRight,
   Eye,
 } from "lucide-react-native";
-import { typography, borderRadius, colors } from "@/constants";
+import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_RDO = {
@@ -57,6 +58,7 @@ const SECTION_ROUTES: Record<string, string> = {
 const SECTION_ORDER = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
 export default function RdoOverviewScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
 

@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -56,6 +57,7 @@ const MOCK_EQUIPMENT_DATA: Record<string, { equipment: string; quantity: number;
 };
 
 export default function EditEquipmentScreen() {
+  const colors = useThemeColors();
   const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId: string }>();
   const insets = useSafeAreaInsets();
   const [step] = useState(4);

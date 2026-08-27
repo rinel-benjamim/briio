@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 
 type BadgeVariant = "success" | "warning" | "info" | "default";
 
@@ -9,18 +10,20 @@ interface StatusBadgeProps {
   uppercase?: boolean;
 }
 
-const VARIANT_COLORS: Record<BadgeVariant, { bg: string; text: string }> = {
-  success: { bg: colors.successBg, text: colors.success },
-  warning: { bg: colors.warningBg, text: colors.warning },
-  info: { bg: colors.primaryLight, text: colors.primary },
-  default: { bg: "#F4F6F4", text: colors.textMuted },
-};
-
 export function StatusBadge({
   label,
   variant = "default",
   uppercase = false,
 }: StatusBadgeProps) {
+  const colors = useThemeColors();
+
+  const VARIANT_COLORS: Record<BadgeVariant, { bg: string; text: string }> = {
+    success: { bg: colors.successBg, text: colors.success },
+    warning: { bg: colors.warningBg, text: colors.warning },
+    info: { bg: colors.primaryLight, text: colors.primary },
+    default: { bg: "#F4F6F4", text: colors.textMuted },
+  };
+
   const variantColors = VARIANT_COLORS[variant];
   return (
     <View style={[styles.badge, { backgroundColor: variantColors.bg }]}>

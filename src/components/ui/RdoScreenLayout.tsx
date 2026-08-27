@@ -3,12 +3,11 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "@/constants/colors";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography } from "@/constants/typography";
 import { ScreenHeader } from "./ScreenHeader";
 import { AutosaveStatus } from "./AutosaveStatus";
@@ -39,15 +38,15 @@ export function RdoScreenLayout({
   children,
 }: RdoScreenLayoutProps) {
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.bgSurface }]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        {/* Fixed Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: colors.bgSurface, borderBottomColor: colors.border }]}>
           <ScreenHeader
             title={title}
             onBack={onBack}
@@ -63,9 +62,8 @@ export function RdoScreenLayout({
           />
         </View>
 
-        {/* Scrollable Content */}
         <ScrollView
-          style={styles.scrollView}
+          style={[styles.scrollView, { backgroundColor: colors.bgMain }]}
           contentContainerStyle={[
             styles.content,
             { paddingBottom: insets.bottom + 100 },
@@ -75,12 +73,11 @@ export function RdoScreenLayout({
           {children}
         </ScrollView>
 
-        {/* Fixed Footer */}
         {onContinue && (
           <View
             style={[
               styles.footer,
-              { paddingBottom: insets.bottom + 12 },
+              { backgroundColor: colors.bgSurface, borderTopColor: colors.border, paddingBottom: insets.bottom + 12 },
             ]}
           >
             {showAutosave && <AutosaveStatus />}
@@ -99,19 +96,15 @@ export function RdoScreenLayout({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.bgSurface,
   },
   flex: {
     flex: 1,
   },
   header: {
-    backgroundColor: colors.bgSurface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: colors.bgMain,
   },
   content: {
     paddingHorizontal: 20,
@@ -119,9 +112,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   footer: {
-    backgroundColor: colors.bgSurface,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
     paddingHorizontal: 20,
     paddingTop: 12,
     gap: 8,

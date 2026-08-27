@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Info } from "lucide-react-native";
 import { colors, typography } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -20,6 +21,7 @@ const QUICK_SUGGESTIONS = [
 const MAX_CHARS = 1000;
 
 export default function ObservationsScreen() {
+  const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const [step] = useState(7);
   const totalSteps = 9;

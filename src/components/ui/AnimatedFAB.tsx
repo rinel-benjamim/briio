@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 import { Plus } from "lucide-react-native";
-import * as Haptics from "expo-haptics";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import Animated, {
   useSharedValue,
@@ -23,16 +22,15 @@ export function AnimatedFAB({ onPress, bottomOffset = 24 }: AnimatedFABProps) {
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    scale.value = withSpring(0.95, { damping: 20, stiffness: 300 });
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, { damping: 20, stiffness: 300 });
   };
 
   return (
-    <Animated.View style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }, animatedStyle]}>
+    <Animated.View style={[styles.fab, { bottom: bottomOffset, backgroundColor: colors.primary, shadowColor: colors.primary }, animatedStyle]}>
       <Pressable
         style={styles.fabInner}
         onPress={onPress}

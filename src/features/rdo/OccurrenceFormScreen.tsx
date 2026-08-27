@@ -12,6 +12,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -34,6 +35,7 @@ interface OccurrenceFormProps {
 }
 
 export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: OccurrenceFormProps) {
+  const colors = useThemeColors();
   const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
 
   const editData = mode === "edit" ? MOCK_OCCURRENCES_DATA[occId || "1"] : null;

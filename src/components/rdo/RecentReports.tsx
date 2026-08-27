@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
 import { colors, typography, borderRadius, shadows } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RecentReport {
@@ -19,29 +20,31 @@ interface RecentReportsProps {
   onReportPress?: (id: string) => void;
 }
 
-const statusConfig = {
-  draft: {
-    label: "Rascunho",
-    color: colors.warning,
-    bg: colors.warningBg,
-  },
-  completed: {
-    label: "Concluído",
-    color: colors.success,
-    bg: colors.successBg,
-  },
-  generated: {
-    label: "Gerado",
-    color: colors.success,
-    bg: colors.successBg,
-  },
-};
-
 export function RecentReports({
   reports,
   onViewAll,
   onReportPress,
 }: RecentReportsProps) {
+  const colors = useThemeColors();
+
+  const statusConfig = {
+    draft: {
+      label: "Rascunho",
+      color: colors.warning,
+      bg: colors.warningBg,
+    },
+    completed: {
+      label: "Concluído",
+      color: colors.success,
+      bg: colors.successBg,
+    },
+    generated: {
+      label: "Gerado",
+      color: colors.success,
+      bg: colors.successBg,
+    },
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

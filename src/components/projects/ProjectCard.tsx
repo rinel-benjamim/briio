@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import { router } from "expo-router";
 import { colors, typography, borderRadius, shadows } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import type { ProjectStatus } from "@/types";
 import { PROJECT_STATUS_CONFIG } from "@/constants/statuses";
@@ -25,6 +26,7 @@ export function ProjectCard({
   status,
   onPress,
 }: ProjectCardProps) {
+  const colors = useThemeColors();
   const config = PROJECT_STATUS_CONFIG[status];
 
   return (

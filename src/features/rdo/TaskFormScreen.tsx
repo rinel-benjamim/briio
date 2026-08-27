@@ -9,6 +9,7 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus, Minus, Plus } from "lucide-react-native";
 import { colors, typography, borderRadius } from "@/constants";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -34,6 +35,7 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProps) {
+  const colors = useThemeColors();
   const { id, taskId } = useLocalSearchParams<{ id: string; taskId?: string }>();
 
   const editData = mode === "edit" ? MOCK_TASKS_DATA[taskId || "1"] : null;
