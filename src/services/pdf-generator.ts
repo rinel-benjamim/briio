@@ -2,6 +2,16 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 import { getPdfsDir } from "@/storage/filesystem";
+import { useRdoRepository } from "@/repositories/rdo.repository";
+import { useProjectRepository } from "@/repositories/project.repository";
+import { useWeatherRepository } from "@/repositories/weather.repository";
+import { useWorkforceRepository } from "@/repositories/workforce.repository";
+import { useMaterialRepository } from "@/repositories/material.repository";
+import { useEquipmentRepository } from "@/repositories/equipment.repository";
+import { useTaskRepository } from "@/repositories/task.repository";
+import { useOccurrenceRepository } from "@/repositories/occurrence.repository";
+import { useObservationRepository } from "@/repositories/observation.repository";
+import { usePhotographRepository } from "@/repositories/photograph.repository";
 
 export type RdoData = {
   number: string;
@@ -47,6 +57,113 @@ export type RdoData = {
     type: string;
   }[];
 };
+
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+const WEATHER_LABELS: Record<string, string> = {
+  sunny: "Ensolarado",
+  cloudy: "Nublado",
+  rain: "Chuvoso",
+};
+
+const TASK_STATUS_LABELS: Record<string, string> = {
+  in_progress: "Em execução",
+  completed: "Concluída",
+  paused: "Parada",
+};
+
+const OCCURRENCE_IMPACT_LABELS: Record<string, string> = {
+  none: "Sem impacto",
+  low: "Leve",
+  relevant: "Relevante",
+  stoppage: "Paragem",
+};
+
+export function useRdoDataFetcher() {
+  const rdoRepo = useRdoRepository();
+  const projectRepo = useProjectRepository();
+  const weatherRepo = useWeatherRepository();
+  const workforceRepo = useWorkforceRepository();
+  const materialRepo = useMaterialRepository();
+  const equipmentRepo = useEquipmentRepository();
+  const taskRepo = useTaskRepository();
+  const occurrenceRepo = useOccurrenceRepository();
+  const observationRepo = useObservationRepository();
+  const photographRepo = usePhotographRepository();
+
+  async function fetchRdoData(rdoId: string): Promise<RdoData> {
+    const rdo = await rdoRepo.findById(rdoId);
+    if (!rdo) throw new Error("RDO não encontrado");
+
+    const project = await projectRepo.findById(rdo.project_id);
+
+    const [weather, workforce, materials, equipment, tasks, occurrences, observation, photos] = await Promise.all([
+      weatherRepo.findByRdoId(rdoId),
+      workforceRepo.findByRdoId(rdoId),
+      materialRepo.findByRdoId(rdoId),
+      equipmentRepo.findByRdoId(rdoId),
+      taskRepo.findByRdoId(rdoId),
+      occurrenceRepo.findByRdoId(rdoId),
+      observationRepo.findByRdoId(rdoId),
+      photographRepo.findByRdoId(rdoId),
+    ]);
+
+    const weatherData: RdoData["weather"] = {};
+    for (const w of weather) {
+      const label = w.condition ? (WEATHER_LABELS[w.condition] || w.condition) : "Não definido";
+      if (w.period === "morning") weatherData.morning = label;
+      if (w.period === "afternoon") weatherData.afternoon = label;
+      if (w.period === "night") weatherData.night = label;
+    }
+
+    const totalWorkers = workforce.reduce((sum, w) => sum + w.people_count, 0);
+    const totalHours = workforce.reduce((sum, w) => sum + w.total_hours, 0);
+
+    return {
+      number: `RDO #${String(rdo.number).padStart(3, "0")}`,
+      date: formatReportDate(rdo.report_date),
+      projectName: project?.name || "Obra",
+      projectLocation: project?.location || "",
+      author: project?.responsible_name || "",
+      weather: Object.keys(weatherData).length > 0 ? weatherData : undefined,
+      workforce: workforce.length > 0 ? { totalWorkers, totalHours } : undefined,
+      materials: materials.map((m) => ({
+        name: m.material,
+        quantity: String(m.quantity),
+        unit: m.unit || "",
+      })),
+      equipment: equipment.map((e) => ({
+        name: e.equipment,
+        quantity: e.quantity,
+        state: e.status || "",
+      })),
+      tasks: tasks.map((t) => ({
+        description: t.description,
+        location: t.location || "",
+        progress: t.progress_percentage,
+        state: TASK_STATUS_LABELS[t.status] || t.status,
+      })),
+      occurrences: occurrences.map((o) => ({
+        title: o.title,
+        time: o.occurred_at ? new Date(o.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "",
+        location: o.location || "",
+        description: o.description || "",
+        impact: OCCURRENCE_IMPACT_LABELS[o.impact] || o.impact,
+      })),
+      observations: observation?.content || undefined,
+      photos: photos.map((p) => ({
+        caption: p.caption || "",
+        type: p.type || "",
+      })),
+    };
+  }
+
+  return { fetchRdoData };
+}
 
 export function generateHtml(data: RdoData): string {
   const weatherRows = data.weather
@@ -268,7 +385,7 @@ export function generateHtml(data: RdoData): string {
 export async function generateRdoPdf(data: RdoData): Promise<string> {
   const html = generateHtml(data);
 
-  const { base64, numberOfPages } = await Print.printToFileAsync({
+  const { base64 } = await Print.printToFileAsync({
     html,
     base64: true,
   });
@@ -318,72 +435,4 @@ export async function getRdoPdfSize(pdfUri: string): Promise<string> {
   } catch {
     return "Desconhecido";
   }
-}
-
-export function getMockRdoData(): RdoData {
-  return {
-    number: "RDO #032",
-    date: "12 Agosto 2026",
-    projectName: "Reabilitação Pedrinhas",
-    projectLocation: "Zango 1 — Icolo e Bengo",
-    author: "Kiali Rodrigues",
-    weather: {
-      morning: "Ensolarado, 28°C",
-      afternoon: "Parcialmente nublado, 32°C",
-      night: "Limpo, 22°C",
-    },
-    workforce: {
-      totalWorkers: 7,
-      totalHours: 56,
-    },
-    materials: [
-      { name: "Cimento CP II", quantity: "50", unit: "sacos" },
-      { name: "Areia média", quantity: "10", unit: "m³" },
-      { name: "Brita 1", quantity: "8", unit: "m³" },
-    ],
-    equipment: [
-      { name: "Betoneira 400L", quantity: 1, state: "Bom" },
-      { name: "Retroescavadeira", quantity: 1, state: "Bom" },
-    ],
-    tasks: [
-      {
-        description: "Fundação da laje de estacionamento",
-        location: "Bloco A — Setor 1",
-        progress: 75,
-        state: "Em execução",
-      },
-      {
-        description: "Instalação de tubulação sanitária",
-        location: "Bloco B — Setor 2",
-        progress: 40,
-        state: "Em execução",
-      },
-    ],
-    occurrences: [
-      {
-        title: "Atraso no fornecimento de Areia",
-        time: "08:30",
-        location: "Entrada do canteiro",
-        description:
-          "O fornecedor de areia indicou atraso de 2h devido a trânsito na EN100.",
-        impact: "Leve",
-      },
-      {
-        title: "Chuva intensa no período da tarde",
-        time: "14:00",
-        location: "Canteiro geral",
-        description:
-          "Chuva forte durou 1h30, interrompendo trabalhos no exterior.",
-        impact: "Moderado",
-      },
-    ],
-    observations:
-      "Canteiro de obras em pleno funcionamento. Nenhuma ocorrência de segurança registada. Previsão de conclusão da fundação da laje até sexta-feira.",
-    photos: [
-      { caption: "Vista geral do canteiro", type: "Geral" },
-      { caption: "Fundação Bloco A", type: "Progresso" },
-      { caption: "Tubulação Bloco B", type: "Progresso" },
-      { caption: "Equipe de trabalhadores", type: "Equipe" },
-    ],
-  };
 }

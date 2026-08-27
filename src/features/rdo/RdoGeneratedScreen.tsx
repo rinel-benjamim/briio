@@ -20,6 +20,7 @@ import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import {
   generateRdoPdf,
   generateHtml,
@@ -27,13 +28,21 @@ import {
   openRdoPdf,
   printRdoPdf,
   getRdoPdfSize,
-  getMockRdoData,
+  useRdoDataFetcher,
   type RdoData,
 } from "@/services/pdf-generator";
+
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 export default function RdoGeneratedScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { fetchRdoData } = useRdoDataFetcher();
+  const [rdoData, setRdoData] = useState<RdoData | null>(null);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfHtml, setPdfHtml] = useState<string>("");
   const [pdfSize, setPdfSize] = useState<string>("...");
@@ -42,13 +51,14 @@ export default function RdoGeneratedScreen() {
   const [isPrinting, setIsPrinting] = useState(false);
 
   useEffect(() => {
-    generatePdf();
-  }, []);
+    if (id) generatePdf();
+  }, [id]);
 
   async function generatePdf() {
     try {
       setIsGenerating(true);
-      const data: RdoData = getMockRdoData();
+      const data = await fetchRdoData(id!);
+      setRdoData(data);
       const html = generateHtml(data);
       setPdfHtml(html);
       const uri = await generateRdoPdf(data);
@@ -264,6 +274,8 @@ export default function RdoGeneratedScreen() {
     },
   }));
 
+  if (isGenerating && !rdoData) return <LoadingScreen />;
+
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -289,10 +301,10 @@ export default function RdoGeneratedScreen() {
         </View>
 
         <View style={styles.reportIdentity}>
-          <Text style={styles.reportNumber}>RDO #032</Text>
-          <Text style={styles.reportDate}>12 Agosto 2026</Text>
-          <Text style={styles.reportProject}>Reabilitação Pedrinhas</Text>
-          <Text style={styles.reportLocation}>Zango 1 — Icolo e Bengo</Text>
+          <Text style={styles.reportNumber}>{rdoData?.number || "RDO"}</Text>
+          <Text style={styles.reportDate}>{rdoData?.date || ""}</Text>
+          <Text style={styles.reportProject}>{rdoData?.projectName || ""}</Text>
+          <Text style={styles.reportLocation}>{rdoData?.projectLocation || ""}</Text>
           <View style={styles.reportFile}>
             <Text style={styles.fileText}>PDF · {pdfSize}</Text>
           </View>

@@ -33,7 +33,7 @@ import {
   generateRdoPdf,
   shareRdoPdf,
   openRdoPdf,
-  getMockRdoData,
+  useRdoDataFetcher,
 } from "@/services/pdf-generator";
 
 type SectionItem = {
@@ -57,6 +57,7 @@ export default function RdoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [pdfLoading, setPdfLoading] = useState(false);
+  const { fetchRdoData } = useRdoDataFetcher();
 
   const RDO_SECTIONS: SectionItem[] = [
     { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", icon: CloudSun, iconColor: colors.primary, route: "weather" },
@@ -71,7 +72,7 @@ export default function RdoDetailScreen() {
   async function handleOpenPdf() {
     try {
       setPdfLoading(true);
-      const data = getMockRdoData();
+      const data = await fetchRdoData(id!);
       const pdfUri = await generateRdoPdf(data);
       await openRdoPdf(pdfUri);
     } catch (error: unknown) {
@@ -85,7 +86,7 @@ export default function RdoDetailScreen() {
   async function handleShare() {
     try {
       setPdfLoading(true);
-      const data = getMockRdoData();
+      const data = await fetchRdoData(id!);
       const pdfUri = await generateRdoPdf(data);
       await shareRdoPdf(pdfUri);
     } catch (error: unknown) {
@@ -99,7 +100,7 @@ export default function RdoDetailScreen() {
   async function handleSave() {
     try {
       setPdfLoading(true);
-      const data = getMockRdoData();
+      const data = await fetchRdoData(id!);
       const pdfUri = await generateRdoPdf(data);
       Alert.alert("Guardado", `PDF guardado em:\n${pdfUri}`);
     } catch (error: unknown) {
