@@ -9,6 +9,7 @@ import {
   Pencil,
   Plus,
   Trash2,
+  Archive,
   X,
   Info,
   ArrowRight as ArrowRightIcon,
@@ -32,9 +33,10 @@ export default function ProjectDetailScreen() {
   const { rdoId } = useRdo();
   const [overflowVisible, setOverflowVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [archiveConfirmVisible, setArchiveConfirmVisible] = useState(false);
 
   const { project, loading: projectLoading } = useProject(id ?? null);
-  const { remove } = useProjects();
+  const { remove, archive } = useProjects();
   const { rdos, loading: rdosLoading } = useRdoList(id ?? undefined);
 
   const loading = projectLoading || rdosLoading;
@@ -62,6 +64,7 @@ export default function ProjectDetailScreen() {
     { key: "info", label: "Informações da obra", icon: Info, color: colors.textMain },
     { key: "new-rdo", label: "Novo RDO", icon: Plus, color: colors.textMain },
     { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textMain },
+    { key: "archive", label: "Arquivar obra", icon: Archive, color: colors.primary },
     { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.warning },
   ];
 
@@ -276,6 +279,19 @@ export default function ProjectDetailScreen() {
       fontWeight: typography.fontWeight.medium,
       color: colors.textOnBrand,
     },
+    archiveButton: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: colors.primary,
+    },
+    archiveButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textOnBrand,
+    },
   }));
 
   if (loading) return <LoadingScreen />;
@@ -422,6 +438,8 @@ export default function ProjectDetailScreen() {
                     router.push(`/(tabs)/reports/new`);
                   } else if (option.key === "edit") {
                     router.push(`/(tabs)/projects/${id}/edit`);
+                  } else if (option.key === "archive") {
+                    setArchiveConfirmVisible(true);
                   } else if (option.key === "delete") {
                     setDeleteConfirmVisible(true);
                   }
@@ -472,6 +490,47 @@ export default function ProjectDetailScreen() {
                 }}
               >
                 <Text style={styles.deleteButtonText}>Excluir</Text>
+              </PressableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={archiveConfirmVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setArchiveConfirmVisible(false)}
+      >
+        <Pressable
+          style={styles.overlay}
+          onPress={() => setArchiveConfirmVisible(false)}
+        >
+          <View style={styles.confirmSheet}>
+            <Text style={[styles.confirmTitle, { color: colors.primary }]}>Arquivar obra</Text>
+            <Text style={styles.confirmText}>
+              A obra será arquivada e deixará de aparecer na lista principal. Poderá reativá-la mais tarde.
+            </Text>
+            <View style={styles.confirmActions}>
+              <PressableOpacity
+                style={styles.cancelButton}
+                onPress={() => setArchiveConfirmVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </PressableOpacity>
+              <PressableOpacity
+                style={styles.archiveButton}
+                onPress={async () => {
+                  setArchiveConfirmVisible(false);
+                  try {
+                    await archive(id!);
+                    router.replace("/(tabs)/projects");
+                  } catch (e: any) {
+                    Alert.alert("Erro", e.message || "Erro ao arquivar obra");
+                  }
+                }}
+              >
+                <Text style={styles.archiveButtonText}>Arquivar</Text>
               </PressableOpacity>
             </View>
           </View>
