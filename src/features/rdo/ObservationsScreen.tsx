@@ -8,6 +8,7 @@ import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { AutosaveIndicator } from "@/components/ui/AutosaveStatus";
 import { useRdo } from "@/contexts/RdoContext";
 import { useObservationRepository } from "@/repositories/observation.repository";
 
@@ -30,6 +31,7 @@ export default function ObservationsScreen() {
 
   const [observation, setObservation] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   useEffect(() => {
     if (!id || loaded) return;
@@ -43,9 +45,16 @@ export default function ObservationsScreen() {
 
   useEffect(() => {
     if (!loaded || !id) return;
-    const timer = setTimeout(() => {
-      observationRepo.upsert(id, observation);
-    }, 500);
+    const timer = setTimeout(async () => {
+      setSaveState("saving");
+      try {
+        await observationRepo.upsert(id, observation);
+        setSaveState("saved");
+        setTimeout(() => setSaveState("idle"), 1500);
+      } catch {
+        setSaveState("error");
+      }
+    }, 400);
     return () => clearTimeout(timer);
   }, [observation, loaded]);
 
@@ -180,6 +189,7 @@ export default function ObservationsScreen() {
       <View style={styles.context}>
         <Text style={styles.contextDate}>{date}</Text>
         <Text style={styles.contextProject}>{projectName}</Text>
+        <AutosaveIndicator state={saveState} />
       </View>
 
       <View style={styles.titleSection}>

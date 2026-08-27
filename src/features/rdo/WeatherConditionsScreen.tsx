@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Sun, Cloud, CloudRain } from "lucide-react-native";
@@ -9,6 +9,7 @@ import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { AutosaveIndicator } from "@/components/ui/AutosaveStatus";
 import { useRdo } from "@/contexts/RdoContext";
 import { useWeatherRepository } from "@/repositories/weather.repository";
 import { useRdoOverview } from "@/hooks/useRdoData";
@@ -112,6 +113,7 @@ export default function WeatherConditionsScreen() {
   const [night, setNight] = useState<WeatherOption | null>(null);
   const [observation, setObservation] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   useEffect(() => {
     if (!id || loaded) return;
@@ -130,9 +132,16 @@ export default function WeatherConditionsScreen() {
   useEffect(() => {
     if (!loaded || !id) return;
     const save = async () => {
-      if (morning) await weatherRepo.upsert(id, "morning" as WeatherPeriod, morning as WeatherCondition, null);
-      if (afternoon) await weatherRepo.upsert(id, "afternoon" as WeatherPeriod, afternoon as WeatherCondition, null);
-      if (night) await weatherRepo.upsert(id, "night" as WeatherPeriod, night as WeatherCondition, null);
+      setSaveState("saving");
+      try {
+        if (morning) await weatherRepo.upsert(id, "morning" as WeatherPeriod, morning as WeatherCondition, null);
+        if (afternoon) await weatherRepo.upsert(id, "afternoon" as WeatherPeriod, afternoon as WeatherCondition, null);
+        if (night) await weatherRepo.upsert(id, "night" as WeatherPeriod, night as WeatherCondition, null);
+        setSaveState("saved");
+        setTimeout(() => setSaveState("idle"), 1500);
+      } catch {
+        setSaveState("error");
+      }
     };
     save();
   }, [morning, afternoon, night, loaded]);
@@ -232,6 +241,7 @@ export default function WeatherConditionsScreen() {
         <Text style={styles.contextText}>
           {date} · {projectName}
         </Text>
+        <AutosaveIndicator state={saveState} />
       </View>
 
       <View style={styles.titleSection}>
