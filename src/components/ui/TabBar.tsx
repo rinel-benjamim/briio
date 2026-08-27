@@ -47,7 +47,7 @@ function TabItem({
     <Animated.View style={[styles.tab, animatedStyle]}>
       <Pressable style={styles.tabInner} onPress={onPress}>
         {icon}
-        <Text style={[styles.label, isActive && { color: colors.primary, fontWeight: typography.fontWeight.bold }]}>
+        <Text style={[styles.label, { color: isActive ? colors.primary : colors.inactiveIcon, fontWeight: isActive ? typography.fontWeight.bold : typography.fontWeight.medium }]}>
           {label}
         </Text>
       </Pressable>

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   View,
   FlatList,
-  StyleSheet,
   Text,
   TextInput,
 } from "react-native";
@@ -17,7 +16,8 @@ import {
   Building2,
 } from "lucide-react-native";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
@@ -78,6 +78,152 @@ export default function ProjectsScreen() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingBottom: 12,
+      backgroundColor: colors.bgSurface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerLeft: {
+      flex: 1,
+      gap: 2,
+    },
+    navTitle: {
+      ...typography.presets.h1,
+      color: colors.textMain,
+    },
+    navSubtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    topActions: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    iconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.bgMain,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    filters: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      gap: 8,
+      marginBottom: 8,
+      paddingTop: 12,
+    },
+    filterPill: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: borderRadius.full,
+      height: 32,
+      justifyContent: "center",
+      backgroundColor: colors.bgMain,
+    },
+    filterPillActive: {
+      backgroundColor: colors.primary,
+    },
+    filterText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    filterTextActive: {
+      color: colors.textOnBrand,
+      fontWeight: typography.fontWeight.semibold,
+    },
+    sortRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 8,
+    },
+    sortLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    sortControl: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    sortValue: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    searchContainer: {
+      paddingHorizontal: 20,
+      marginBottom: 8,
+    },
+    searchInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      paddingHorizontal: 14,
+      height: 48,
+      gap: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    searchInput: {
+      flex: 1,
+      ...typography.presets.body,
+      color: colors.textMain,
+      padding: 0,
+    },
+    listContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 100,
+      gap: 12,
+      flexGrow: 1,
+    },
+    emptyState: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 60,
+      gap: 12,
+    },
+    emptyTitle: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    emptyDescription: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    fab: {
+      position: "absolute",
+      right: 20,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primary,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.24,
+      shadowRadius: 12,
+      elevation: 8,
+    },
+  }));
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 150);
@@ -247,149 +393,3 @@ export default function ProjectsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    backgroundColor: colors.bgSurface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerLeft: {
-    flex: 1,
-    gap: 2,
-  },
-  navTitle: {
-    ...typography.presets.h1,
-    color: colors.textMain,
-  },
-  navSubtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  topActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.bgMain,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  filters: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 8,
-    marginBottom: 8,
-    paddingTop: 12,
-  },
-  filterPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: borderRadius.full,
-    height: 32,
-    justifyContent: "center",
-    backgroundColor: colors.bgMain,
-  },
-  filterPillActive: {
-    backgroundColor: colors.primary,
-  },
-  filterText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  filterTextActive: {
-    color: colors.textOnBrand,
-    fontWeight: typography.fontWeight.semibold,
-  },
-  sortRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-  },
-  sortLabel: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  sortControl: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  sortValue: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  searchContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 8,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: 14,
-    height: 48,
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  searchInput: {
-    flex: 1,
-    ...typography.presets.body,
-    color: colors.textMain,
-    padding: 0,
-  },
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 100,
-    gap: 12,
-    flexGrow: 1,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 60,
-    gap: 12,
-  },
-  emptyTitle: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  emptyDescription: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-  fab: {
-    position: "absolute",
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.24,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-});
