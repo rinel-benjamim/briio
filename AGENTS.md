@@ -232,22 +232,23 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Micro-interações — PressOpacity, AnimatedFAB, TabBar animada
 - [x] Screen transitions — slide_from_right, slide_from_bottom, fade
 - [x] Lazy loading — LoadingScreen, FadeInView
+- [x] Repository layer — 10 repositórios CRUD (project, rdo, weather, workforce, material, equipment, task, occurrence, observation, photograph)
+- [x] Services layer — project.service + rdo.service (business logic, validations)
+- [x] Custom hooks — useProjects, useRdoData, useAutosave, useThemedStyles
+- [x] SQLite integration — todas as telas usam repositórios reais (mocks removidos)
+- [x] Form validations — 7 form screens + ErrorMessage component
+- [x] Autosave — Weather (on select) + Observations (400ms debounce) com AutosaveIndicator
 
 ### Em progresso
-- [ ] Repository layer (CRUD para todas as entidades)
-- [ ] Services layer (lógica de negócio)
-- [ ] Integração SQLite (substituir mocks)
-- [ ] Validações em formulários
-- [ ] Autosave real com debounce
-
-### Pendente
-- [ ] Arquivar obra (alternativa a excluir)
 - [ ] Testes unitários
 - [ ] Testes de integração
 
+### Pendente
+- [ ] Arquivar obra (alternativa a excluir)
+- [ ] Reutilização de RDO anterior
+- [ ] PDF (review, template, geração, partilha)
+
 ### Próximas fases
-- Fase 3: Reutilização de RDO anterior
-- Fase 4: PDF (review, template, geração, partilha)
 - Fase 5: Qualidade (testes)
 - Fase 6: Beta (validação em obra real)
 

@@ -1291,8 +1291,8 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 -   [x] Detalhes
 -   [x] Informações da obra
 -   [ ] Arquivar obra
--   [ ] Repository layer (CRUD SQLite)
--   [ ] Validações
+-   [x] Repository layer (CRUD SQLite)
+-   [x] Validações
 
 ## Fase 2 --- RDO
 
@@ -1308,10 +1308,10 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 -   [x] Fotografias
 -   [x] Revisão
 -   [x] RDO gerado (PDF básico)
--   [ ] Repository layer (CRUD SQLite)
--   [ ] Autosave real com debounce
--   [ ] Validações
--   [ ] Validação de RDO duplicado
+-   [x] Repository layer (CRUD SQLite)
+-   [x] Autosave real com debounce
+-   [x] Validações
+-   [x] Validação de RDO duplicado
 
 ## Fase 3 --- Reutilização
 
