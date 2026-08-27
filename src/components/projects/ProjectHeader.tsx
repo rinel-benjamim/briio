@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
 import { typography, borderRadius } from "@/constants";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import type { ProjectStatus } from "@/types";
-import { PROJECT_STATUS_CONFIG_UPPERCASE } from "@/constants/statuses";
 
 interface ProjectHeaderProps {
   name: string;
@@ -11,7 +11,30 @@ interface ProjectHeaderProps {
 }
 
 export function ProjectHeader({ name, location, status }: ProjectHeaderProps) {
-  const config = PROJECT_STATUS_CONFIG_UPPERCASE[status];
+  const colors = useThemeColors();
+
+  const statusConfig: Record<ProjectStatus, { label: string; dotColor: string; bgColor: string; textColor: string }> = {
+    active: {
+      label: "ATIVA",
+      dotColor: colors.success,
+      bgColor: colors.successBg,
+      textColor: colors.success,
+    },
+    completed: {
+      label: "CONCLUÍDA",
+      dotColor: colors.textMuted,
+      bgColor: colors.bgMain,
+      textColor: colors.textMuted,
+    },
+    archived: {
+      label: "ARQUIVADA",
+      dotColor: colors.warning,
+      bgColor: colors.warningBg,
+      textColor: colors.warning,
+    },
+  };
+
+  const config = statusConfig[status];
 
   const styles = useThemedStyles((colors) => ({
     container: {

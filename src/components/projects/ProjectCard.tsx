@@ -6,7 +6,6 @@ import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import type { ProjectStatus } from "@/types";
-import { PROJECT_STATUS_CONFIG } from "@/constants/statuses";
 
 export type { ProjectStatus };
 
@@ -28,7 +27,29 @@ export function ProjectCard({
   onPress,
 }: ProjectCardProps) {
   const colors = useThemeColors();
-  const config = PROJECT_STATUS_CONFIG[status];
+
+  const statusConfig: Record<ProjectStatus, { label: string; dotColor: string; bgColor: string; textColor: string }> = {
+    active: {
+      label: "Em andamento",
+      dotColor: colors.success,
+      bgColor: colors.successBg,
+      textColor: colors.success,
+    },
+    completed: {
+      label: "Concluído",
+      dotColor: colors.textMuted,
+      bgColor: colors.bgMain,
+      textColor: colors.textMuted,
+    },
+    archived: {
+      label: "Arquivada",
+      dotColor: colors.warning,
+      bgColor: colors.warningBg,
+      textColor: colors.warning,
+    },
+  };
+
+  const config = statusConfig[status];
 
   const styles = useThemedStyles((colors) => ({
     container: {
