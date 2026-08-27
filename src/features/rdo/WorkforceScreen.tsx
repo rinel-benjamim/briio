@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronRight, Plus, Copy } from "lucide-react-native";
@@ -7,36 +7,41 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-const MOCK_SUMMARY = {
-  workers: 7,
-  totalHours: 56,
-};
-
-interface WorkforceItem {
-  id: string;
-  role: string;
-  people: number;
-  hoursPerPerson: number;
-  totalHours: number;
-}
-
-const MOCK_WORKFORCE: WorkforceItem[] = [
-  { id: "1", role: "Mestre de Obras", people: 2, hoursPerPerson: 8, totalHours: 16 },
-  { id: "2", role: "Serventes", people: 5, hoursPerPerson: 8, totalHours: 40 },
-];
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useWorkforceRepository } from "@/repositories/workforce.repository";
+import type { WorkforceEntry } from "@/types";
 
 export default function WorkforceScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const workforceRepo = useWorkforceRepository();
   const [step] = useState(2);
   const totalSteps = 9;
   const fromReview = from === "review";
+
+  const [entries, setEntries] = useState<WorkforceEntry[]>([]);
+  const [workers, setWorkers] = useState(0);
+  const [totalHours, setTotalHours] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    loadData();
+  }, [id]);
+
+  async function loadData() {
+    if (!id) return;
+    const [data, summary] = await Promise.all([
+      workforceRepo.findByRdoId(id),
+      workforceRepo.getSummary(id),
+    ]);
+    setEntries(data);
+    setWorkers(summary.workers);
+    setTotalHours(summary.totalHours);
+    setLoading(false);
+  }
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -166,6 +171,8 @@ export default function WorkforceScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Mão de obra"
@@ -180,25 +187,25 @@ export default function WorkforceScreen() {
       }}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Trabalhadores</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.workers} trabalhadores</Text>
+          <Text style={styles.summaryValue}>{workers} trabalhadores</Text>
         </View>
         <View style={styles.summaryRight}>
           <Text style={styles.summaryLabel}>Horas totais</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.totalHours} h</Text>
+          <Text style={styles.summaryValue}>{totalHours} h</Text>
         </View>
       </View>
 
       <Text style={styles.sectionLabel}>FUNCÇÕES</Text>
 
       <View style={styles.workforceList}>
-        {MOCK_WORKFORCE.map((item, index) => (
+        {entries.map((item, index) => (
           <View key={item.id}>
             <PressableOpacity
               style={styles.workItem}
@@ -206,21 +213,21 @@ export default function WorkforceScreen() {
             >
               <View style={styles.workItemLeft}>
                 <View style={styles.workItemInfo}>
-                  <Text style={styles.workItemName}>{item.role}</Text>
+                  <Text style={styles.workItemName}>{item.function}</Text>
                   <Text style={styles.workItemMeta}>
-                    {item.people} pessoas · {item.hoursPerPerson} h por pessoa
+                    {item.people_count} pessoas · {item.hours_per_person} h por pessoa
                   </Text>
                 </View>
               </View>
               <View style={styles.workItemRight}>
                 <View style={styles.workItemTotalInfo}>
-                  <Text style={styles.workItemTotal}>{item.totalHours} h</Text>
+                  <Text style={styles.workItemTotal}>{item.total_hours} h</Text>
                   <Text style={styles.workItemTotalLabel}>total</Text>
                 </View>
                 <ChevronRight size={16} color={colors.textMuted} />
               </View>
             </PressableOpacity>
-            {index < MOCK_WORKFORCE.length - 1 && <View style={styles.divider} />}
+            {index < entries.length - 1 && <View style={styles.divider} />}
           </View>
         ))}
       </View>

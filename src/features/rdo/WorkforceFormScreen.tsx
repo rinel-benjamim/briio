@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
@@ -13,7 +13,20 @@ import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SelectField } from "@/components/ui/Form/SelectField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
-import { MOCK_RDO_CONTEXT, MOCK_ROLES, MOCK_WORKFORCE_DATA } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useWorkforceRepository } from "@/repositories/workforce.repository";
+
+const MOCK_ROLES = [
+  "Mestre de Obras",
+  "Serventes",
+  "Pedreiro",
+  "Armador",
+  "Carpinteiro",
+  "Electricista",
+  "Canalizador",
+  "Outro",
+];
 
 interface WorkforceFormProps {
   mode: "add" | "edit";
@@ -23,6 +36,30 @@ interface WorkforceFormProps {
 
 export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: WorkforceFormProps) {
   const colors = useThemeColors();
+  const { id, workforceId } = useLocalSearchParams<{ id: string; workforceId?: string }>();
+  const { date, projectName } = useRdo();
+  const workforceRepo = useWorkforceRepository();
+
+  const [role, setRole] = useState("");
+  const [customRole, setCustomRole] = useState("");
+  const [peopleCount, setPeopleCount] = useState(1);
+  const [hoursPerPerson, setHoursPerPerson] = useState(8);
+  const [observation, setObservation] = useState("");
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && workforceId) {
+      workforceRepo.findById(workforceId).then((entry) => {
+        if (entry) {
+          setRole(entry.function);
+          setPeopleCount(entry.people_count);
+          setHoursPerPerson(entry.hours_per_person);
+          setObservation(entry.observation ?? "");
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, workforceId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -113,16 +150,6 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
     },
   }));
 
-  const { id, workforceId } = useLocalSearchParams<{ id: string; workforceId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_WORKFORCE_DATA[workforceId || "1"] : null;
-
-  const [role, setRole] = useState(editData?.role || "");
-  const [customRole, setCustomRole] = useState("");
-  const [peopleCount, setPeopleCount] = useState(editData?.people || 1);
-  const [hoursPerPerson, setHoursPerPerson] = useState(editData?.hoursPerPerson || 8);
-  const [observation, setObservation] = useState(editData?.observation || "");
-
   const totalHours = peopleCount * hoursPerPerson;
   const isCustomRole = role === "Outro";
 
@@ -133,6 +160,31 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
       </Text>
     </View>
   );
+
+  async function handleSave() {
+    if (!id) return;
+    const functionName = isCustomRole ? customRole : role;
+    if (!functionName) return;
+
+    if (mode === "add") {
+      await workforceRepo.create(id, {
+        function: functionName,
+        people_count: peopleCount,
+        hours_per_person: hoursPerPerson,
+        observation: observation || undefined,
+      });
+    } else if (workforceId) {
+      await workforceRepo.update(workforceId, {
+        function: functionName,
+        people_count: peopleCount,
+        hours_per_person: hoursPerPerson,
+        observation: observation || undefined,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
@@ -147,7 +199,7 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         <View style={styles.section}>
           <SelectField
@@ -216,7 +268,7 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar à equipa" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -232,5 +284,3 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
     </View>
   );
 }
-
-

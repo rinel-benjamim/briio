@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
@@ -14,14 +14,35 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
-import {
-  MOCK_RDO_CONTEXT,
-  MOCK_EQUIPMENT_OPTIONS,
-  EQUIPMENT_STATUS_OPTIONS,
-  EQUIPMENT_STATUS_LABELS,
-  MOCK_EQUIPMENT_DATA,
-} from "@/mocks";
-import type { EquipmentStatusOption } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useEquipmentRepository } from "@/repositories/equipment.repository";
+import type { EquipmentStatus } from "@/types";
+
+const MOCK_EQUIPMENT_OPTIONS = [
+  "Retroescavadora",
+  "Betoneira",
+  "Camião basculante",
+  "Guindaste",
+  "Compressor",
+  "Gerador",
+  "Motocicleta",
+  "Outro",
+];
+
+const EQUIPMENT_STATUS_OPTIONS = [
+  { label: "Em operação", value: "operational" },
+  { label: "Parado", value: "stopped" },
+  { label: "Manutenção", value: "maintenance" },
+  { label: "Indisponível", value: "unavailable" },
+];
+
+const EQUIPMENT_STATUS_LABELS: Record<string, string> = {
+  operational: "Em operação",
+  stopped: "Parado",
+  maintenance: "Manutenção",
+  unavailable: "Indisponível",
+};
 
 interface EquipmentFormProps {
   mode: "add" | "edit";
@@ -31,6 +52,32 @@ interface EquipmentFormProps {
 
 export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: EquipmentFormProps) {
   const colors = useThemeColors();
+  const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId?: string }>();
+  const { date, projectName } = useRdo();
+  const equipmentRepo = useEquipmentRepository();
+
+  const [equipment, setEquipment] = useState("");
+  const [customEquipment, setCustomEquipment] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [hours, setHours] = useState(8);
+  const [status, setStatus] = useState<EquipmentStatus>("operational");
+  const [observation, setObservation] = useState("");
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && equipmentId) {
+      equipmentRepo.findById(equipmentId).then((entry) => {
+        if (entry) {
+          setEquipment(entry.equipment);
+          setQuantity(entry.quantity);
+          setHours(entry.hours_used);
+          setStatus(entry.status);
+          setObservation(entry.observation ?? "");
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, equipmentId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -121,17 +168,6 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
     },
   }));
 
-  const { id, equipmentId } = useLocalSearchParams<{ id: string; equipmentId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_EQUIPMENT_DATA[equipmentId || "1"] : null;
-
-  const [equipment, setEquipment] = useState(editData?.equipment || "");
-  const [customEquipment, setCustomEquipment] = useState("");
-  const [quantity, setQuantity] = useState(editData?.quantity || 1);
-  const [hours, setHours] = useState(editData?.hours || 8);
-  const [status, setStatus] = useState<EquipmentStatusOption>(editData?.status || "em_operacao");
-  const [observation, setObservation] = useState(editData?.observation || "");
-
   const isCustomEquipment = equipment === "Outro";
 
   const stepBadge = (
@@ -141,6 +177,33 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
       </Text>
     </View>
   );
+
+  async function handleSave() {
+    if (!id) return;
+    const equipmentName = isCustomEquipment ? customEquipment : equipment;
+    if (!equipmentName) return;
+
+    if (mode === "add") {
+      await equipmentRepo.create(id, {
+        equipment: equipmentName,
+        quantity,
+        hours_used: hours,
+        status,
+        observation: observation || undefined,
+      });
+    } else if (equipmentId) {
+      await equipmentRepo.update(equipmentId, {
+        equipment: equipmentName,
+        quantity,
+        hours_used: hours,
+        status,
+        observation: observation || undefined,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
@@ -155,7 +218,7 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         <View style={styles.section}>
           <SelectField
@@ -203,7 +266,7 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
           label="Estado"
           value={status}
           options={EQUIPMENT_STATUS_OPTIONS}
-          onChange={(v) => setStatus(v as EquipmentStatusOption)}
+          onChange={(v) => setStatus(v as EquipmentStatus)}
         />
 
         <View style={styles.summaryCard}>
@@ -231,7 +294,7 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar equipamento" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -247,5 +310,3 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
     </View>
   );
 }
-
-

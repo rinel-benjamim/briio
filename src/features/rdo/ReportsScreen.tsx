@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   FlatList,
@@ -26,84 +26,40 @@ import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
+import { useRdoList } from "@/hooks/useRdoData";
+import { useProjectRepository } from "@/repositories/project.repository";
+import type { Project, RDO } from "@/types";
 
 type FilterType = "all" | "draft" | "generated";
 
-type Project = {
-  id: string;
-  name: string;
-  location: string;
-};
-
-type Report = {
-  id: string;
-  number: string;
-  projectName: string;
-  date: string;
-  status: "draft" | "generated";
-  summary: string;
-};
-
-const MOCK_PROJECTS: Project[] = [
-  { id: "1", name: "Reabilitação Pedrinhas", location: "Zango 1 — Icolo e Bengo" },
-  { id: "2", name: "Construção Residencial Kilamba", location: "Kilamba — Luanda" },
-  { id: "3", name: "Edifício Comercial Talatona", location: "Talatona — Luanda" },
-  { id: "4", name: "Ponte sobre o Rio Kwanza", location: "Viana — Luanda" },
-];
-
-const MOCK_REPORTS: Report[] = [
-  {
-    id: "1",
-    number: "RDO #024",
-    projectName: "Construção Residencial Kilamba",
-    date: "20 Ago 2026",
-    status: "generated",
-    summary: "12 trabalhadores · 4 atividades · 6 fotografias",
-  },
-  {
-    id: "2",
-    number: "RDO #023",
-    projectName: "Construção Residencial Kilamba",
-    date: "19 Ago 2026",
-    status: "generated",
-    summary: "11 trabalhadores · 5 atividades · 8 fotografias",
-  },
-  {
-    id: "3",
-    number: "RDO #022",
-    projectName: "Edifício Comercial Talatona",
-    date: "18 Ago 2026",
-    status: "draft",
-    summary: "9 trabalhadores · 3 atividades · 4 fotografias",
-  },
-  {
-    id: "4",
-    number: "RDO #021",
-    projectName: "Edifício Comercial Talatona",
-    date: "17 Ago 2026",
-    status: "generated",
-    summary: "10 trabalhadores · 5 atividades · 7 fotografias",
-  },
-  {
-    id: "5",
-    number: "RDO #020",
-    projectName: "Reabilitação Pedrinhas",
-    date: "16 Ago 2026",
-    status: "generated",
-    summary: "8 trabalhadores · 4 atividades · 5 fotografias",
-  },
-];
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 export default function ReportsScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const { rdoId } = useRdo();
-  const [loading, setLoading] = useState(true);
+  const projectRepo = useProjectRepository();
+  const { rdos, loading: rdosLoading, refresh } = useRdoList();
+  const [projects, setProjects] = useState<Project[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [projectModalVisible, setProjectModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    projectRepo.findAll().then(setProjects);
+  }, []);
+
+  const projectMap = useCallback(() => {
+    const map: Record<string, Project> = {};
+    projects.forEach((p) => { map[p.id] = p; });
+    return map;
+  }, [projects])();
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -376,44 +332,42 @@ export default function ReportsScreen() {
     },
   }));
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 150);
-    return () => clearTimeout(timer);
-  }, []);
+  if (rdosLoading) return <LoadingScreen />;
 
-  if (loading) return <LoadingScreen />;
+  const filteredReports = rdos
+    .filter((rdo) => {
+      if (activeFilter === "all") return true;
+      return rdo.status === activeFilter;
+    })
+    .filter((rdo) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      const project = projectMap[rdo.project_id];
+      const projectName = project?.name ?? "";
+      return (
+        `RDO #${String(rdo.number).padStart(3, "0")}`.toLowerCase().includes(query) ||
+        projectName.toLowerCase().includes(query)
+      );
+    });
 
-  const filteredReports = MOCK_REPORTS.filter((report) => {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "draft") return report.status === "draft";
-    if (activeFilter === "generated") return report.status === "generated";
-    return true;
-  }).filter((report) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      report.number.toLowerCase().includes(query) ||
-      report.projectName.toLowerCase().includes(query)
-    );
-  });
-
-  function handleReportPress(report: Report) {
-    if (report.status === "generated") {
-      router.push(`/(tabs)/reports/${rdoId}/detail`);
+  function handleReportPress(rdo: RDO) {
+    if (rdo.status === "generated") {
+      router.push(`/(tabs)/reports/${rdo.id}/detail`);
     } else {
-      router.push(`/(tabs)/reports/${rdoId}`);
+      router.push(`/(tabs)/reports/${rdo.id}`);
     }
   }
 
-  function renderReportCard({ item }: { item: Report }) {
+  function renderReportCard({ item }: { item: RDO }) {
     const isGenerated = item.status === "generated";
+    const project = projectMap[item.project_id];
     return (
       <PressableOpacity
         style={styles.reportCard}
         onPress={() => handleReportPress(item)}
       >
         <View style={styles.cardTop}>
-          <Text style={styles.reportNumber}>{item.number}</Text>
+          <Text style={styles.reportNumber}>RDO #{String(item.number).padStart(3, "0")}</Text>
           <View
             style={[
               styles.statusBadge,
@@ -431,12 +385,9 @@ export default function ReportsScreen() {
           </View>
         </View>
         <Text style={styles.projectName} numberOfLines={1}>
-          {item.projectName}
+          {project?.name ?? "Sem obra"}
         </Text>
-        <Text style={styles.reportDate}>{item.date}</Text>
-        <Text style={styles.reportSummary} numberOfLines={1}>
-          {item.summary}
-        </Text>
+        <Text style={styles.reportDate}>{formatReportDate(item.report_date)}</Text>
       </PressableOpacity>
     );
   }
@@ -589,7 +540,7 @@ export default function ReportsScreen() {
             </Text>
 
             <FlatList
-              data={MOCK_PROJECTS}
+              data={projects}
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.projectList}
               renderItem={({ item }) => {
@@ -619,7 +570,7 @@ export default function ReportsScreen() {
                         {item.name}
                       </Text>
                       <Text style={styles.projectOptionLocation}>
-                        {item.location}
+                        {item.location ?? ""}
                       </Text>
                     </View>
                     {isSelected && (

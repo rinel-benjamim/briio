@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronRight, Plus, Copy } from "lucide-react-native";
@@ -7,36 +7,32 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-const MOCK_SUMMARY = {
-  equipmentCount: 3,
-  totalHours: 25,
-};
-
-interface EquipmentItem {
-  id: string;
-  name: string;
-  units: number;
-  hours: number;
-}
-
-const MOCK_EQUIPMENT: EquipmentItem[] = [
-  { id: "1", name: "Retroescavadora", units: 1, hours: 8 },
-  { id: "2", name: "Betoneira", units: 2, hours: 6 },
-  { id: "3", name: "Camião basculante", units: 3, hours: 7 },
-];
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useEquipmentRepository } from "@/repositories/equipment.repository";
+import type { EquipmentEntry } from "@/types";
 
 export default function EquipmentScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const equipmentRepo = useEquipmentRepository();
   const [step] = useState(4);
   const totalSteps = 9;
   const fromReview = from === "review";
+
+  const [entries, setEntries] = useState<EquipmentEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    equipmentRepo.findByRdoId(id).then((data) => {
+      setEntries(data);
+      setLoading(false);
+    });
+  }, [id]);
+
+  const totalHours = entries.reduce((sum, e) => sum + e.hours_used, 0);
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -149,6 +145,8 @@ export default function EquipmentScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Equipamentos"
@@ -163,25 +161,25 @@ export default function EquipmentScreen() {
       }}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Equipamentos</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.equipmentCount} equipamentos</Text>
+          <Text style={styles.summaryValue}>{entries.length} equipamentos</Text>
         </View>
         <View style={styles.summaryRight}>
           <Text style={styles.summaryLabel}>Horas de uso</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.totalHours} h</Text>
+          <Text style={styles.summaryValue}>{totalHours} h</Text>
         </View>
       </View>
 
       <Text style={styles.sectionLabel}>EQUIPAMENTOS REGISTADOS</Text>
 
       <View style={styles.equipmentList}>
-        {MOCK_EQUIPMENT.map((item, index) => (
+        {entries.map((item, index) => (
           <View key={item.id}>
             <PressableOpacity
               style={styles.equipmentItem}
@@ -189,15 +187,15 @@ export default function EquipmentScreen() {
             >
               <View style={styles.equipmentItemLeft}>
                 <View style={styles.equipmentItemInfo}>
-                  <Text style={styles.equipmentItemName}>{item.name}</Text>
+                  <Text style={styles.equipmentItemName}>{item.equipment}</Text>
                   <Text style={styles.equipmentItemMeta}>
-                    {item.units} {item.units === 1 ? "unidade" : "unidades"} · {item.hours} h
+                    {item.quantity} {item.quantity === 1 ? "unidade" : "unidades"} · {item.hours_used} h
                   </Text>
                 </View>
               </View>
               <ChevronRight size={16} color={colors.textMuted} />
             </PressableOpacity>
-            {index < MOCK_EQUIPMENT.length - 1 && <View style={styles.divider} />}
+            {index < entries.length - 1 && <View style={styles.divider} />}
           </View>
         ))}
       </View>

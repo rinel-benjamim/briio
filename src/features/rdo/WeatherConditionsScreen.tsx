@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Sun, Cloud, CloudRain } from "lucide-react-native";
@@ -8,15 +8,16 @@ import { useThemedStyles } from "@/hooks/useThemedStyles";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useWeatherRepository } from "@/repositories/weather.repository";
+import { useRdoOverview } from "@/hooks/useRdoData";
+import { useProjectRepository } from "@/repositories/project.repository";
 
 import type { ThemeColors } from "@/contexts/ThemeContext";
+import type { WeatherCondition, WeatherPeriod } from "@/types";
 
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-type WeatherOption = "sol" | "nublado" | "chuva";
+type WeatherOption = "sunny" | "cloudy" | "rain";
 
 interface WeatherPeriodProps {
   label: string;
@@ -32,17 +33,17 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
       <Text style={styles.periodLabel}>{label}</Text>
       <View style={styles.periodOptions}>
         <PressableOpacity
-          style={[styles.weatherOption, selected === "sol" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("sol")}
+          style={[styles.weatherOption, selected === "sunny" && styles.weatherOptionSelected]}
+          onPress={() => onSelect("sunny")}
         >
           <Sun
             size={25}
-            color={selected === "sol" ? colors.textOnBrand : colors.inactiveIcon}
+            color={selected === "sunny" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
               styles.weatherOptionText,
-              selected === "sol" && styles.weatherOptionTextSelected,
+              selected === "sunny" && styles.weatherOptionTextSelected,
             ]}
           >
             Sol
@@ -50,17 +51,17 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
         </PressableOpacity>
 
         <PressableOpacity
-          style={[styles.weatherOption, selected === "nublado" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("nublado")}
+          style={[styles.weatherOption, selected === "cloudy" && styles.weatherOptionSelected]}
+          onPress={() => onSelect("cloudy")}
         >
           <Cloud
             size={25}
-            color={selected === "nublado" ? colors.textOnBrand : colors.inactiveIcon}
+            color={selected === "cloudy" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
               styles.weatherOptionText,
-              selected === "nublado" && styles.weatherOptionTextSelected,
+              selected === "cloudy" && styles.weatherOptionTextSelected,
             ]}
           >
             Nublado
@@ -68,17 +69,17 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
         </PressableOpacity>
 
         <PressableOpacity
-          style={[styles.weatherOption, selected === "chuva" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("chuva")}
+          style={[styles.weatherOption, selected === "rain" && styles.weatherOptionSelected]}
+          onPress={() => onSelect("rain")}
         >
           <CloudRain
             size={25}
-            color={selected === "chuva" ? colors.textOnBrand : colors.inactiveIcon}
+            color={selected === "rain" ? colors.textOnBrand : colors.inactiveIcon}
           />
           <Text
             style={[
               styles.weatherOptionText,
-              selected === "chuva" && styles.weatherOptionTextSelected,
+              selected === "rain" && styles.weatherOptionTextSelected,
             ]}
           >
             Chuva
@@ -89,17 +90,52 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
   );
 }
 
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 export default function WeatherConditionsScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const fromReview = from === "review";
+  const { date, projectName } = useRdo();
+  const { overview, loading: overviewLoading } = useRdoOverview(id ?? null);
+  const weatherRepo = useWeatherRepository();
+
   const [step] = useState(1);
   const totalSteps = 9;
-  const fromReview = from === "review";
 
-  const [morning, setMorning] = useState<WeatherOption | null>("sol");
-  const [afternoon, setAfternoon] = useState<WeatherOption | null>("chuva");
+  const [morning, setMorning] = useState<WeatherOption | null>(null);
+  const [afternoon, setAfternoon] = useState<WeatherOption | null>(null);
   const [night, setNight] = useState<WeatherOption | null>(null);
   const [observation, setObservation] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!id || loaded) return;
+    weatherRepo.findByRdoId(id).then((conditions) => {
+      for (const c of conditions) {
+        const option = c.condition as WeatherOption | null;
+        if (c.period === "morning") setMorning(option);
+        if (c.period === "afternoon") setAfternoon(option);
+        if (c.period === "night") setNight(option);
+        if (c.notes) setObservation(c.notes);
+      }
+      setLoaded(true);
+    });
+  }, [id, loaded]);
+
+  useEffect(() => {
+    if (!loaded || !id) return;
+    const save = async () => {
+      if (morning) await weatherRepo.upsert(id, "morning" as WeatherPeriod, morning as WeatherCondition, null);
+      if (afternoon) await weatherRepo.upsert(id, "afternoon" as WeatherPeriod, afternoon as WeatherCondition, null);
+      if (night) await weatherRepo.upsert(id, "night" as WeatherPeriod, night as WeatherCondition, null);
+    };
+    save();
+  }, [morning, afternoon, night, loaded]);
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -176,6 +212,8 @@ export default function WeatherConditionsScreen() {
     },
   }));
 
+  if (overviewLoading || !loaded) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Condições do dia"
@@ -190,14 +228,12 @@ export default function WeatherConditionsScreen() {
         }
       }}
     >
-      {/* Context line */}
       <View style={styles.context}>
         <Text style={styles.contextText}>
-          {MOCK_CONTEXT.date} · {MOCK_CONTEXT.projectName}
+          {date} · {projectName}
         </Text>
       </View>
 
-      {/* Title */}
       <View style={styles.titleSection}>
         <Text style={styles.mainTitle}>Como esteve o tempo hoje?</Text>
         <Text style={styles.subtitle}>
@@ -205,12 +241,10 @@ export default function WeatherConditionsScreen() {
         </Text>
       </View>
 
-      {/* Weather periods */}
       <WeatherPeriod label="Manhã" selected={morning} onSelect={setMorning} colors={colors} styles={styles} />
       <WeatherPeriod label="Tarde" selected={afternoon} onSelect={setAfternoon} colors={colors} styles={styles} />
       <WeatherPeriod label="Noite" selected={night} onSelect={setNight} colors={colors} styles={styles} />
 
-      {/* Observation */}
       <View style={styles.observationSection}>
         <TextInput
           style={styles.obsInput}

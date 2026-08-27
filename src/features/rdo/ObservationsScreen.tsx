@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Info } from "lucide-react-native";
@@ -7,11 +7,9 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useObservationRepository } from "@/repositories/observation.repository";
 
 const QUICK_SUGGESTIONS = [
   "Trabalhos decorreram normalmente",
@@ -24,11 +22,32 @@ const MAX_CHARS = 1000;
 export default function ObservationsScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const observationRepo = useObservationRepository();
   const [step] = useState(7);
   const totalSteps = 9;
   const fromReview = from === "review";
 
   const [observation, setObservation] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!id || loaded) return;
+    observationRepo.findByRdoId(id).then((existing) => {
+      if (existing) {
+        setObservation(existing.content);
+      }
+      setLoaded(true);
+    });
+  }, [id, loaded]);
+
+  useEffect(() => {
+    if (!loaded || !id) return;
+    const timer = setTimeout(() => {
+      observationRepo.upsert(id, observation);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [observation, loaded]);
 
   const handleSuggestionPress = (suggestion: string) => {
     if (observation.length === 0) {
@@ -149,6 +168,8 @@ export default function ObservationsScreen() {
     },
   }));
 
+  if (!loaded) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Observações"
@@ -157,8 +178,8 @@ export default function ObservationsScreen() {
       onContinue={handleContinue}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.titleSection}>

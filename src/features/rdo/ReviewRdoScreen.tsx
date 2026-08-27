@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,14 +11,16 @@ import { typography } from "@/constants/typography";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdoOverview } from "@/hooks/useRdoData";
+import { useProjectRepository } from "@/repositories/project.repository";
+import type { Project } from "@/types";
 
-const MOCK_RDO = {
-  number: "RDO #032",
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-  location: "Zango 1 — Icolo e Bengo",
-  author: "Kiali Rodrigues",
-};
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 type SectionItem = {
   id: string;
@@ -27,15 +29,15 @@ type SectionItem = {
   route: string;
 };
 
-const RDO_SECTIONS: SectionItem[] = [
-  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", route: "weather" },
-  { id: "2", name: "Mão de obra", summary: "7 trabalhadores · 8h", route: "workforce" },
-  { id: "3", name: "Materiais", summary: "3 registos", route: "materials" },
-  { id: "4", name: "Equipamentos", summary: "2 registos", route: "equipment" },
-  { id: "5", name: "Tarefas", summary: "2 tarefas", route: "tasks" },
-  { id: "6", name: "Ocorrências", summary: "2 ocorrências", route: "occurrences" },
-  { id: "7", name: "Observações", summary: "Preenchido", route: "observations" },
-  { id: "8", name: "Fotografias", summary: "6 fotografias", route: "photos" },
+const SECTION_META: Array<{ key: string; name: string; route: string }> = [
+  { key: "weather", name: "Condições do dia", route: "weather" },
+  { key: "workforce", name: "Mão de obra", route: "workforce" },
+  { key: "materials", name: "Materiais", route: "materials" },
+  { key: "equipment", name: "Equipamentos", route: "equipment" },
+  { key: "tasks", name: "Tarefas", route: "tasks" },
+  { key: "occurrences", name: "Ocorrências", route: "occurrences" },
+  { key: "observations", name: "Observações", route: "observations" },
+  { key: "photographs", name: "Fotografias", route: "photos" },
 ];
 
 export default function ReviewRdoScreen() {
@@ -44,6 +46,16 @@ export default function ReviewRdoScreen() {
   const insets = useSafeAreaInsets();
   const [step] = useState(9);
   const totalSteps = 9;
+
+  const { overview, loading } = useRdoOverview(id ?? null);
+  const projectRepo = useProjectRepository();
+  const [project, setProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (overview) {
+      projectRepo.findById(overview.rdo.project_id).then(setProject);
+    }
+  }, [overview]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -230,6 +242,27 @@ export default function ReviewRdoScreen() {
     },
   }));
 
+  if (loading || !overview) return <LoadingScreen />;
+
+  const { rdo, sectionStatuses, completedSections, totalSections } = overview;
+
+  const sections: SectionItem[] = SECTION_META.map((meta) => {
+    const status = sectionStatuses[meta.key as keyof typeof sectionStatuses];
+    const isComplete = status === "complete";
+    let summary = "";
+    switch (meta.key) {
+      case "weather": summary = "Manhã · Tarde · Noite"; break;
+      case "workforce": summary = "Mão de obra registada"; break;
+      case "materials": summary = "Materiais registados"; break;
+      case "equipment": summary = "Equipamentos registados"; break;
+      case "tasks": summary = "Tarefas registadas"; break;
+      case "occurrences": summary = "Ocorrências registadas"; break;
+      case "observations": summary = isComplete ? "Preenchido" : "Sem dados"; break;
+      case "photographs": summary = "Fotografias registadas"; break;
+    }
+    return { id: meta.key, name: meta.name, summary, route: meta.route };
+  });
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -253,18 +286,22 @@ export default function ReviewRdoScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.reportIdentity}>
-          <Text style={styles.reportNumber}>{MOCK_RDO.number}</Text>
-          <Text style={styles.reportDate}>{MOCK_RDO.date}</Text>
-          <Text style={styles.reportProject}>{MOCK_RDO.projectName}</Text>
-          <Text style={styles.reportLocation}>{MOCK_RDO.location}</Text>
+          <Text style={styles.reportNumber}>RDO #{String(rdo.number).padStart(3, "0")}</Text>
+          <Text style={styles.reportDate}>{formatReportDate(rdo.report_date)}</Text>
+          <Text style={styles.reportProject}>{project?.name ?? "Sem obra"}</Text>
+          <Text style={styles.reportLocation}>{project?.location ?? ""}</Text>
         </View>
 
         <View style={styles.overallStatus}>
           <CheckCircle size={20} color={colors.success} />
           <View style={styles.overallInfo}>
-            <Text style={styles.overallTitle}>Tudo preenchido</Text>
+            <Text style={styles.overallTitle}>
+              {completedSections === totalSections ? "Tudo preenchido" : `${completedSections} de ${totalSections} preenchidos`}
+            </Text>
             <Text style={styles.overallSubtitle}>
-              O RDO está pronto para ser gerado.
+              {completedSections === totalSections
+                ? "O RDO está pronto para ser gerado."
+                : "Complete as secções em falta."}
             </Text>
           </View>
         </View>
@@ -272,7 +309,7 @@ export default function ReviewRdoScreen() {
         <Text style={styles.checklistLabel}>SECÇÕES DO RELATÓRIO</Text>
 
         <View style={styles.checklist}>
-          {RDO_SECTIONS.map((section, index) => (
+          {sections.map((section, index) => (
             <View key={section.id}>
               <PressableOpacity
                 style={styles.checklistItem}
@@ -291,7 +328,7 @@ export default function ReviewRdoScreen() {
                 </View>
                 <Text style={styles.editButton}>Editar</Text>
               </PressableOpacity>
-              {index < RDO_SECTIONS.length - 1 && <View style={styles.divider} />}
+              {index < sections.length - 1 && <View style={styles.divider} />}
             </View>
           ))}
         </View>
@@ -301,7 +338,7 @@ export default function ReviewRdoScreen() {
           <Text style={styles.signatureRole}>
             Responsável pelo preenchimento
           </Text>
-          <Text style={styles.signatureName}>{MOCK_RDO.author}</Text>
+          <Text style={styles.signatureName}>{project?.responsible_name ?? "—"}</Text>
           <Text style={styles.signatureNote}>
             Assinatura física após impressão
           </Text>

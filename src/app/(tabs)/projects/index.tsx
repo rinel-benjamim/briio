@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   View,
   FlatList,
@@ -18,6 +18,7 @@ import {
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography, borderRadius } from "@/constants";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProjects } from "@/hooks/useProjects";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
@@ -25,59 +26,14 @@ import { ProjectCard, type ProjectStatus } from "@/components/projects/ProjectCa
 
 type FilterType = "all" | "active" | "completed" | "archived";
 
-type Project = {
-  id: string;
-  name: string;
-  location: string;
-  lastRdo: string;
-  status: ProjectStatus;
-};
-
-const MOCK_PROJECTS: Project[] = [
-  {
-    id: "1",
-    name: "Reabilitação Pedrinhas",
-    location: "Zango 1 — Icolo e Bengo",
-    lastRdo: "Último RDO · Hoje",
-    status: "active",
-  },
-  {
-    id: "2",
-    name: "Construção Residencial Kilamba",
-    location: "Kilamba — Luanda",
-    lastRdo: "Último RDO · Ontem",
-    status: "completed",
-  },
-  {
-    id: "3",
-    name: "Reabilitação Escola 17 de Setembro",
-    location: "Viana — Luanda",
-    lastRdo: "Último RDO · 08 Ago",
-    status: "active",
-  },
-  {
-    id: "4",
-    name: "Edifício Comercial Talatona",
-    location: "Talatona — Luanda",
-    lastRdo: "Último RDO · 05 Ago",
-    status: "active",
-  },
-  {
-    id: "5",
-    name: "Ponte sobre o Rio Kwanza",
-    location: "Viana — Luanda",
-    lastRdo: "Último RDO · 01 Ago",
-    status: "archived",
-  },
-];
-
 export default function ProjectsScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
-  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { projects, loading } = useProjects();
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -225,26 +181,34 @@ export default function ProjectsScreen() {
     },
   }));
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 150);
-    return () => clearTimeout(timer);
-  }, []);
+  const filteredProjects = useMemo(() => {
+    return projects
+      .filter((project) => {
+        if (activeFilter === "all") return true;
+        return project.status === activeFilter;
+      })
+      .filter((project) => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+          project.name.toLowerCase().includes(query) ||
+          (project.location && project.location.toLowerCase().includes(query))
+        );
+      })
+      .map((project) => ({
+        id: project.id,
+        name: project.name,
+        location: project.location ?? "",
+        lastRdo: project.start_date
+          ? `Início · ${new Date(project.start_date).toLocaleDateString("pt-AO", { day: "2-digit", month: "short" })}`
+          : "",
+        status: project.status as ProjectStatus,
+      }));
+  }, [projects, activeFilter, searchQuery]);
 
   if (loading) return <LoadingScreen />;
 
-  const filteredProjects = MOCK_PROJECTS.filter((project) => {
-    if (activeFilter === "all") return true;
-    return project.status === activeFilter;
-  }).filter((project) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      project.name.toLowerCase().includes(query) ||
-      project.location.toLowerCase().includes(query)
-    );
-  });
-
-  function renderProjectCard({ item }: { item: Project }) {
+  function renderProjectCard({ item }: { item: typeof filteredProjects[0] }) {
     return (
       <ProjectCard
         id={item.id}

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
   Text,
   Pressable,
   Platform,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import {
@@ -17,25 +18,14 @@ import DateTimePicker, {
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProject, useProjects } from "@/hooks/useProjects";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { Field } from "@/components/ui/Form/Field";
 import { SelectField } from "@/components/ui/Form/SelectField";
-
-const MOCK_PROJECT = {
-  name: "Reabilitação Pedrinhas",
-  reference: "OBR-2026-032",
-  location: "Zango 1 — Icolo e Bengo",
-  province: "Icolo e Bengo",
-  startDate: new Date(2026, 5, 3),
-  endDate: new Date(2026, 10, 30),
-  responsible: "Kiali Rodrigues",
-  client: "Nome do cliente",
-  contractor: "Nome da empresa",
-  inspector: "Nome da entidade / responsável",
-};
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 const PROVINCES = [
   "Bengo", "Benguela", "Bié", "Cabinda", "Cuando-Cubango",
@@ -128,17 +118,35 @@ function DateField({
 export default function EditProjectScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { project, loading: projectLoading } = useProject(id ?? null);
+  const { update } = useProjects();
 
-  const [name, setName] = useState(MOCK_PROJECT.name);
-  const [reference, setReference] = useState(MOCK_PROJECT.reference);
-  const [location, setLocation] = useState(MOCK_PROJECT.location);
-  const [province, setProvince] = useState(MOCK_PROJECT.province);
-  const [startDate, setStartDate] = useState<Date | null>(MOCK_PROJECT.startDate);
-  const [endDate, setEndDate] = useState<Date | null>(MOCK_PROJECT.endDate);
-  const [responsible, setResponsible] = useState(MOCK_PROJECT.responsible);
-  const [client, setClient] = useState(MOCK_PROJECT.client);
-  const [contractor, setContractor] = useState(MOCK_PROJECT.contractor);
-  const [inspector, setInspector] = useState(MOCK_PROJECT.inspector);
+  const [name, setName] = useState("");
+  const [reference, setReference] = useState("");
+  const [location, setLocation] = useState("");
+  const [province, setProvince] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [responsible, setResponsible] = useState("");
+  const [client, setClient] = useState("");
+  const [contractor, setContractor] = useState("");
+  const [inspector, setInspector] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (project) {
+      setName(project.name);
+      setReference(project.reference ?? "");
+      setLocation(project.location ?? "");
+      setProvince(project.province ?? "");
+      setStartDate(project.start_date ? new Date(project.start_date) : null);
+      setEndDate(project.expected_end_date ? new Date(project.expected_end_date) : null);
+      setResponsible(project.responsible_name ?? "");
+      setClient(project.client_name ?? "");
+      setContractor(project.contractor_name ?? "");
+      setInspector(project.inspector_name ?? "");
+    }
+  }, [project]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -240,6 +248,46 @@ export default function EditProjectScreen() {
       color: colors.textMuted,
     },
   }));
+
+  if (projectLoading) return <LoadingScreen />;
+
+  if (!project) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title="Editar obra" onBack={() => router.back()} />
+        <Text style={{ color: colors.textMuted, textAlign: "center", marginTop: 100 }}>
+          Obra não encontrada.
+        </Text>
+      </View>
+    );
+  }
+
+  const handleSave = async () => {
+    if (!name.trim()) {
+      Alert.alert("Erro", "O nome da obra é obrigatório.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await update(id!, {
+        name: name.trim(),
+        reference: reference.trim() || undefined,
+        location: location.trim() || undefined,
+        province: province || undefined,
+        start_date: startDate ? startDate.toISOString() : undefined,
+        expected_end_date: endDate ? endDate.toISOString() : undefined,
+        responsible_name: responsible.trim() || undefined,
+        client_name: client.trim() || undefined,
+        contractor_name: contractor.trim() || undefined,
+        inspector_name: inspector.trim() || undefined,
+      });
+      router.back();
+    } catch (e: any) {
+      Alert.alert("Erro", e.message || "Erro ao guardar alterações.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -347,8 +395,9 @@ export default function EditProjectScreen() {
         </View>
 
         <PrimaryButton
-          label="Guardar alterações"
-          onPress={() => router.back()}
+          label={saving ? "Guardando..." : "Guardar alterações"}
+          onPress={handleSave}
+          disabled={saving}
         />
 
         <PressableOpacity

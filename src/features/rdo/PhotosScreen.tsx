@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Camera, X } from "lucide-react-native";
@@ -7,35 +7,32 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-type PhotoItem = {
-  id: string;
-  caption: string;
-};
-
-const INITIAL_PHOTOS: PhotoItem[] = [
-  { id: "1", caption: "Frente — Bloco A" },
-  { id: "2", caption: "Alvenaria — Piso 2" },
-  { id: "3", caption: "Revestimento — Piso 1" },
-  { id: "4", caption: "Área comum" },
-  { id: "5", caption: "Equipamentos no local" },
-  { id: "6", caption: "Estado geral da obra" },
-];
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { usePhotographRepository } from "@/repositories/photograph.repository";
+import type { Photograph } from "@/types";
 
 export default function PhotosScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const photographRepo = usePhotographRepository();
   const [step] = useState(8);
   const totalSteps = 9;
-  const [photos, setPhotos] = useState<PhotoItem[]>(INITIAL_PHOTOS);
+  const [photos, setPhotos] = useState<Photograph[]>([]);
   const fromReview = from === "review";
+  const [loading, setLoading] = useState(true);
 
-  const removePhoto = (photoId: string) => {
+  useEffect(() => {
+    if (!id) return;
+    photographRepo.findByRdoId(id).then((data) => {
+      setPhotos(data);
+      setLoading(false);
+    });
+  }, [id]);
+
+  const removePhoto = async (photoId: string) => {
+    await photographRepo.remove(photoId);
     setPhotos((prev) => prev.filter((p) => p.id !== photoId));
   };
 
@@ -161,6 +158,13 @@ export default function PhotosScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
+  const rows: Photograph[][] = [];
+  for (let i = 0; i < photos.length; i += 2) {
+    rows.push(photos.slice(i, i + 2));
+  }
+
   return (
     <RdoScreenLayout
       title="Fotografias"
@@ -169,8 +173,8 @@ export default function PhotosScreen() {
       onContinue={handleContinue}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
@@ -189,9 +193,9 @@ export default function PhotosScreen() {
       <Text style={styles.sectionLabel}>FOTOGRAFIAS REGISTADAS</Text>
 
       <View style={styles.photoGrid}>
-        {[0, 2, 4].map((rowStart) => (
-          <View key={rowStart} style={styles.photoRow}>
-            {photos.slice(rowStart, rowStart + 2).map((photo) => (
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.photoRow}>
+            {row.map((photo) => (
               <View key={photo.id} style={styles.photoItemContainer}>
                 <PressableOpacity
                   style={styles.removeButton}
@@ -205,7 +209,7 @@ export default function PhotosScreen() {
                     router.push(`/(tabs)/reports/${id}/edit-photo?photoId=${photo.id}`)
                   }
                 >
-                  <Text style={styles.photoCaption}>{photo.caption}</Text>
+                  <Text style={styles.photoCaption}>{photo.caption ?? ""}</Text>
                 </PressableOpacity>
               </View>
             ))}

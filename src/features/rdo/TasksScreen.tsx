@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Plus, ChevronRight, Copy } from "lucide-react-native";
@@ -7,39 +7,35 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-const MOCK_SUMMARY = {
-  activities: 2,
-};
-
-interface ActivityItem {
-  id: string;
-  name: string;
-  location: string;
-  quantity: string;
-  status: "em_curso" | "concluido";
-}
-
-const MOCK_ACTIVITIES: ActivityItem[] = [
-  { id: "1", name: "Execução de alvenaria", location: "Piso 2 — Bloco A", quantity: "120 m²", status: "em_curso" },
-  { id: "2", name: "Assentamento de revestimento", location: "Piso 1 — Bloco B", quantity: "85 m²", status: "concluido" },
-];
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useTaskRepository } from "@/repositories/task.repository";
+import type { Task } from "@/types";
 
 export default function TasksScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const taskRepo = useTaskRepository();
   const [step] = useState(5);
   const totalSteps = 9;
   const fromReview = from === "review";
 
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    taskRepo.findByRdoId(id).then((data) => {
+      setTasks(data);
+      setLoading(false);
+    });
+  }, [id]);
+
   const STATUS_LABELS: Record<string, { label: string; color: string; bgColor: string }> = {
-    em_curso: { label: "Em curso", color: colors.warning, bgColor: colors.warningBg },
-    concluido: { label: "Concluído", color: colors.success, bgColor: colors.successBg },
+    in_progress: { label: "Em curso", color: colors.warning, bgColor: colors.warningBg },
+    completed: { label: "Concluído", color: colors.success, bgColor: colors.successBg },
+    paused: { label: "Pausado", color: colors.textMuted, bgColor: colors.bgSurface },
   };
 
   const handleContinue = () => {
@@ -187,6 +183,8 @@ export default function TasksScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Tarefas"
@@ -195,14 +193,14 @@ export default function TasksScreen() {
       onContinue={handleContinue}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Atividades</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.activities} atividades</Text>
+          <Text style={styles.summaryValue}>{tasks.length} atividades</Text>
         </View>
         <View style={styles.summaryRight}>
           <Text style={styles.summaryLabel}>Trabalho</Text>
@@ -213,33 +211,38 @@ export default function TasksScreen() {
       <Text style={styles.sectionLabel}>ATIVIDADES REGISTADAS</Text>
 
       <View style={styles.activitiesList}>
-        {MOCK_ACTIVITIES.map((item, index) => (
-          <View key={item.id}>
-            <PressableOpacity
-              style={styles.activityItem}
-              onPress={() => router.push(`/(tabs)/reports/${id}/edit-task?taskId=${item.id}`)}
-            >
-              <View style={styles.activityItemLeft}>
-                <View style={styles.activityItemInfo}>
-                  <Text style={styles.activityItemName}>{item.name}</Text>
-                  <Text style={styles.activityItemLocation}>{item.location}</Text>
-                </View>
-              </View>
-              <View style={styles.activityItemRight}>
-                <View style={styles.activityItemQtyInfo}>
-                  <Text style={styles.activityItemQty}>{item.quantity}</Text>
-                  <View style={[styles.statusBadge, { backgroundColor: STATUS_LABELS[item.status].bgColor }]}>
-                    <Text style={[styles.statusBadgeText, { color: STATUS_LABELS[item.status].color }]}>
-                      {STATUS_LABELS[item.status].label}
-                    </Text>
+        {tasks.map((item, index) => {
+          const statusInfo = STATUS_LABELS[item.status] ?? STATUS_LABELS.in_progress;
+          return (
+            <View key={item.id}>
+              <PressableOpacity
+                style={styles.activityItem}
+                onPress={() => router.push(`/(tabs)/reports/${id}/edit-task?taskId=${item.id}`)}
+              >
+                <View style={styles.activityItemLeft}>
+                  <View style={styles.activityItemInfo}>
+                    <Text style={styles.activityItemName}>{item.description}</Text>
+                    <Text style={styles.activityItemLocation}>{item.location ?? ""}</Text>
                   </View>
                 </View>
-                <ChevronRight size={16} color={colors.textMuted} />
-              </View>
-            </PressableOpacity>
-            {index < MOCK_ACTIVITIES.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
+                <View style={styles.activityItemRight}>
+                  <View style={styles.activityItemQtyInfo}>
+                    <Text style={styles.activityItemQty}>
+                      {item.quantity != null ? `${item.quantity} ${item.unit ?? ""}` : ""}
+                    </Text>
+                    <View style={[styles.statusBadge, { backgroundColor: statusInfo.bgColor }]}>
+                      <Text style={[styles.statusBadgeText, { color: statusInfo.color }]}>
+                        {statusInfo.label}
+                      </Text>
+                    </View>
+                  </View>
+                  <ChevronRight size={16} color={colors.textMuted} />
+                </View>
+              </PressableOpacity>
+              {index < tasks.length - 1 && <View style={styles.divider} />}
+            </View>
+          );
+        })}
       </View>
 
       <PressableOpacity

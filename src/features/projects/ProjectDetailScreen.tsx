@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View, ScrollView, Text, Modal, Pressable } from "react-native";
+import { useState, useEffect, useMemo } from "react";
+import { View, ScrollView, Text, Modal, Pressable, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -16,36 +16,14 @@ import {
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProject, useProjects } from "@/hooks/useProjects";
+import { useRdoList } from "@/hooks/useRdoData";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { InfoCard } from "@/components/projects/InfoCard";
 import { RecentRdoList } from "@/components/projects/RecentRdoList";
 import { useRdo } from "@/contexts/RdoContext";
-
-const MOCK_PROJECT = {
-  id: "1",
-  name: "Reabilitação Pedrinhas",
-  location: "Zango 1 — Icolo e Bengo",
-  status: "active" as const,
-  responsible: "Kiali Rodrigues",
-  contractType: "Construção",
-  startDate: "09 Fev 2026",
-  deadline: "Maio 2026",
-};
-
-const MOCK_RDO = {
-  date: "12 Agosto 2026",
-  status: "Em andamento",
-  progressPercentage: 65,
-  completedSteps: 6,
-  totalSteps: 9,
-};
-
-const MOCK_RECENT_RDOS = [
-  { id: "1", date: "11 Ago", number: 31, status: "generated" as const },
-  { id: "2", date: "10 Ago", number: 30, status: "generated" as const },
-  { id: "3", date: "09 Ago", number: 29, status: "generated" as const },
-];
 
 export default function ProjectDetailScreen() {
   const colors = useThemeColors();
@@ -54,6 +32,31 @@ export default function ProjectDetailScreen() {
   const { rdoId } = useRdo();
   const [overflowVisible, setOverflowVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+
+  const { project, loading: projectLoading } = useProject(id ?? null);
+  const { remove } = useProjects();
+  const { rdos, loading: rdosLoading } = useRdoList(id ?? undefined);
+
+  const loading = projectLoading || rdosLoading;
+
+  const latestRdo = useMemo(() => {
+    if (rdos.length === 0) return null;
+    return rdos[0];
+  }, [rdos]);
+
+  const recentRdos = useMemo(() => {
+    return rdos.slice(0, 5).map((r) => {
+      const date = new Date(r.report_date);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = date.toLocaleDateString("pt-AO", { month: "short" });
+      return {
+        id: r.id,
+        date: `${day} ${month}`,
+        number: r.number,
+        status: r.status as "draft" | "completed" | "generated",
+      };
+    });
+  }, [rdos]);
 
   const OVERFLOW_OPTIONS = [
     { key: "info", label: "Informações da obra", icon: Info, color: colors.textMain },
@@ -275,6 +278,17 @@ export default function ProjectDetailScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+  if (!project) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.textMuted, textAlign: "center", marginTop: 100 }}>
+          Obra não encontrada.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -282,7 +296,7 @@ export default function ProjectDetailScreen() {
           <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle} numberOfLines={1}>
-          {MOCK_PROJECT.name}
+          {project.name}
         </Text>
         <PressableOpacity
           style={styles.navButton}
@@ -298,36 +312,41 @@ export default function ProjectDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ProjectHeader
-          name={MOCK_PROJECT.name}
-          location={MOCK_PROJECT.location}
-          status={MOCK_PROJECT.status}
+          name={project.name}
+          location={project.location ?? ""}
+          status={project.status}
         />
 
         <View style={styles.rdoSection}>
           <Text style={styles.sectionLabel}>RDO DE HOJE</Text>
           <View style={styles.rdoCard}>
-            <Text style={styles.rdoDate}>{MOCK_RDO.date}</Text>
+            <Text style={styles.rdoDate}>
+              {latestRdo
+                ? new Date(latestRdo.report_date).toLocaleDateString("pt-AO", { day: "numeric", month: "long", year: "numeric" })
+                : "Sem RDO"}
+            </Text>
             <Text style={styles.rdoStatus}>
-              {MOCK_RDO.status} · {MOCK_RDO.progressPercentage}%
+              {latestRdo
+                ? `${latestRdo.status === "draft" ? "Rascunho" : latestRdo.status === "completed" ? "Concluído" : "Gerado"} · ${latestRdo.progress_percentage}%`
+                : "Nenhum RDO"}
             </Text>
 
-            <View style={styles.progressSection}>
-              <View style={styles.progressTrack}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${MOCK_RDO.progressPercentage}%` },
-                  ]}
-                />
+            {latestRdo && (
+              <View style={styles.progressSection}>
+                <View style={styles.progressTrack}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${latestRdo.progress_percentage}%` },
+                    ]}
+                  />
+                </View>
               </View>
-              <Text style={styles.progressSteps}>
-                {MOCK_RDO.completedSteps} de {MOCK_RDO.totalSteps} etapas concluídas
-              </Text>
-            </View>
+            )}
 
             <PressableOpacity
               style={styles.ctaButton}
-              onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
+              onPress={() => latestRdo && router.push(`/(tabs)/reports/${latestRdo.id}`)}
             >
               <Text style={styles.ctaText}>Continuar RDO</Text>
               <ArrowRight size={18} color={colors.textOnBrand} />
@@ -348,17 +367,17 @@ export default function ProjectDetailScreen() {
           </View>
           <InfoCard
             fields={[
-              { label: "Responsável técnico", value: MOCK_PROJECT.responsible },
-              { label: "Contrato", value: MOCK_PROJECT.contractType },
-              { label: "Início", value: MOCK_PROJECT.startDate },
-              { label: "Prazo", value: MOCK_PROJECT.deadline },
+              { label: "Responsável técnico", value: project.responsible_name ?? "—" },
+              { label: "Contrato", value: project.contractor_name ?? "—" },
+              { label: "Início", value: project.start_date ? new Date(project.start_date).toLocaleDateString("pt-AO", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+              { label: "Prazo", value: project.expected_end_date ? new Date(project.expected_end_date).toLocaleDateString("pt-AO", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
             ]}
           />
         </View>
 
         <View style={styles.recentSection}>
           <Text style={styles.sectionLabel}>RDOs recentes</Text>
-          <RecentRdoList items={MOCK_RECENT_RDOS} />
+          <RecentRdoList items={recentRdos} />
         </View>
 
         <PressableOpacity
@@ -442,9 +461,14 @@ export default function ProjectDetailScreen() {
               </PressableOpacity>
               <PressableOpacity
                 style={styles.deleteButton}
-                onPress={() => {
+                onPress={async () => {
                   setDeleteConfirmVisible(false);
-                  router.back();
+                  try {
+                    await remove(id!);
+                    router.replace("/(tabs)/projects");
+                  } catch (e: any) {
+                    Alert.alert("Erro", e.message || "Erro ao excluir obra");
+                  }
                 }}
               >
                 <Text style={styles.deleteButtonText}>Excluir</Text>

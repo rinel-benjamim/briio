@@ -12,20 +12,9 @@ import {
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProject } from "@/hooks/useProjects";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-
-const MOCK_PROJECT = {
-  name: "Reabilitação Pedrinhas",
-  status: "Em execução",
-  location: "Zango 1 — Icolo e Bengo",
-  startDate: "03 Jun 2026",
-  endDate: "30 Nov 2026",
-  responsible: "Kiali Rodrigues",
-  client: "Nome do cliente",
-  contractor: "Nome da empresa",
-  inspector: "Nome da entidade / responsável",
-  reference: "OBR-2026-032",
-};
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 interface InfoRowProps {
   label: string;
@@ -54,6 +43,7 @@ export default function ProjectInfoScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { project, loading } = useProject(id ?? null);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -183,6 +173,27 @@ export default function ProjectInfoScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
+  if (!project) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.textMuted, textAlign: "center", marginTop: 100 }}>
+          Obra não encontrada.
+        </Text>
+      </View>
+    );
+  }
+
+  const statusLabel =
+    project.status === "active" ? "Em execução" :
+    project.status === "completed" ? "Concluída" : "Arquivada";
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—";
+    return new Date(dateStr).toLocaleDateString("pt-AO", { day: "2-digit", month: "short", year: "numeric" });
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -201,11 +212,11 @@ export default function ProjectInfoScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.identity}>
-          <Text style={styles.projectName}>{MOCK_PROJECT.name}</Text>
+          <Text style={styles.projectName}>{project.name}</Text>
           <View style={styles.statusRow}>
             <View style={styles.statusBadge}>
               <CircleCheck size={14} color={colors.success} />
-              <Text style={styles.statusText}>{MOCK_PROJECT.status}</Text>
+              <Text style={styles.statusText}>{statusLabel}</Text>
             </View>
           </View>
         </View>
@@ -217,16 +228,16 @@ export default function ProjectInfoScreen() {
           <Divider styles={styles} />
           <InfoRow
             label="Localização"
-            value={MOCK_PROJECT.location}
+            value={project.location ?? "—"}
             icon={<MapPin size={16} color={colors.textMuted} />}
             styles={styles}
           />
           <Divider styles={styles} />
-          <InfoRow label="Data de início" value={MOCK_PROJECT.startDate} styles={styles} />
+          <InfoRow label="Data de início" value={formatDate(project.start_date)} styles={styles} />
           <Divider styles={styles} />
-          <InfoRow label="Previsão de conclusão" value={MOCK_PROJECT.endDate} styles={styles} />
+          <InfoRow label="Previsão de conclusão" value={formatDate(project.expected_end_date)} styles={styles} />
           <Divider styles={styles} />
-          <InfoRow label="Responsável" value={MOCK_PROJECT.responsible} styles={styles} />
+          <InfoRow label="Responsável" value={project.responsible_name ?? "—"} styles={styles} />
         </View>
 
         <View style={styles.section}>
@@ -234,17 +245,17 @@ export default function ProjectInfoScreen() {
             <Text style={styles.sectionTitle}>Entidades</Text>
           </View>
           <Divider styles={styles} />
-          <InfoRow label="Cliente" value={MOCK_PROJECT.client} styles={styles} />
+          <InfoRow label="Cliente" value={project.client_name ?? "—"} styles={styles} />
           <Divider styles={styles} />
-          <InfoRow label="Empreiteiro" value={MOCK_PROJECT.contractor} styles={styles} />
+          <InfoRow label="Empreiteiro" value={project.contractor_name ?? "—"} styles={styles} />
           <Divider styles={styles} />
-          <InfoRow label="Fiscalização" value={MOCK_PROJECT.inspector} styles={styles} />
+          <InfoRow label="Fiscalização" value={project.inspector_name ?? "—"} styles={styles} />
         </View>
 
         <View style={styles.section}>
           <InfoRow
             label="Referência da obra"
-            value={MOCK_PROJECT.reference}
+            value={project.reference ?? "—"}
             icon={<Copy size={18} color={colors.textMuted} />}
             styles={styles}
           />
@@ -255,11 +266,11 @@ export default function ProjectInfoScreen() {
             <Text style={styles.sectionTitle}>Localização da obra</Text>
           </View>
           <View style={styles.addressRow}>
-            <Text style={styles.addressText}>{MOCK_PROJECT.location}</Text>
+            <Text style={styles.addressText}>{project.location ?? "—"}</Text>
           </View>
           <View style={styles.mapPlaceholder}>
             <Map size={32} color={colors.textMuted} />
-            <Text style={styles.mapText}>Zango 1, Icolo e Bengo, Luanda</Text>
+            <Text style={styles.mapText}>{project.location ?? "Localização não definida"}</Text>
           </View>
         </View>
       </ScrollView>

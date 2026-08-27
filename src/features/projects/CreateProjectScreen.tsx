@@ -5,6 +5,7 @@ import {
   Text,
   Pressable,
   Platform,
+  Alert,
 } from "react-native";
 import { router } from "expo-router";
 import {
@@ -18,6 +19,7 @@ import DateTimePicker, {
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProjects } from "@/hooks/useProjects";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -114,6 +116,7 @@ function DateField({
 
 export default function CreateProjectScreen() {
   const colors = useThemeColors();
+  const { create } = useProjects();
   const [name, setName] = useState("");
   const [reference, setReference] = useState("");
   const [location, setLocation] = useState("");
@@ -124,6 +127,7 @@ export default function CreateProjectScreen() {
   const [contractor, setContractor] = useState("");
   const [inspector, setInspector] = useState("");
   const [entidadesExpanded, setEntidadesExpanded] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -248,6 +252,32 @@ export default function CreateProjectScreen() {
     },
   }));
 
+  const handleCreate = async () => {
+    if (!name.trim()) {
+      Alert.alert("Erro", "O nome da obra é obrigatório.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const project = await create({
+        name: name.trim(),
+        reference: reference.trim() || undefined,
+        location: location.trim() || undefined,
+        province: province || undefined,
+        start_date: startDate ? startDate.toISOString() : undefined,
+        expected_end_date: endDate ? endDate.toISOString() : undefined,
+        client_name: client.trim() || undefined,
+        contractor_name: contractor.trim() || undefined,
+        inspector_name: inspector.trim() || undefined,
+      });
+      router.replace(`/(tabs)/projects/${project.id}/configure-rdo`);
+    } catch (e: any) {
+      Alert.alert("Erro", e.message || "Erro ao criar obra.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const stepBadge = (
     <View style={styles.stepBadge}>
       <Text style={styles.stepBadgeText}>1 de 2</Text>
@@ -362,9 +392,10 @@ export default function CreateProjectScreen() {
         </View>
 
         <PrimaryButton
-          label="Continuar"
-          onPress={() => router.push(`/(tabs)/projects/1/configure-rdo`)}
-          icon={<ArrowRight size={18} color={colors.textOnBrand} />}
+          label={saving ? "Criando..." : "Continuar"}
+          onPress={handleCreate}
+          disabled={saving}
+          icon={!saving ? <ArrowRight size={18} color={colors.textOnBrand} /> : undefined}
         />
 
         <Text style={styles.supportingText}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
@@ -14,15 +14,37 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
-import {
-  MOCK_RDO_CONTEXT,
-  MOCK_MATERIALS_OPTIONS,
-  MOCK_UNITS,
-  MATERIAL_STATUS_OPTIONS,
-  MATERIAL_STATUS_LABELS,
-  MOCK_MATERIALS_DATA,
-} from "@/mocks";
-import type { MaterialStatusOption } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useMaterialRepository } from "@/repositories/material.repository";
+import type { MaterialStatus } from "@/types";
+
+const MOCK_MATERIALS_OPTIONS = [
+  "Cimento Portland 42.5",
+  "Areia média",
+  "Bloco de cimento",
+  "Brita",
+  "Vergalhão",
+  "Tubo PVC",
+  "Fio eléctrico",
+  "Outro",
+];
+
+const MOCK_UNITS = ["sacos", "m³", "un.", "kg", "l", "cx", "rolo"];
+
+const MATERIAL_STATUS_OPTIONS = [
+  { label: "Recebido", value: "received" },
+  { label: "Utilizado", value: "used" },
+  { label: "Em falta", value: "missing" },
+  { label: "Em trânsito", value: "in_transit" },
+];
+
+const MATERIAL_STATUS_LABELS: Record<string, string> = {
+  received: "Recebido",
+  used: "Utilizado",
+  missing: "Em falta",
+  in_transit: "Em trânsito",
+};
 
 interface MaterialFormProps {
   mode: "add" | "edit";
@@ -32,6 +54,32 @@ interface MaterialFormProps {
 
 export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: MaterialFormProps) {
   const colors = useThemeColors();
+  const { id, materialId } = useLocalSearchParams<{ id: string; materialId?: string }>();
+  const { date, projectName } = useRdo();
+  const materialRepo = useMaterialRepository();
+
+  const [material, setMaterial] = useState("");
+  const [customMaterial, setCustomMaterial] = useState("");
+  const [quantity, setQuantity] = useState(50);
+  const [unit, setUnit] = useState("sacos");
+  const [status, setStatus] = useState<MaterialStatus>("received");
+  const [observation, setObservation] = useState("");
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && materialId) {
+      materialRepo.findById(materialId).then((entry) => {
+        if (entry) {
+          setMaterial(entry.material);
+          setQuantity(entry.quantity);
+          setUnit(entry.unit ?? "sacos");
+          setStatus(entry.status);
+          setObservation(entry.observation ?? "");
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, materialId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -112,17 +160,6 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
     },
   }));
 
-  const { id, materialId } = useLocalSearchParams<{ id: string; materialId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_MATERIALS_DATA[materialId || "1"] : null;
-
-  const [material, setMaterial] = useState(editData?.material || "");
-  const [customMaterial, setCustomMaterial] = useState("");
-  const [quantity, setQuantity] = useState(editData?.quantity || 50);
-  const [unit, setUnit] = useState(editData?.unit || "sacos");
-  const [status, setStatus] = useState<MaterialStatusOption>(editData?.status || "recebido");
-  const [observation, setObservation] = useState(editData?.observation || "");
-
   const isCustomMaterial = material === "Outro";
 
   const stepBadge = (
@@ -132,6 +169,33 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
       </Text>
     </View>
   );
+
+  async function handleSave() {
+    if (!id) return;
+    const materialName = isCustomMaterial ? customMaterial : material;
+    if (!materialName) return;
+
+    if (mode === "add") {
+      await materialRepo.create(id, {
+        material: materialName,
+        quantity,
+        unit,
+        status,
+        observation: observation || undefined,
+      });
+    } else if (materialId) {
+      await materialRepo.update(materialId, {
+        material: materialName,
+        quantity,
+        unit,
+        status,
+        observation: observation || undefined,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
@@ -146,7 +210,7 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         <View style={styles.section}>
           <SelectField
@@ -193,7 +257,7 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
           label="Situação"
           value={status}
           options={MATERIAL_STATUS_OPTIONS}
-          onChange={(v) => setStatus(v as MaterialStatusOption)}
+          onChange={(v) => setStatus(v as MaterialStatus)}
         />
 
         <View style={styles.summaryCard}>
@@ -218,7 +282,7 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar material" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -234,5 +298,3 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
     </View>
   );
 }
-
-

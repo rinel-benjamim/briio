@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -17,12 +17,16 @@ import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { Field } from "@/components/ui/Form/Field";
-import {
-  MOCK_RDO_CONTEXT,
-  PHOTO_TYPES,
-  MOCK_PHOTOS_DATA,
-} from "@/mocks";
-import type { PhotoType } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { usePhotographRepository } from "@/repositories/photograph.repository";
+import type { PhotographType } from "@/types";
+
+const PHOTO_TYPES = [
+  { label: "Execução", value: "during" as PhotographType },
+  { label: "Antes", value: "before" as PhotographType },
+  { label: "Depois", value: "after" as PhotographType },
+];
 
 interface PhotoFormProps {
   mode: "add" | "edit";
@@ -32,6 +36,29 @@ interface PhotoFormProps {
 
 export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormProps) {
   const colors = useThemeColors();
+  const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
+  const { date, projectName } = useRdo();
+  const photographRepo = usePhotographRepository();
+
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [caption, setCaption] = useState("");
+  const [location, setLocation] = useState("");
+  const [photoType, setPhotoType] = useState<PhotographType>("during");
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && photoId) {
+      photographRepo.findById(photoId).then((entry) => {
+        if (entry) {
+          setPhotoUri(entry.file_uri);
+          setCaption(entry.caption ?? "");
+          setLocation(entry.location ?? "");
+          if (entry.type) setPhotoType(entry.type);
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, photoId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -159,15 +186,6 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
     },
   }));
 
-  const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_PHOTOS_DATA[photoId || "1"] : null;
-
-  const [photoUri, setPhotoUri] = useState<string | null>(editData?.uri || null);
-  const [caption, setCaption] = useState(editData?.caption || "");
-  const [location, setLocation] = useState(editData?.location || "");
-  const [photoType, setPhotoType] = useState<PhotoType>(editData?.type || "execucao");
-
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -205,6 +223,29 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
     </View>
   );
 
+  async function handleSave() {
+    if (!id) return;
+
+    if (mode === "add") {
+      if (!photoUri) return;
+      await photographRepo.create(id, {
+        file_uri: photoUri,
+        caption: caption || undefined,
+        location: location || undefined,
+        type: photoType,
+      });
+    } else if (photoId) {
+      await photographRepo.update(photoId, {
+        caption: caption || undefined,
+        location: location || undefined,
+        type: photoType,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
+
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -218,7 +259,7 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         {!photoUri ? (
           <View style={styles.photoArea}>
@@ -288,7 +329,7 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar fotografia" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -304,5 +345,3 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
     </View>
   );
 }
-
-

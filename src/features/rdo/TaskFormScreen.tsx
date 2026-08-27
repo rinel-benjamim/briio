@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -19,14 +19,24 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
-import {
-  MOCK_RDO_CONTEXT,
-  MOCK_TASK_UNITS,
-  TASK_STATUS_OPTIONS,
-  TASK_STATUS_LABELS,
-  MOCK_TASKS_DATA,
-} from "@/mocks";
-import type { TaskStatusOption } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useTaskRepository } from "@/repositories/task.repository";
+import type { TaskStatus } from "@/types";
+
+const MOCK_TASK_UNITS = ["m²", "m", "un.", "kg", "l", "cx", "m³"];
+
+const TASK_STATUS_OPTIONS = [
+  { label: "Em execução", value: "in_progress" },
+  { label: "Concluído", value: "completed" },
+  { label: "Pausado", value: "paused" },
+];
+
+const TASK_STATUS_LABELS: Record<string, string> = {
+  in_progress: "Em execução",
+  completed: "Concluído",
+  paused: "Pausado",
+};
 
 interface TaskFormProps {
   mode: "add" | "edit";
@@ -36,6 +46,35 @@ interface TaskFormProps {
 
 export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProps) {
   const colors = useThemeColors();
+  const { id, taskId } = useLocalSearchParams<{ id: string; taskId?: string }>();
+  const { date, projectName } = useRdo();
+  const taskRepo = useTaskRepository();
+
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [quantity, setQuantity] = useState(120);
+  const [unit, setUnit] = useState("m²");
+  const [status, setStatus] = useState<TaskStatus>("in_progress");
+  const [observation, setObservation] = useState("");
+  const [progress, setProgress] = useState(65);
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && taskId) {
+      taskRepo.findById(taskId).then((entry) => {
+        if (entry) {
+          setDescription(entry.description);
+          setLocation(entry.location ?? "");
+          setQuantity(entry.quantity ?? 120);
+          setUnit(entry.unit ?? "m²");
+          setStatus(entry.status);
+          setObservation(entry.observation ?? "");
+          setProgress(entry.progress_percentage);
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, taskId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -153,18 +192,6 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
     },
   }));
 
-  const { id, taskId } = useLocalSearchParams<{ id: string; taskId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_TASKS_DATA[taskId || "1"] : null;
-
-  const [description, setDescription] = useState(editData?.description || "");
-  const [location, setLocation] = useState(editData?.location || "");
-  const [quantity, setQuantity] = useState(editData?.quantity || 120);
-  const [unit, setUnit] = useState(editData?.unit || "m²");
-  const [status, setStatus] = useState<TaskStatusOption>(editData?.status || "em_execucao");
-  const [observation, setObservation] = useState(editData?.observation || "");
-  const [progress, setProgress] = useState(editData?.progress || 65);
-
   const trackWidth = useRef(0);
 
   const panResponder = useRef(
@@ -189,6 +216,36 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
     </View>
   );
 
+  async function handleSave() {
+    if (!id) return;
+    if (!description) return;
+
+    if (mode === "add") {
+      await taskRepo.create(id, {
+        description,
+        location: location || undefined,
+        quantity,
+        unit,
+        progress_percentage: progress,
+        status,
+        observation: observation || undefined,
+      });
+    } else if (taskId) {
+      await taskRepo.update(taskId, {
+        description,
+        location: location || undefined,
+        quantity,
+        unit,
+        progress_percentage: progress,
+        status,
+        observation: observation || undefined,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
+
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -202,7 +259,7 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         <View style={styles.section}>
           <TextArea
@@ -245,7 +302,7 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
           label="Estado"
           value={status}
           options={TASK_STATUS_OPTIONS}
-          onChange={(v) => setStatus(v as TaskStatusOption)}
+          onChange={(v) => setStatus(v as TaskStatus)}
         />
 
         <TextArea
@@ -292,7 +349,7 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Adicionar atividade" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -308,5 +365,3 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
     </View>
   );
 }
-
-

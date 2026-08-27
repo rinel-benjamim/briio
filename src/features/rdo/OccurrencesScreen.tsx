@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Plus, ChevronRight } from "lucide-react-native";
@@ -7,45 +7,36 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useOccurrenceRepository } from "@/repositories/occurrence.repository";
+import type { Occurrence } from "@/types";
 
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-type OccurrenceItem = {
-  id: string;
-  title: string;
-  time: string;
-  location: string;
-  description: string;
-};
-
-const MOCK_OCCURRENCES: OccurrenceItem[] = [
-  {
-    id: "1",
-    title: "Chuva intensa",
-    time: "14:20",
-    location: "Área externa",
-    description:
-      "Interrupção dos trabalhos exteriores durante aproximadamente 1 hora.",
-  },
-  {
-    id: "2",
-    title: "Atraso na entrega de material",
-    time: "10:30",
-    location: "Frente B",
-    description:
-      "A entrega do cimento prevista para a manhã ocorreu às 14h.",
-  },
-];
+function formatTime(isoString: string | null): string {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  return `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+}
 
 export default function OccurrencesScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const occurrenceRepo = useOccurrenceRepository();
   const [step] = useState(6);
   const totalSteps = 9;
   const fromReview = from === "review";
+
+  const [occurrences, setOccurrences] = useState<Occurrence[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    occurrenceRepo.findByRdoId(id).then((data) => {
+      setOccurrences(data);
+      setLoading(false);
+    });
+  }, [id]);
 
   const handleContinue = () => {
     if (fromReview) {
@@ -165,6 +156,8 @@ export default function OccurrencesScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Ocorrências"
@@ -173,15 +166,15 @@ export default function OccurrencesScreen() {
       onContinue={handleContinue}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Ocorrências</Text>
           <Text style={styles.summaryValue}>
-            {MOCK_OCCURRENCES.length} ocorrências
+            {occurrences.length} ocorrências
           </Text>
         </View>
         <View style={styles.summaryRight}>
@@ -193,7 +186,7 @@ export default function OccurrencesScreen() {
       <Text style={styles.sectionLabel}>OCORRÊNCIAS REGISTADAS</Text>
 
       <View style={styles.occurrencesCard}>
-        {MOCK_OCCURRENCES.map((item, index) => (
+        {occurrences.map((item, index) => (
           <View key={item.id}>
             <PressableOpacity
               style={styles.occurrenceItem}
@@ -206,11 +199,11 @@ export default function OccurrencesScreen() {
                 <ChevronRight size={16} color={colors.textMuted} />
               </View>
               <Text style={styles.occurrenceMeta}>
-                {item.time} · {item.location}
+                {formatTime(item.occurred_at)} · {item.location ?? ""}
               </Text>
-              <Text style={styles.occurrenceDesc}>{item.description}</Text>
+              <Text style={styles.occurrenceDesc}>{item.description ?? ""}</Text>
             </PressableOpacity>
-            {index < MOCK_OCCURRENCES.length - 1 && (
+            {index < occurrences.length - 1 && (
               <View style={styles.divider} />
             )}
           </View>

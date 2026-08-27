@@ -14,18 +14,17 @@ import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdoOverview } from "@/hooks/useRdoData";
+import { useProjectRepository } from "@/repositories/project.repository";
+import { useState, useEffect } from "react";
+import type { Project } from "@/types";
 
-const MOCK_RDO = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-  location: "Zango 1 — Icolo e Bengo",
-  number: "RDO #032",
-  reportDate: "12 Ago 2026",
-  status: "Em andamento",
-  progressPercentage: 100,
-  completedSteps: 9,
-  totalSteps: 9,
-};
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 interface RdoSection {
   id: string;
@@ -34,40 +33,94 @@ interface RdoSection {
   completed: boolean;
 }
 
-const RDO_SECTIONS: RdoSection[] = [
-  { id: "1", name: "Condições do dia", summary: "Manhã · Tarde · Noite", completed: true },
-  { id: "2", name: "Mão de obra", summary: "7 trabalhadores · 8h", completed: true },
-  { id: "3", name: "Materiais", summary: "3 registos", completed: true },
-  { id: "4", name: "Equipamentos", summary: "2 registos", completed: true },
-  { id: "5", name: "Tarefas", summary: "2 tarefas", completed: true },
-  { id: "6", name: "Ocorrências", summary: "2 ocorrências", completed: true },
-  { id: "7", name: "Observações", summary: "Preenchido", completed: true },
-  { id: "8", name: "Fotografias", summary: "6 fotografias", completed: true },
-];
-
 const SECTION_ROUTES: Record<string, string> = {
-  "1": "weather",
-  "2": "workforce",
-  "3": "materials",
-  "4": "equipment",
-  "5": "tasks",
-  "6": "occurrences",
-  "7": "observations",
-  "8": "photos",
+  weather: "weather",
+  workforce: "workforce",
+  materials: "materials",
+  equipment: "equipment",
+  tasks: "tasks",
+  occurrences: "occurrences",
+  observations: "observations",
+  photographs: "photos",
 };
 
-const SECTION_ORDER = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const SECTION_KEYS = ["weather", "workforce", "materials", "equipment", "tasks", "occurrences", "observations", "photographs"] as const;
+
+const SECTION_NAMES: Record<string, string> = {
+  weather: "Condições do dia",
+  workforce: "Mão de obra",
+  materials: "Materiais",
+  equipment: "Equipamentos",
+  tasks: "Tarefas",
+  occurrences: "Ocorrências",
+  observations: "Observações",
+  photographs: "Fotografias",
+};
+
+function buildSectionSummary(key: string, counts: Record<string, number>): string {
+  switch (key) {
+    case "weather": {
+      const c = counts.weather ?? 0;
+      if (c === 0) return "Sem dados";
+      const labels = ["Manhã", "Tarde", "Noite"];
+      return labels.slice(0, c).join(" · ");
+    }
+    case "workforce": {
+      const c = counts.workforce ?? 0;
+      const h = counts.workforceHours ?? 0;
+      return `${c} trabalhadores · ${h}h`;
+    }
+    case "materials": return `${counts.materials ?? 0} registos`;
+    case "equipment": return `${counts.equipment ?? 0} registos`;
+    case "tasks": return `${counts.tasks ?? 0} tarefas`;
+    case "occurrences": return `${counts.occurrences ?? 0} ocorrências`;
+    case "observations": return (counts.observations ?? 0) > 0 ? "Preenchido" : "Sem dados";
+    case "photographs": return `${counts.photographs ?? 0} fotografias`;
+    default: return "";
+  }
+}
 
 export default function RdoOverviewScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { overview, loading } = useRdoOverview(id ?? null);
+  const projectRepo = useProjectRepository();
+  const [project, setProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (overview) {
+      projectRepo.findById(overview.rdo.project_id).then(setProject);
+    }
+  }, [overview]);
+
+  if (loading || !overview) return <LoadingScreen />;
+
+  const { rdo, sectionStatuses, completedSections, totalSections, progressPercentage } = overview;
+
+  const counts: Record<string, number> = {
+    weather: 0,
+    workforce: 0,
+    workforceHours: 0,
+    materials: 0,
+    equipment: 0,
+    tasks: 0,
+    occurrences: 0,
+    observations: 0,
+    photographs: 0,
+  };
+
+  const sections: RdoSection[] = SECTION_KEYS.map((key) => ({
+    id: key,
+    name: SECTION_NAMES[key],
+    summary: buildSectionSummary(key, counts),
+    completed: sectionStatuses[key] === "complete",
+  }));
 
   const getNextUnfilledSection = () => {
-    for (const sectionId of SECTION_ORDER) {
-      const section = RDO_SECTIONS.find((s) => s.id === sectionId);
-      if (section && !section.completed) {
-        return SECTION_ROUTES[sectionId];
+    for (const section of sections) {
+      if (!section.completed) {
+        return SECTION_ROUTES[section.id];
       }
     }
     return null;
@@ -291,34 +344,36 @@ export default function RdoOverviewScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.reportIdentity}>
-          <Text style={styles.dateLabel}>{MOCK_RDO.date}</Text>
-          <Text style={styles.projectName}>{MOCK_RDO.projectName}</Text>
-          <Text style={styles.projectLocation}>{MOCK_RDO.location}</Text>
+          <Text style={styles.dateLabel}>{formatReportDate(rdo.report_date)}</Text>
+          <Text style={styles.projectName}>{project?.name ?? "Sem obra"}</Text>
+          <Text style={styles.projectLocation}>{project?.location ?? ""}</Text>
           <View style={styles.reportMeta}>
             <View style={styles.reportMetaLeft}>
-              <Text style={styles.reportNumber}>{MOCK_RDO.number}</Text>
+              <Text style={styles.reportNumber}>RDO #{String(rdo.number).padStart(3, "0")}</Text>
               <View style={styles.metaDot} />
-              <Text style={styles.reportMetaDate}>{MOCK_RDO.reportDate}</Text>
+              <Text style={styles.reportMetaDate}>{formatReportDate(rdo.report_date)}</Text>
             </View>
             <View style={styles.statusBadge}>
               <View style={styles.statusDot} />
-              <Text style={styles.statusText}>{MOCK_RDO.status}</Text>
+              <Text style={styles.statusText}>
+                {rdo.status === "draft" ? "Em andamento" : rdo.status === "completed" ? "Concluído" : "Gerado"}
+              </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.progressSection}>
           <View style={styles.progressHeader}>
-            <Text style={styles.progressValue}>{MOCK_RDO.progressPercentage}%</Text>
+            <Text style={styles.progressValue}>{progressPercentage}%</Text>
             <Text style={styles.progressSteps}>
-              {MOCK_RDO.completedSteps} de {MOCK_RDO.totalSteps} etapas{"\n"}concluídas
+              {completedSections} de {totalSections} etapas{"\n"}concluídas
             </Text>
           </View>
           <View style={styles.progressTrack}>
             <View
               style={[
                 styles.progressFill,
-                { width: `${MOCK_RDO.progressPercentage}%` },
+                { width: `${progressPercentage}%` },
               ]}
             />
           </View>
@@ -327,7 +382,7 @@ export default function RdoOverviewScreen() {
         <Text style={styles.sectionsLabel}>SECÇÕES DO RELATÓRIO</Text>
 
         <View style={styles.sectionsList}>
-          {RDO_SECTIONS.map((section, index) => (
+          {sections.map((section, index) => (
             <View key={section.id}>
               <PressableOpacity
                 style={styles.sectionRow}
@@ -346,7 +401,7 @@ export default function RdoOverviewScreen() {
                 </View>
                 <ChevronRight size={16} color={colors.textMuted} />
               </PressableOpacity>
-              {index < RDO_SECTIONS.length - 1 && <View style={styles.divider} />}
+              {index < sections.length - 1 && <View style={styles.divider} />}
             </View>
           ))}
         </View>

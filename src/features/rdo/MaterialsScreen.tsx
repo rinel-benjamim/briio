@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronRight, Plus, Copy } from "lucide-react-native";
@@ -7,35 +7,32 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
-
-const MOCK_CONTEXT = {
-  date: "12 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-const MOCK_SUMMARY = {
-  records: 3,
-  totalItems: 12,
-};
-
-interface MaterialItem {
-  id: string;
-  name: string;
-  quantity: string;
-}
-
-const MOCK_MATERIALS: MaterialItem[] = [
-  { id: "1", name: "Cimento Portland 42.5", quantity: "50 sacos" },
-  { id: "2", name: "Areia média", quantity: "8 m³" },
-  { id: "3", name: "Bloco de cimento", quantity: "500 un." },
-];
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useMaterialRepository } from "@/repositories/material.repository";
+import type { MaterialEntry } from "@/types";
 
 export default function MaterialsScreen() {
   const colors = useThemeColors();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  const { date, projectName } = useRdo();
+  const materialRepo = useMaterialRepository();
   const [step] = useState(3);
   const totalSteps = 9;
   const fromReview = from === "review";
+
+  const [entries, setEntries] = useState<MaterialEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    materialRepo.findByRdoId(id).then((data) => {
+      setEntries(data);
+      setLoading(false);
+    });
+  }, [id]);
+
+  const totalItems = entries.reduce((sum, e) => sum + e.quantity, 0);
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -149,6 +146,8 @@ export default function MaterialsScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <RdoScreenLayout
       title="Materiais"
@@ -163,25 +162,25 @@ export default function MaterialsScreen() {
       }}
     >
       <View style={styles.context}>
-        <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-        <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+        <Text style={styles.contextDate}>{date}</Text>
+        <Text style={styles.contextProject}>{projectName}</Text>
       </View>
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Registos</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.records} registos</Text>
+          <Text style={styles.summaryValue}>{entries.length} registos</Text>
         </View>
         <View style={styles.summaryRight}>
           <Text style={styles.summaryLabel}>Itens totais</Text>
-          <Text style={styles.summaryValue}>{MOCK_SUMMARY.totalItems} itens</Text>
+          <Text style={styles.summaryValue}>{totalItems} itens</Text>
         </View>
       </View>
 
       <Text style={styles.sectionLabel}>MATERIAIS REGISTADOS</Text>
 
       <View style={styles.materialsList}>
-        {MOCK_MATERIALS.map((item, index) => (
+        {entries.map((item, index) => (
           <View key={item.id}>
             <PressableOpacity
               style={styles.materialItem}
@@ -189,13 +188,15 @@ export default function MaterialsScreen() {
             >
               <View style={styles.materialItemLeft}>
                 <View style={styles.materialItemInfo}>
-                  <Text style={styles.materialItemName}>{item.name}</Text>
-                  <Text style={styles.materialItemQty}>{item.quantity}</Text>
+                  <Text style={styles.materialItemName}>{item.material}</Text>
+                  <Text style={styles.materialItemQty}>
+                    {item.quantity} {item.unit ?? ""}
+                  </Text>
                 </View>
               </View>
               <ChevronRight size={16} color={colors.textMuted} />
             </PressableOpacity>
-            {index < MOCK_MATERIALS.length - 1 && <View style={styles.divider} />}
+            {index < entries.length - 1 && <View style={styles.divider} />}
           </View>
         ))}
       </View>

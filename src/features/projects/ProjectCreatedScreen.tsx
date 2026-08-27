@@ -5,18 +5,15 @@ import { ArrowLeftCircle, CheckCircle } from "lucide-react-native";
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProject } from "@/hooks/useProjects";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-
-const MOCK_PROJECT = {
-  name: "Reabilitação Pedrinhas",
-  location: "Zango 1 — Icolo e Bengo",
-  status: "Em execução",
-};
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 export default function ProjectCreatedScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { project, loading } = useProject(id ?? null);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -154,13 +151,31 @@ export default function ProjectCreatedScreen() {
     },
   }));
 
+  if (loading) return <LoadingScreen />;
+
+  if (!project) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.textMuted, textAlign: "center", marginTop: 100 }}>
+          Obra não encontrada.
+        </Text>
+      </View>
+    );
+  }
+
+  const statusLabel =
+    project.status === "active" ? "Em execução" :
+    project.status === "completed" ? "Concluída" : "Arquivada";
+
+  const today = new Date().toLocaleDateString("pt-AO", { day: "numeric", month: "long", year: "numeric" });
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
           <ArrowLeftCircle size={22} color={colors.textMain} />
         </PressableOpacity>
-        <Text style={styles.navTitle}>{MOCK_PROJECT.name}</Text>
+        <Text style={styles.navTitle}>{project.name}</Text>
       </View>
 
       <View style={styles.content}>
@@ -179,16 +194,16 @@ export default function ProjectCreatedScreen() {
         <View style={styles.projectCard}>
           <View style={styles.badge}>
             <View style={styles.badgeDot} />
-            <Text style={styles.badgeText}>{MOCK_PROJECT.status}</Text>
+            <Text style={styles.badgeText}>{statusLabel}</Text>
           </View>
-          <Text style={styles.projectName}>{MOCK_PROJECT.name}</Text>
-          <Text style={styles.projectLocation}>{MOCK_PROJECT.location}</Text>
+          <Text style={styles.projectName}>{project.name}</Text>
+          <Text style={styles.projectLocation}>{project.location ?? ""}</Text>
         </View>
 
         <View style={styles.nextSection}>
           <Text style={styles.nextLabel}>Próximo passo</Text>
           <Text style={styles.nextText}>Registe o que aconteceu hoje na obra.</Text>
-          <Text style={styles.nextDate}>17 Agosto 2026</Text>
+          <Text style={styles.nextDate}>{today}</Text>
         </View>
 
         <View style={styles.spacer} />

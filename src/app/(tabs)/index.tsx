@@ -1,10 +1,12 @@
 import { View, ScrollView, StyleSheet, Text, Modal, Pressable, FlatList } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Plus, X, Check, Building2, Camera, Users, AlertTriangle } from "lucide-react-native";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { typography, borderRadius, shadows } from "@/constants";
+import { typography } from "@/constants";
+import { useProjects } from "@/hooks/useProjects";
+import { useRdoList } from "@/hooks/useRdoData";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { AnimatedFAB } from "@/components/ui/AnimatedFAB";
@@ -18,53 +20,6 @@ import { RDOCard } from "@/components/rdo/RDOCard";
 import { RecentReports } from "@/components/rdo/RecentReports";
 import { useRdo } from "@/contexts/RdoContext";
 
-type Project = {
-  id: string;
-  name: string;
-  location: string;
-};
-
-const PROJECTS: ProjectOption[] = [
-  {
-    id: "1",
-    name: "Reabilitação Pedrinhas",
-    location: "Zango 1 — Icolo e Bengo",
-  },
-  {
-    id: "2",
-    name: "Reestruturação Predial",
-    location: "Luanda — Petrangol",
-  },
-];
-
-const MOCK_PROJECTS: Project[] = [
-  { id: "1", name: "Reabilitação Pedrinhas", location: "Zango 1 — Icolo e Bengo" },
-  { id: "2", name: "Construção Residencial Kilamba", location: "Kilamba — Luanda" },
-  { id: "3", name: "Edifício Comercial Talatona", location: "Talatona — Luanda" },
-  { id: "4", name: "Ponte sobre o Rio Kwanza", location: "Viana — Luanda" },
-];
-
-const MOCK_REPORTS = [
-  {
-    id: "1",
-    number: 31,
-    date: "11 Ago 2026",
-    day: "11",
-    month: "Ago",
-    projectName: "Reabilitação Pedrinhas",
-    status: "generated" as const,
-  },
-  {
-    id: "2",
-    number: 30,
-    date: "10 Ago 2026",
-    day: "10",
-    month: "Ago",
-    projectName: "Reabilitação Pedrinhas",
-    status: "generated" as const,
-  },
-];
-
 const QUICK_ACTIONS = [
   { id: "photo", label: "Fotografia", icon: Camera },
   { id: "workforce", label: "Mão de obra", icon: Users },
@@ -75,16 +30,54 @@ export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const { rdoId } = useRdo();
-  const [loading, setLoading] = useState(true);
-  const [selectedProject, setSelectedProject] = useState(PROJECTS[0]);
-  const [hasActiveReport] = useState(true);
   const [projectModalVisible, setProjectModalVisible] = useState(false);
-  const [selectedProjectForNew, setSelectedProjectForNew] = useState<Project | null>(null);
+  const [selectedProjectForNew, setSelectedProjectForNew] = useState<ProjectOption | null>(null);
+
+  const { projects, loading: projectsLoading } = useProjects();
+  const { rdos, loading: rdosLoading } = useRdoList();
+
+  const loading = projectsLoading || rdosLoading;
+
+  const projectOptions: ProjectOption[] = useMemo(
+    () =>
+      projects.map((p) => ({
+        id: p.id,
+        name: p.name,
+        location: p.location ?? "",
+      })),
+    [projects]
+  );
+
+  const [selectedProject, setSelectedProject] = useState<ProjectOption | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 150);
-    return () => clearTimeout(timer);
-  }, []);
+    if (projectOptions.length > 0 && !selectedProject) {
+      setSelectedProject(projectOptions[0]);
+    }
+  }, [projectOptions, selectedProject]);
+
+  const latestRdo = useMemo(() => {
+    if (rdos.length === 0) return null;
+    return rdos[0];
+  }, [rdos]);
+
+  const recentReports = useMemo(() => {
+    return rdos.slice(0, 5).map((r) => {
+      const date = new Date(r.report_date);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = date.toLocaleDateString("pt-AO", { month: "short" });
+      const projectName = projects.find((p) => p.id === r.project_id)?.name ?? "";
+      return {
+        id: r.id,
+        number: r.number,
+        date: `${day} ${month} ${date.getFullYear()}`,
+        day,
+        month,
+        projectName,
+        status: r.status as "draft" | "completed" | "generated",
+      };
+    });
+  }, [rdos, projects]);
 
   if (loading) return <LoadingScreen />;
 
@@ -109,21 +102,21 @@ export default function DashboardScreen() {
         </FadeInView>
 
         {/* Project Selector */}
-        <ProjectSelector
-          projects={PROJECTS}
-          selectedId={selectedProject.id}
-          onSelect={setSelectedProject}
-        />
+        {projectOptions.length > 0 && (
+          <ProjectSelector
+            projects={projectOptions}
+            selectedId={selectedProject?.id}
+            onSelect={setSelectedProject}
+          />
+        )}
 
         {/* Hero RDO Card */}
-        {hasActiveReport ? (
+        {latestRdo ? (
           <RDOCard
-            date="12 Agosto 2026"
-            projectName={selectedProject.name}
-            progressPercentage={65}
-            completedSteps={6}
-            totalSteps={9}
-            onContinue={() => router.push(`/(tabs)/reports/${rdoId}`)}
+            date={new Date(latestRdo.report_date).toLocaleDateString("pt-AO", { day: "numeric", month: "long", year: "numeric" })}
+            projectName={selectedProject?.name ?? ""}
+            progressPercentage={latestRdo.progress_percentage}
+            onContinue={() => router.push(`/(tabs)/reports/${latestRdo.id}`)}
           />
         ) : (
           <FadeInView delay={100}>
@@ -166,7 +159,12 @@ export default function DashboardScreen() {
         </FadeInView>
 
         {/* Recent Reports */}
-        <RecentReports reports={MOCK_REPORTS} />
+        {recentReports.length > 0 && (
+          <RecentReports
+            reports={recentReports}
+            onReportPress={(id) => router.push(`/(tabs)/reports/${id}`)}
+          />
+        )}
       </ScrollView>
 
       {/* FAB */}
@@ -202,7 +200,7 @@ export default function DashboardScreen() {
             </Text>
 
             <FlatList
-              data={MOCK_PROJECTS}
+              data={projectOptions}
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.projectList}
               renderItem={({ item }) => {

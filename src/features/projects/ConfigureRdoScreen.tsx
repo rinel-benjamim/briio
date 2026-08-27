@@ -13,11 +13,9 @@ import {
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useProject } from "@/hooks/useProjects";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
-
-const MOCK_PROJECT = {
-  name: "Reabilitação Pedrinhas",
-};
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 interface RadioOptionProps {
   selected: boolean;
@@ -48,6 +46,7 @@ export default function ConfigureRdoScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { project, loading: projectLoading } = useProject(id ?? null);
   const [step] = useState(2);
   const totalSteps = 2;
 
@@ -265,6 +264,18 @@ export default function ConfigureRdoScreen() {
     },
   }));
 
+  if (projectLoading) return <LoadingScreen />;
+
+  if (!project) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.textMuted, textAlign: "center", marginTop: 100 }}>
+          Obra não encontrada.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -285,7 +296,7 @@ export default function ConfigureRdoScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.projectContext}>
-          <Text style={styles.projectName}>{MOCK_PROJECT.name}</Text>
+          <Text style={styles.projectName}>{project.name}</Text>
           <Text style={styles.projectDescription}>
             Configure as informações padrão dos RDOs desta obra.
           </Text>
@@ -301,7 +312,9 @@ export default function ConfigureRdoScreen() {
               <User size={18} color={colors.textOnBrand} />
             </View>
             <View style={styles.responsibleInfo}>
-              <Text style={styles.responsibleName}>Kiali Rodrigues</Text>
+              <Text style={styles.responsibleName}>
+                {project.responsible_name ?? "Não definido"}
+              </Text>
               <Text style={styles.responsibleRole}>Responsável técnico</Text>
             </View>
             <CircleCheck size={20} color={colors.primary} />
@@ -316,7 +329,7 @@ export default function ConfigureRdoScreen() {
           <RadioOption
             selected={signatureOption === "me"}
             label="Eu"
-            sublabel="Kiali Rodrigues"
+            sublabel={project.responsible_name ?? "Responsável"}
             onPress={() => setSignatureOption("me")}
             styles={styles}
           />
@@ -355,7 +368,7 @@ export default function ConfigureRdoScreen() {
 
         <PressableOpacity
           style={styles.primaryButton}
-          onPress={() => router.push(`/(tabs)/projects/1/created`)}
+          onPress={() => router.replace(`/(tabs)/projects/${id}/created`)}
         >
           <Text style={styles.primaryButtonText}>Concluir configuração</Text>
         </PressableOpacity>

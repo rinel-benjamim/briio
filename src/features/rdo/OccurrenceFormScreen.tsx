@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -21,12 +21,24 @@ import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
-import {
-  MOCK_RDO_CONTEXT,
-  IMPACT_OPTIONS,
-  MOCK_OCCURRENCES_DATA,
-} from "@/mocks";
-import type { ImpactOption } from "@/mocks";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdo } from "@/contexts/RdoContext";
+import { useOccurrenceRepository } from "@/repositories/occurrence.repository";
+import type { OccurrenceImpact } from "@/types";
+
+const IMPACT_OPTIONS = [
+  { label: "Nenhum", value: "none" },
+  { label: "Baixo", value: "low" },
+  { label: "Relevante", value: "relevant" },
+  { label: "Paragem", value: "stoppage" },
+];
+
+const IMPACT_LABELS: Record<string, string> = {
+  none: "Nenhum",
+  low: "Baixo",
+  relevant: "Relevante",
+  stoppage: "Paragem",
+};
 
 interface OccurrenceFormProps {
   mode: "add" | "edit";
@@ -36,6 +48,36 @@ interface OccurrenceFormProps {
 
 export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: OccurrenceFormProps) {
   const colors = useThemeColors();
+  const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
+  const { date, projectName } = useRdo();
+  const occurrenceRepo = useOccurrenceRepository();
+
+  const [title, setTitle] = useState("");
+  const [timeDate, setTimeDate] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [impact, setImpact] = useState<OccurrenceImpact>("none");
+  const [actionTaken, setActionTaken] = useState("");
+  const [loading, setLoading] = useState(mode === "edit");
+
+  useEffect(() => {
+    if (mode === "edit" && occId) {
+      occurrenceRepo.findById(occId).then((entry) => {
+        if (entry) {
+          setTitle(entry.title);
+          if (entry.occurred_at) {
+            setTimeDate(new Date(entry.occurred_at));
+          }
+          setLocation(entry.location ?? "");
+          setDescription(entry.description ?? "");
+          setImpact(entry.impact);
+          setActionTaken(entry.action_taken ?? "");
+        }
+        setLoading(false);
+      });
+    }
+  }, [mode, occId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -113,25 +155,6 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
     },
   }));
 
-  const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
-
-  const editData = mode === "edit" ? MOCK_OCCURRENCES_DATA[occId || "1"] : null;
-
-  const parseTimeString = (timeStr: string) => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    return new Date(2026, 7, 12, hours, minutes);
-  };
-
-  const [title, setTitle] = useState(editData?.title || "");
-  const [timeDate, setTimeDate] = useState(
-    editData?.time ? parseTimeString(editData.time) : new Date(2026, 7, 12, 14, 20)
-  );
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [location, setLocation] = useState(editData?.location || "");
-  const [description, setDescription] = useState(editData?.description || "");
-  const [impact, setImpact] = useState<ImpactOption>(editData?.impact || "impacto_relevante");
-  const [actionTaken, setActionTaken] = useState(editData?.actionTaken || "");
-
   const formatTime = (date: Date) => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
@@ -155,6 +178,36 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
     </View>
   );
 
+  async function handleSave() {
+    if (!id) return;
+    if (!title) return;
+
+    const occurredAt = timeDate.toISOString();
+
+    if (mode === "add") {
+      await occurrenceRepo.create(id, {
+        title,
+        occurred_at: occurredAt,
+        location: location || undefined,
+        description: description || undefined,
+        impact,
+        action_taken: actionTaken || undefined,
+      });
+    } else if (occId) {
+      await occurrenceRepo.update(occId, {
+        title,
+        occurred_at: occurredAt,
+        location: location || undefined,
+        description: description || undefined,
+        impact,
+        action_taken: actionTaken || undefined,
+      });
+    }
+    router.back();
+  }
+
+  if (loading) return <LoadingScreen />;
+
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -168,7 +221,7 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ContextBar date={MOCK_RDO_CONTEXT.date} projectName={MOCK_RDO_CONTEXT.projectName} />
+        <ContextBar date={date} projectName={projectName} />
 
         <View style={styles.section}>
           <Field
@@ -218,7 +271,7 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
           label="Impacto"
           value={impact}
           options={IMPACT_OPTIONS}
-          onChange={(v) => setImpact(v as ImpactOption)}
+          onChange={(v) => setImpact(v as OccurrenceImpact)}
         />
 
         <TextArea
@@ -236,7 +289,7 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
         <View style={styles.buttonSection}>
           <PrimaryButton
             label={mode === "add" ? "Registar ocorrência" : "Guardar alterações"}
-            onPress={() => router.back()}
+            onPress={handleSave}
             icon={<CirclePlus size={18} color={colors.textOnBrand} />}
           />
           <PressableOpacity
@@ -252,5 +305,3 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
     </View>
   );
 }
-
-
