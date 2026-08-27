@@ -2,6 +2,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useProjectRepository, type CreateProjectInput, type UpdateProjectInput } from "@/repositories/project.repository";
 import type { Project, ProjectStatus } from "@/types";
 
+export type { CreateProjectInput, UpdateProjectInput };
+
 export function useProjectService() {
   const db = useSQLiteContext();
   const repo = useProjectRepository();
