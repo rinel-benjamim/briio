@@ -233,11 +233,13 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Screen transitions — slide_from_right, slide_from_bottom, fade
 - [x] Lazy loading — LoadingScreen, FadeInView
 - [x] Repository layer — 10 repositórios CRUD (project, rdo, weather, workforce, material, equipment, task, occurrence, observation, photograph)
-- [x] Services layer — project.service + rdo.service (business logic, validations)
+- [x] Services layer — project.service + rdo.service + reuse.service + pdf-generator (business logic, validations)
 - [x] Custom hooks — useProjects, useRdoData, useAutosave, useThemedStyles
 - [x] SQLite integration — todas as telas usam repositórios reais (mocks removidos)
 - [x] Form validations — 7 form screens + ErrorMessage component
 - [x] Autosave — Weather (on select) + Observations (400ms debounce) com AutosaveIndicator
+- [x] Fase 3: Reutilização de RDO anterior (selecionar dados, copiar com transação)
+- [x] Fase 4: PDF com dados reais (HTML/CSS template, geração, partilha, impressão)
 
 ### Em progresso
 - [ ] Testes unitários
@@ -245,8 +247,6 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 
 ### Pendente
 - [ ] Arquivar obra (alternativa a excluir)
-- [ ] Reutilização de RDO anterior
-- [ ] PDF (review, template, geração, partilha)
 
 ### Próximas fases
 - Fase 5: Qualidade (testes)

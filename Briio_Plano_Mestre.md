@@ -1315,23 +1315,23 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 
 ## Fase 3 --- Reutilização
 
--   [ ] Selecionar RDO anterior
--   [ ] Selecionar dados
--   [ ] Copiar para novo RDO
--   [ ] Editar dados copiados
+-   [x] Selecionar RDO anterior
+-   [x] Selecionar dados
+-   [x] Copiar para novo RDO
+-   [x] Editar dados copiados
 
 ## Fase 4 --- PDF
 
--   [ ] Revisão
--   [ ] Validação
--   [ ] Template
--   [ ] HTML/CSS
--   [ ] Fotografias
--   [ ] Paginação
--   [ ] Cabeçalho/rodapé
--   [ ] Geração local
--   [ ] Abrir
--   [ ] Partilhar
+-   [x] Revisão
+-   [x] Validação
+-   [x] Template
+-   [x] HTML/CSS
+-   [x] Fotografias
+-   [x] Paginação
+-   [x] Cabeçalho/rodapé
+-   [x] Geração local
+-   [x] Abrir
+-   [x] Partilhar
 
 ## Fase 5 --- Qualidade
 
