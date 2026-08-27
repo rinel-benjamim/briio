@@ -19,6 +19,8 @@ export const colors = {
   successBg: "#DDF5E9",
   warning: "#E69B2D",
   warningBg: "#FFF2D8",
+  error: "#DC2626",
+  errorBg: "#FEE2E2",
 
   // Borders / Dividers
   border: "#DDE5E1",

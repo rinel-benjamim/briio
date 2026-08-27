@@ -19,10 +19,16 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useTaskRepository } from "@/repositories/task.repository";
 import type { TaskStatus } from "@/types";
+import {
+  validate,
+  hasErrors,
+  taskValidation,
+} from "@/utils/validation";
 
 const MOCK_TASK_UNITS = ["m²", "m", "un.", "kg", "l", "cx", "m³"];
 
@@ -58,6 +64,8 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
   const [observation, setObservation] = useState("");
   const [progress, setProgress] = useState(65);
   const [loading, setLoading] = useState(mode === "edit");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (mode === "edit" && taskId) {
@@ -218,7 +226,16 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
 
   async function handleSave() {
     if (!id) return;
-    if (!description) return;
+
+    const validationErrors = validate(taskValidation, {
+      activity_name: description,
+      status,
+    });
+    setErrors(validationErrors);
+    setTouched({ activity_name: true, status: true });
+    if (hasErrors(validationErrors)) {
+      return;
+    }
 
     if (mode === "add") {
       await taskRepo.create(id, {
@@ -268,7 +285,12 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
             onChangeText={setDescription}
             placeholder="Ex.: Execução de alvenaria"
             height={64}
+            onBlur={() => {
+              setTouched((prev) => ({ ...prev, activity_name: true }));
+              setErrors(validate(taskValidation, { activity_name: description, status }));
+            }}
           />
+          <ErrorMessage message={errors.activity_name} visible={touched.activity_name} />
 
           <Field
             label="Local / frente de trabalho"
@@ -302,8 +324,13 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
           label="Estado"
           value={status}
           options={TASK_STATUS_OPTIONS}
-          onChange={(v) => setStatus(v as TaskStatus)}
+          onChange={(v) => {
+            setStatus(v as TaskStatus);
+            setTouched((prev) => ({ ...prev, status: true }));
+            setErrors(validate(taskValidation, { activity_name: description, status: v }));
+          }}
         />
+        <ErrorMessage message={errors.status} visible={touched.status} />
 
         <TextArea
           label="Observação"

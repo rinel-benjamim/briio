@@ -26,6 +26,12 @@ import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { Field } from "@/components/ui/Form/Field";
 import { SelectField } from "@/components/ui/Form/SelectField";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
+import {
+  validate,
+  hasErrors,
+  projectValidation,
+} from "@/utils/validation";
 
 const PROVINCES = [
   "Bengo", "Benguela", "Bié", "Cabinda", "Cuando-Cubango",
@@ -132,6 +138,8 @@ export default function EditProjectScreen() {
   const [contractor, setContractor] = useState("");
   const [inspector, setInspector] = useState("");
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (project) {
@@ -263,8 +271,19 @@ export default function EditProjectScreen() {
   }
 
   const handleSave = async () => {
-    if (!name.trim()) {
-      Alert.alert("Erro", "O nome da obra é obrigatório.");
+    const validationErrors = validate(projectValidation, {
+      name: name.trim(),
+      reference: reference.trim(),
+      location: location.trim(),
+      province,
+      responsible_name: responsible.trim(),
+      client_name: client.trim(),
+      contractor_name: contractor.trim(),
+      inspector_name: inspector.trim(),
+    });
+    setErrors(validationErrors);
+    setTouched({ name: true, reference: true, location: true, province: true, responsible_name: true, client_name: true, contractor_name: true, inspector_name: true });
+    if (hasErrors(validationErrors)) {
       return;
     }
     setSaving(true);
@@ -307,7 +326,12 @@ export default function EditProjectScreen() {
             value={name}
             onChangeText={setName}
             placeholder="Ex.: Reabilitação Pedrinhas"
+            onBlur={() => {
+              setTouched((prev) => ({ ...prev, name: true }));
+              setErrors(validate(projectValidation, { name: name.trim() }));
+            }}
           />
+          <ErrorMessage message={errors.name} visible={touched.name} />
           <Field
             label="Referência"
             value={reference}

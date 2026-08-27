@@ -13,9 +13,15 @@ import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SelectField } from "@/components/ui/Form/SelectField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useWorkforceRepository } from "@/repositories/workforce.repository";
+import {
+  validate,
+  hasErrors,
+  workforceValidation,
+} from "@/utils/validation";
 
 const MOCK_ROLES = [
   "Mestre de Obras",
@@ -46,6 +52,8 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
   const [hoursPerPerson, setHoursPerPerson] = useState(8);
   const [observation, setObservation] = useState("");
   const [loading, setLoading] = useState(mode === "edit");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (mode === "edit" && workforceId) {
@@ -164,7 +172,17 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
   async function handleSave() {
     if (!id) return;
     const functionName = isCustomRole ? customRole : role;
-    if (!functionName) return;
+
+    const validationErrors = validate(workforceValidation, {
+      role: functionName,
+      worker_name: functionName,
+      worker_count: peopleCount,
+    });
+    setErrors(validationErrors);
+    setTouched({ role: true, worker_name: true, worker_count: true });
+    if (hasErrors(validationErrors)) {
+      return;
+    }
 
     if (mode === "add") {
       await workforceRepo.create(id, {
@@ -209,15 +227,24 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
             onSelect={(v) => {
               setRole(v);
               setCustomRole("");
+              setTouched((prev) => ({ ...prev, role: true }));
+              const fn = v === "Outro" ? "" : v;
+              setErrors(validate(workforceValidation, { role: fn, worker_name: fn, worker_count: peopleCount }));
             }}
             placeholder="Ex.: Mestre de Obras"
           />
+          <ErrorMessage message={errors.role} visible={touched.role} />
           {isCustomRole && (
             <Field
               label="Nome da função"
               value={customRole}
               onChangeText={setCustomRole}
               placeholder="Inserir nome da função"
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, role: true }));
+                const fn = customRole;
+                setErrors(validate(workforceValidation, { role: fn, worker_name: fn, worker_count: peopleCount }));
+              }}
             />
           )}
 
@@ -226,10 +253,22 @@ export function WorkforceForm({ mode, currentStep = 2, totalSteps = 9 }: Workfor
               <Field
                 label="N.º de pessoas"
                 value={String(peopleCount)}
-                onChangeText={(v) => setPeopleCount(Number(v) || 1)}
+                onChangeText={(v) => {
+                  const num = Number(v) || 1;
+                  setPeopleCount(num);
+                  setTouched((prev) => ({ ...prev, worker_count: true }));
+                  const fn = isCustomRole ? customRole : role;
+                  setErrors(validate(workforceValidation, { role: fn, worker_name: fn, worker_count: num }));
+                }}
                 keyboardType="numeric"
                 placeholder="2"
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, worker_count: true }));
+                  const fn = isCustomRole ? customRole : role;
+                  setErrors(validate(workforceValidation, { role: fn, worker_name: fn, worker_count: peopleCount }));
+                }}
               />
+              <ErrorMessage message={errors.worker_count} visible={touched.worker_count} />
             </View>
             <View style={styles.stepperHalf}>
               <Field

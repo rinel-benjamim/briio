@@ -21,10 +21,16 @@ import { AutosaveStatus } from "@/components/ui/AutosaveStatus";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useOccurrenceRepository } from "@/repositories/occurrence.repository";
 import type { OccurrenceImpact } from "@/types";
+import {
+  validate,
+  hasErrors,
+  occurrenceValidation,
+} from "@/utils/validation";
 
 const IMPACT_OPTIONS = [
   { label: "Nenhum", value: "none" },
@@ -60,6 +66,8 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
   const [impact, setImpact] = useState<OccurrenceImpact>("none");
   const [actionTaken, setActionTaken] = useState("");
   const [loading, setLoading] = useState(mode === "edit");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (mode === "edit" && occId) {
@@ -180,7 +188,16 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
 
   async function handleSave() {
     if (!id) return;
-    if (!title) return;
+
+    const validationErrors = validate(occurrenceValidation, {
+      occurrence_type: title,
+      description,
+    });
+    setErrors(validationErrors);
+    setTouched({ occurrence_type: true, description: true });
+    if (hasErrors(validationErrors)) {
+      return;
+    }
 
     const occurredAt = timeDate.toISOString();
 
@@ -229,7 +246,12 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
             value={title}
             onChangeText={setTitle}
             placeholder="Ex.: Chuva intensa"
+            onBlur={() => {
+              setTouched((prev) => ({ ...prev, occurrence_type: true }));
+              setErrors(validate(occurrenceValidation, { occurrence_type: title, description }));
+            }}
           />
+          <ErrorMessage message={errors.occurrence_type} visible={touched.occurrence_type} />
 
           <View style={styles.field}>
             <Text style={styles.fieldLabel}>Hora</Text>
@@ -264,7 +286,12 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
             onChangeText={setDescription}
             placeholder="Descreva o que aconteceu e como afetou os trabalhos."
             height={88}
+            onBlur={() => {
+              setTouched((prev) => ({ ...prev, description: true }));
+              setErrors(validate(occurrenceValidation, { occurrence_type: title, description }));
+            }}
           />
+          <ErrorMessage message={errors.description} visible={touched.description} />
         </View>
 
         <SegmentedField

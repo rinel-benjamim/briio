@@ -19,6 +19,8 @@ export const darkColors = {
   successBg: "#112C22",
   warning: "#F59E0B",
   warningBg: "#2E2211",
+  error: "#F87171",
+  errorBg: "#2D1B1B",
 
   // Borders / Dividers
   border: "#232F2A",

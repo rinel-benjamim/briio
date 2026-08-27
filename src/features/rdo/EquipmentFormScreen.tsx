@@ -14,10 +14,16 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useEquipmentRepository } from "@/repositories/equipment.repository";
 import type { EquipmentStatus } from "@/types";
+import {
+  validate,
+  hasErrors,
+  equipmentValidation,
+} from "@/utils/validation";
 
 const MOCK_EQUIPMENT_OPTIONS = [
   "Retroescavadora",
@@ -63,6 +69,8 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
   const [status, setStatus] = useState<EquipmentStatus>("operational");
   const [observation, setObservation] = useState("");
   const [loading, setLoading] = useState(mode === "edit");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (mode === "edit" && equipmentId) {
@@ -181,7 +189,16 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
   async function handleSave() {
     if (!id) return;
     const equipmentName = isCustomEquipment ? customEquipment : equipment;
-    if (!equipmentName) return;
+
+    const validationErrors = validate(equipmentValidation, {
+      equipment_name: equipmentName,
+      equipment_count: quantity,
+    });
+    setErrors(validationErrors);
+    setTouched({ equipment_name: true, equipment_count: true });
+    if (hasErrors(validationErrors)) {
+      return;
+    }
 
     if (mode === "add") {
       await equipmentRepo.create(id, {
@@ -228,15 +245,23 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
             onSelect={(v) => {
               setEquipment(v);
               setCustomEquipment("");
+              setTouched((prev) => ({ ...prev, equipment_name: true }));
+              const en = v === "Outro" ? "" : v;
+              setErrors(validate(equipmentValidation, { equipment_name: en, equipment_count: quantity }));
             }}
             placeholder="Ex.: Retroescavadora"
           />
+          <ErrorMessage message={errors.equipment_name} visible={touched.equipment_name} />
           {isCustomEquipment && (
             <Field
               label="Nome do equipamento"
               value={customEquipment}
               onChangeText={setCustomEquipment}
               placeholder="Inserir nome do equipamento"
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, equipment_name: true }));
+                setErrors(validate(equipmentValidation, { equipment_name: customEquipment, equipment_count: quantity }));
+              }}
             />
           )}
 
@@ -245,10 +270,22 @@ export function EquipmentForm({ mode, currentStep = 4, totalSteps = 9 }: Equipme
               <Field
                 label="Quantidade"
                 value={String(quantity)}
-                onChangeText={(v) => setQuantity(Number(v) || 1)}
+                onChangeText={(v) => {
+                  const num = Number(v) || 1;
+                  setQuantity(num);
+                  setTouched((prev) => ({ ...prev, equipment_count: true }));
+                  const en = isCustomEquipment ? customEquipment : equipment;
+                  setErrors(validate(equipmentValidation, { equipment_name: en, equipment_count: num }));
+                }}
                 keyboardType="numeric"
                 placeholder="1"
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, equipment_count: true }));
+                  const en = isCustomEquipment ? customEquipment : equipment;
+                  setErrors(validate(equipmentValidation, { equipment_name: en, equipment_count: quantity }));
+                }}
               />
+              <ErrorMessage message={errors.equipment_count} visible={touched.equipment_count} />
             </View>
             <View style={styles.fieldHalf}>
               <Field

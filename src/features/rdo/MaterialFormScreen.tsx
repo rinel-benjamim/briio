@@ -14,10 +14,16 @@ import { SelectField } from "@/components/ui/Form/SelectField";
 import { SegmentedField } from "@/components/ui/Form/SegmentedField";
 import { TextArea } from "@/components/ui/Form/TextArea";
 import { Field } from "@/components/ui/Form/Field";
+import { ErrorMessage } from "@/components/ui/Form/ErrorMessage";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useMaterialRepository } from "@/repositories/material.repository";
 import type { MaterialStatus } from "@/types";
+import {
+  validate,
+  hasErrors,
+  materialValidation,
+} from "@/utils/validation";
 
 const MOCK_MATERIALS_OPTIONS = [
   "Cimento Portland 42.5",
@@ -65,6 +71,8 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
   const [status, setStatus] = useState<MaterialStatus>("received");
   const [observation, setObservation] = useState("");
   const [loading, setLoading] = useState(mode === "edit");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (mode === "edit" && materialId) {
@@ -173,7 +181,17 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
   async function handleSave() {
     if (!id) return;
     const materialName = isCustomMaterial ? customMaterial : material;
-    if (!materialName) return;
+
+    const validationErrors = validate(materialValidation, {
+      material_name: materialName,
+      quantity,
+      unit,
+    });
+    setErrors(validationErrors);
+    setTouched({ material_name: true, quantity: true, unit: true });
+    if (hasErrors(validationErrors)) {
+      return;
+    }
 
     if (mode === "add") {
       await materialRepo.create(id, {
@@ -220,15 +238,23 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
             onSelect={(v) => {
               setMaterial(v);
               setCustomMaterial("");
+              setTouched((prev) => ({ ...prev, material_name: true }));
+              const mn = v === "Outro" ? "" : v;
+              setErrors(validate(materialValidation, { material_name: mn, quantity, unit }));
             }}
             placeholder="Ex.: Cimento Portland 42.5"
           />
+          <ErrorMessage message={errors.material_name} visible={touched.material_name} />
           {isCustomMaterial && (
             <Field
               label="Nome do material"
               value={customMaterial}
               onChangeText={setCustomMaterial}
               placeholder="Inserir nome do material"
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, material_name: true }));
+                setErrors(validate(materialValidation, { material_name: customMaterial, quantity, unit }));
+              }}
             />
           )}
 
@@ -237,18 +263,36 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
               <Field
                 label="Quantidade"
                 value={String(quantity)}
-                onChangeText={(v) => setQuantity(Number(v) || 1)}
+                onChangeText={(v) => {
+                  const num = Number(v) || 1;
+                  setQuantity(num);
+                  setTouched((prev) => ({ ...prev, quantity: true }));
+                  const mn = isCustomMaterial ? customMaterial : material;
+                  setErrors(validate(materialValidation, { material_name: mn, quantity: num, unit }));
+                }}
                 keyboardType="numeric"
                 placeholder="50"
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, quantity: true }));
+                  const mn = isCustomMaterial ? customMaterial : material;
+                  setErrors(validate(materialValidation, { material_name: mn, quantity, unit }));
+                }}
               />
+              <ErrorMessage message={errors.quantity} visible={touched.quantity} />
             </View>
             <View style={styles.fieldHalf}>
               <SelectField
                 label="Unidade"
                 value={unit}
                 options={MOCK_UNITS}
-                onSelect={setUnit}
+                onSelect={(v) => {
+                  setUnit(v);
+                  setTouched((prev) => ({ ...prev, unit: true }));
+                  const mn = isCustomMaterial ? customMaterial : material;
+                  setErrors(validate(materialValidation, { material_name: mn, quantity, unit: v }));
+                }}
               />
+              <ErrorMessage message={errors.unit} visible={touched.unit} />
             </View>
           </View>
         </View>
