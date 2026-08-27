@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 
 interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -9,6 +10,32 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 40,
+      paddingHorizontal: 20,
+      gap: 12,
+    },
+    iconContainer: {
+      marginBottom: 8,
+    },
+    title: {
+      ...typography.presets.h3,
+      color: colors.textMain,
+      textAlign: "center",
+    },
+    description: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    action: {
+      marginTop: 8,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
@@ -18,29 +45,3 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    gap: 12,
-  },
-  iconContainer: {
-    marginBottom: 8,
-  },
-  title: {
-    ...typography.presets.h3,
-    color: colors.textMain,
-    textAlign: "center",
-  },
-  description: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-  action: {
-    marginTop: 8,
-  },
-});

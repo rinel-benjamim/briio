@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Sun, Cloud, CloudRain } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
+
+import type { ThemeColors } from "@/contexts/ThemeContext";
 
 const MOCK_CONTEXT = {
   date: "12 Agosto 2026",
@@ -19,9 +22,11 @@ interface WeatherPeriodProps {
   label: string;
   selected: WeatherOption | null;
   onSelect: (option: WeatherOption) => void;
+  colors: ThemeColors;
+  styles: Record<string, any>;
 }
 
-function WeatherPeriod({ label, selected, onSelect }: WeatherPeriodProps) {
+function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPeriodProps) {
   return (
     <View style={styles.periodSection}>
       <Text style={styles.periodLabel}>{label}</Text>
@@ -96,6 +101,81 @@ export default function WeatherConditionsScreen() {
   const [night, setNight] = useState<WeatherOption | null>(null);
   const [observation, setObservation] = useState("");
 
+  const styles = useThemedStyles((colors) => ({
+    context: {
+      gap: 2,
+    },
+    contextText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    titleSection: {
+      gap: 6,
+    },
+    mainTitle: {
+      fontSize: 26,
+      lineHeight: 30,
+      fontWeight: "400",
+      fontFamily: typography.fontFamily,
+      color: colors.textMain,
+    },
+    subtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    periodSection: {
+      gap: 10,
+    },
+    periodLabel: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.textMain,
+    },
+    periodOptions: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    weatherOption: {
+      flex: 1,
+      height: 92,
+      borderRadius: 16,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+    },
+    weatherOptionSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    weatherOptionText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.inactiveIcon,
+    },
+    weatherOptionTextSelected: {
+      color: colors.textOnBrand,
+      fontWeight: typography.fontWeight.bold,
+    },
+    observationSection: {
+      gap: 8,
+    },
+    obsInput: {
+      height: 72,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 14,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.bodySmall,
+      color: colors.textMain,
+    },
+  }));
+
   return (
     <RdoScreenLayout
       title="Condições do dia"
@@ -126,9 +206,9 @@ export default function WeatherConditionsScreen() {
       </View>
 
       {/* Weather periods */}
-      <WeatherPeriod label="Manhã" selected={morning} onSelect={setMorning} />
-      <WeatherPeriod label="Tarde" selected={afternoon} onSelect={setAfternoon} />
-      <WeatherPeriod label="Noite" selected={night} onSelect={setNight} />
+      <WeatherPeriod label="Manhã" selected={morning} onSelect={setMorning} colors={colors} styles={styles} />
+      <WeatherPeriod label="Tarde" selected={afternoon} onSelect={setAfternoon} colors={colors} styles={styles} />
+      <WeatherPeriod label="Noite" selected={night} onSelect={setNight} colors={colors} styles={styles} />
 
       {/* Observation */}
       <View style={styles.observationSection}>
@@ -145,78 +225,3 @@ export default function WeatherConditionsScreen() {
     </RdoScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  context: {
-    gap: 2,
-  },
-  contextText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  titleSection: {
-    gap: 6,
-  },
-  mainTitle: {
-    fontSize: 26,
-    lineHeight: 30,
-    fontWeight: "400",
-    fontFamily: typography.fontFamily,
-    color: colors.textMain,
-  },
-  subtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  periodSection: {
-    gap: 10,
-  },
-  periodLabel: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.textMain,
-  },
-  periodOptions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  weatherOption: {
-    flex: 1,
-    height: 92,
-    borderRadius: 16,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  weatherOptionSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  weatherOptionText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.inactiveIcon,
-  },
-  weatherOptionTextSelected: {
-    color: colors.textOnBrand,
-    fontWeight: typography.fontWeight.bold,
-  },
-  observationSection: {
-    gap: 8,
-  },
-  obsInput: {
-    height: 72,
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...typography.presets.bodySmall,
-    color: colors.textMain,
-  },
-});

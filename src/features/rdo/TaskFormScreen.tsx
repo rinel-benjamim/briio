@@ -2,14 +2,14 @@ import { useState, useRef } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Text,
   PanResponder,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus, Minus, Plus } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -36,6 +36,123 @@ interface TaskFormProps {
 
 export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProps) {
   const colors = useThemeColors();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 8,
+      gap: 18,
+    },
+    stepBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: borderRadius.full,
+      backgroundColor: colors.progressTrack,
+    },
+    stepBadgeText: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: typography.fontWeight.semibold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    section: {
+      gap: 7,
+    },
+    fieldRow: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    fieldHalf: {
+      flex: 1,
+    },
+    progressSection: {
+      gap: 10,
+    },
+    progressLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: typography.fontWeight.bold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMain,
+    },
+    progressCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      padding: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      gap: 10,
+    },
+    progressTrack: {
+      flex: 1,
+      height: 6,
+      backgroundColor: colors.border,
+      borderRadius: 3,
+      position: "relative",
+    },
+    progressFill: {
+      height: "100%",
+      backgroundColor: colors.primary,
+      borderRadius: 3,
+    },
+    progressThumb: {
+      position: "absolute",
+      top: -5,
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: colors.primary,
+      borderWidth: 2,
+      borderColor: colors.bgSurface,
+      marginLeft: -8,
+    },
+    progressButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 6,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    progressValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      minWidth: 40,
+      textAlign: "center",
+    },
+    saveReassurance: {
+      alignItems: "flex-start",
+    },
+    buttonSection: {
+      gap: 10,
+    },
+    cancelButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+    },
+    cancelText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: typography.fontWeight.regular,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+  }));
+
   const { id, taskId } = useLocalSearchParams<{ id: string; taskId?: string }>();
 
   const editData = mode === "edit" ? MOCK_TASKS_DATA[taskId || "1"] : null;
@@ -192,118 +309,4 @@ export function TaskForm({ mode, currentStep = 5, totalSteps = 9 }: TaskFormProp
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 8,
-    gap: 18,
-  },
-  stepBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.progressTrack,
-  },
-  stepBadgeText: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.semibold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  section: {
-    gap: 7,
-  },
-  fieldRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  fieldHalf: {
-    flex: 1,
-  },
-  progressSection: {
-    gap: 10,
-  },
-  progressLabel: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMain,
-  },
-  progressCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: 10,
-  },
-  progressTrack: {
-    flex: 1,
-    height: 6,
-    backgroundColor: colors.border,
-    borderRadius: 3,
-    position: "relative",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: colors.primary,
-    borderRadius: 3,
-  },
-  progressThumb: {
-    position: "absolute",
-    top: -5,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: colors.primary,
-    borderWidth: 2,
-    borderColor: colors.bgSurface,
-    marginLeft: -8,
-  },
-  progressButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  progressValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-    minWidth: 40,
-    textAlign: "center",
-  },
-  saveReassurance: {
-    alignItems: "flex-start",
-  },
-  buttonSection: {
-    gap: 10,
-  },
-  cancelButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-  },
-  cancelText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-});
+

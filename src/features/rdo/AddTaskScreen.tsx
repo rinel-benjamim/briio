@@ -17,8 +17,9 @@ import {
   Check,
   Percent,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -74,11 +75,304 @@ export default function AddTaskScreen() {
     })
   ).current;
 
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgSurface,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingBottom: 8,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      flex: 1,
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    progressText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 8,
+      gap: 20,
+    },
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    section: {
+      gap: 12,
+    },
+    sectionLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    field: {
+      gap: 8,
+    },
+    fieldLabel: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    textArea: {
+      height: 64,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      padding: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    textInput: {
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    dropdown: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      height: 48,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    dropdownText: {
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    dropdownOptions: {
+      backgroundColor: colors.bgElevated,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    dropdownOption: {
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    dropdownOptionText: {
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    stepper: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      height: 48,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    stepperButton: {
+      width: 48,
+      height: 48,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    stepperDivider: {
+      width: 1,
+      height: 28,
+      backgroundColor: colors.border,
+    },
+    stepperValue: {
+      flex: 1,
+      height: 48,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    stepperValueText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    segmentedControl: {
+      flexDirection: "row",
+      height: 40,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    segmentOption: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+    },
+    segmentOptionSelected: {
+      backgroundColor: colors.primary,
+    },
+    segmentOptionText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    segmentOptionTextSelected: {
+      color: colors.textMain,
+      fontWeight: typography.fontWeight.semibold,
+    },
+    obsSection: {
+      gap: 8,
+    },
+    obsLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    obsInput: {
+      height: 72,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      padding: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    progressSection: {
+      gap: 10,
+    },
+    progressLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    progressCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      padding: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      gap: 10,
+    },
+    progressTrack: {
+      flex: 1,
+      height: 6,
+      backgroundColor: colors.border,
+      borderRadius: 3,
+      position: "relative",
+    },
+    progressFill: {
+      height: "100%",
+      backgroundColor: colors.primary,
+      borderRadius: 3,
+    },
+    progressThumb: {
+      position: "absolute",
+      top: -5,
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: colors.primary,
+      borderWidth: 2,
+      borderColor: colors.textOnBrand,
+      marginLeft: -8,
+    },
+    progressButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 6,
+      backgroundColor: colors.bgSurface,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    progressValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      minWidth: 40,
+      textAlign: "center",
+    },
+    buttonSection: {
+      gap: 12,
+    },
+    primaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: 24,
+      height: 48,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    secondaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+    },
+    secondaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    autosaveStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
+    },
+    autosaveText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
         <PressableOpacity style={styles.navButton} onPress={() => router.back()}>
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Adicionar atividade</Text>
         <Text style={styles.progressText}>
@@ -106,7 +400,7 @@ export default function AddTaskScreen() {
               value={description}
               onChangeText={setDescription}
               placeholder="Ex.: Execução de alvenaria"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
               multiline
               textAlignVertical="top"
             />
@@ -119,7 +413,7 @@ export default function AddTaskScreen() {
               value={location}
               onChangeText={setLocation}
               placeholder="Ex.: Piso 2 — Bloco A"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
             />
           </View>
 
@@ -130,7 +424,7 @@ export default function AddTaskScreen() {
                 style={styles.stepperButton}
                 onPress={() => setQuantity(Math.max(1, quantity - 1))}
               >
-                <Minus size={18} color={colors.textTertiary} />
+                <Minus size={18} color={colors.textMuted} />
               </PressableOpacity>
               <View style={styles.stepperDivider} />
               <View style={styles.stepperValue}>
@@ -141,7 +435,7 @@ export default function AddTaskScreen() {
                 style={styles.stepperButton}
                 onPress={() => setQuantity(quantity + 1)}
               >
-                <Plus size={18} color={colors.textTertiary} />
+                <Plus size={18} color={colors.textMuted} />
               </PressableOpacity>
             </View>
           </View>
@@ -153,7 +447,7 @@ export default function AddTaskScreen() {
               onPress={() => setShowUnitDropdown(!showUnitDropdown)}
             >
               <Text style={styles.dropdownText}>{unit}</Text>
-              <ChevronDown size={18} color={colors.textTertiary} />
+              <ChevronDown size={18} color={colors.textMuted} />
             </PressableOpacity>
             {showUnitDropdown && (
               <View style={styles.dropdownOptions}>
@@ -206,7 +500,7 @@ export default function AddTaskScreen() {
             value={observation}
             onChangeText={setObservation}
             placeholder="Ex.: Execução iniciada no período da manhã."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.textMuted}
             multiline
             textAlignVertical="top"
           />
@@ -219,7 +513,7 @@ export default function AddTaskScreen() {
               style={styles.progressButton}
               onPress={() => setProgress(Math.max(0, progress - 5))}
             >
-              <Minus size={14} color={colors.textTertiary} />
+              <Minus size={14} color={colors.textMuted} />
             </PressableOpacity>
             <View
               style={styles.progressTrack}
@@ -235,7 +529,7 @@ export default function AddTaskScreen() {
               style={styles.progressButton}
               onPress={() => setProgress(Math.min(100, progress + 5))}
             >
-              <Plus size={14} color={colors.textTertiary} />
+              <Plus size={14} color={colors.textMuted} />
             </PressableOpacity>
             <Text style={styles.progressValue}>{progress}%</Text>
           </View>
@@ -257,303 +551,10 @@ export default function AddTaskScreen() {
         </View>
 
         <View style={styles.autosaveStatus}>
-          <Check size={14} color={colors.textTertiary} />
+          <Check size={14} color={colors.textMuted} />
           <Text style={styles.autosaveText}>Salvo automaticamente</Text>
         </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surfaceBg,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 8,
-    gap: 20,
-  },
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-  contextProject: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  section: {
-    gap: 12,
-  },
-  sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textArea: {
-    height: 64,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  textInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  dropdown: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  dropdownOptions: {
-    backgroundColor: "rgba(30, 41, 59, 0.95)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  dropdownOption: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)",
-  },
-  dropdownOptionText: {
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    height: 48,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  stepperButton: {
-    width: 48,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: "#E5E7EB",
-  },
-  stepperValue: {
-    flex: 1,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepperValueText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  segmentedControl: {
-    flexDirection: "row",
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-  },
-  segmentOption: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-  },
-  segmentOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-  },
-  segmentOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  segmentOptionTextSelected: {
-    color: colors.textPrimary,
-    fontWeight: typography.fontWeight.semibold,
-  },
-  obsSection: {
-    gap: 8,
-  },
-  obsLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  obsInput: {
-    height: 72,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  progressSection: {
-    gap: 10,
-  },
-  progressLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  progressCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    padding: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    gap: 10,
-  },
-  progressTrack: {
-    flex: 1,
-    height: 6,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 3,
-    position: "relative",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: 3,
-  },
-  progressThumb: {
-    position: "absolute",
-    top: -5,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: colors.brandPrimary,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-    marginLeft: -8,
-  },
-  progressButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    backgroundColor: "rgba(148, 163, 184, 0.15)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  progressValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-    minWidth: 40,
-    textAlign: "center",
-  },
-  buttonSection: {
-    gap: 12,
-  },
-  primaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: 24,
-    height: 48,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  secondaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 44,
-  },
-  secondaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  autosaveStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  autosaveText: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-});

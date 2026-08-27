@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Plus, ChevronRight } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -53,6 +54,116 @@ export default function OccurrencesScreen() {
       router.push(`/(tabs)/reports/${id}/observations`);
     }
   };
+
+  const styles = useThemedStyles((colors) => ({
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summaryCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 16,
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    summaryLeft: {
+      gap: 4,
+    },
+    summaryLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summaryValue: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    summaryRight: {
+      alignItems: "flex-end",
+      gap: 4,
+    },
+    summarySubLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summarySubValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    sectionLabel: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    occurrencesCard: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    occurrenceItem: {
+      padding: 14,
+      paddingHorizontal: 16,
+      gap: 6,
+    },
+    occurrenceTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    occurrenceTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    occurrenceMeta: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    occurrenceDesc: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      flex: 1,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    addButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      height: 56,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    addButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.primary,
+    },
+  }));
 
   return (
     <RdoScreenLayout
@@ -118,113 +229,3 @@ export default function OccurrencesScreen() {
     </RdoScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  contextProject: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summaryCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 16,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  summaryLeft: {
-    gap: 4,
-  },
-  summaryLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summaryValue: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  summaryRight: {
-    alignItems: "flex-end",
-    gap: 4,
-  },
-  summarySubLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summarySubValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  sectionLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  occurrencesCard: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  occurrenceItem: {
-    padding: 14,
-    paddingHorizontal: 16,
-    gap: 6,
-  },
-  occurrenceTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  occurrenceTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  occurrenceMeta: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  occurrenceDesc: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    flex: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  addButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
-  },
-});

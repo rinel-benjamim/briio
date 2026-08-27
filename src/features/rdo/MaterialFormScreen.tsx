@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -31,6 +32,86 @@ interface MaterialFormProps {
 
 export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: MaterialFormProps) {
   const colors = useThemeColors();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 8,
+      gap: 18,
+    },
+    stepBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: borderRadius.full,
+      backgroundColor: colors.progressTrack,
+    },
+    stepBadgeText: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: typography.fontWeight.semibold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    section: {
+      gap: 7,
+    },
+    fieldRow: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    fieldHalf: {
+      flex: 1,
+    },
+    summaryCard: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: colors.primaryLight,
+      borderRadius: borderRadius["2xl"],
+      padding: 16,
+    },
+    summaryText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: typography.fontWeight.bold,
+      fontFamily: typography.fontFamily,
+      color: colors.primaryHover,
+    },
+    summaryStatus: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: typography.fontWeight.regular,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    saveReassurance: {
+      alignItems: "flex-start",
+    },
+    buttonSection: {
+      gap: 10,
+    },
+    cancelButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+    },
+    cancelText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: typography.fontWeight.regular,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+  }));
+
   const { id, materialId } = useLocalSearchParams<{ id: string; materialId?: string }>();
 
   const editData = mode === "edit" ? MOCK_MATERIALS_DATA[materialId || "1"] : null;
@@ -154,81 +235,4 @@ export function MaterialForm({ mode, currentStep = 3, totalSteps = 9 }: Material
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 8,
-    gap: 18,
-  },
-  stepBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.progressTrack,
-  },
-  stepBadgeText: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.semibold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  section: {
-    gap: 7,
-  },
-  fieldRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  fieldHalf: {
-    flex: 1,
-  },
-  summaryCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius["2xl"],
-    padding: 16,
-  },
-  summaryText: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily,
-    color: colors.primaryHover,
-  },
-  summaryStatus: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  saveReassurance: {
-    alignItems: "flex-start",
-  },
-  buttonSection: {
-    gap: 10,
-  },
-  cancelButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-  },
-  cancelText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-});
+

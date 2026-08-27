@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Info } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -44,6 +45,109 @@ export default function ObservationsScreen() {
       router.push(`/(tabs)/reports/${id}/photos`);
     }
   };
+
+  const styles = useThemedStyles((colors) => ({
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    titleSection: {
+      gap: 6,
+    },
+    mainTitle: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    mainTitleText: {
+      ...typography.presets.h1,
+      color: colors.textMain,
+    },
+    optionalBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 9999,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    optionalText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+    },
+    subtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    suggestionsSection: {
+      gap: 10,
+    },
+    suggestionsLabel: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    chipRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    chip: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 9999,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    chipText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    textFieldContainer: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    textField: {
+      height: 200,
+      padding: 16,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    charCount: {
+      position: "absolute",
+      bottom: 12,
+      right: 16,
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+    },
+    emptyHint: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+    },
+    emptyHintText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+  }));
 
   return (
     <RdoScreenLayout
@@ -122,106 +226,3 @@ export default function ObservationsScreen() {
     </RdoScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  contextProject: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  titleSection: {
-    gap: 6,
-  },
-  mainTitle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  mainTitleText: {
-    ...typography.presets.h1,
-    color: colors.textMain,
-  },
-  optionalBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 9999,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  optionalText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-  },
-  subtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  suggestionsSection: {
-    gap: 10,
-  },
-  suggestionsLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  chipRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 9999,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  chipText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  textFieldContainer: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  textField: {
-    height: 200,
-    padding: 16,
-    ...typography.presets.body,
-    color: colors.textMain,
-  },
-  charCount: {
-    position: "absolute",
-    bottom: 12,
-    right: 16,
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-  },
-  emptyHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-  },
-  emptyHintText: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-});

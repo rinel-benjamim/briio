@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Text,
   Platform,
 } from "react-native";
@@ -11,8 +10,9 @@ import { CirclePlus, Clock, ChevronDown } from "lucide-react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -36,6 +36,83 @@ interface OccurrenceFormProps {
 
 export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: OccurrenceFormProps) {
   const colors = useThemeColors();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 8,
+      gap: 18,
+    },
+    stepBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: borderRadius.full,
+      backgroundColor: colors.progressTrack,
+    },
+    stepBadgeText: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: typography.fontWeight.semibold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    section: {
+      gap: 7,
+    },
+    field: {
+      gap: 8,
+    },
+    fieldLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: typography.fontWeight.medium,
+      fontFamily: typography.fontFamily,
+      color: colors.textMain,
+    },
+    timeField: {
+      flexDirection: "row",
+      alignItems: "center",
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "space-between",
+    },
+    timeValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    saveReassurance: {
+      alignItems: "flex-start",
+    },
+    buttonSection: {
+      gap: 10,
+    },
+    cancelButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+    },
+    cancelText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: typography.fontWeight.regular,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+  }));
+
   const { id, occId } = useLocalSearchParams<{ id: string; occId?: string }>();
 
   const editData = mode === "edit" ? MOCK_OCCURRENCES_DATA[occId || "1"] : null;
@@ -176,78 +253,4 @@ export function OccurrenceForm({ mode, currentStep = 6, totalSteps = 9 }: Occurr
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 8,
-    gap: 18,
-  },
-  stepBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.progressTrack,
-  },
-  stepBadgeText: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.semibold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  section: {
-    gap: 7,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: typography.fontWeight.medium,
-    fontFamily: typography.fontFamily,
-    color: colors.textMain,
-  },
-  timeField: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 48,
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: "space-between",
-  },
-  timeValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  saveReassurance: {
-    alignItems: "flex-start",
-  },
-  buttonSection: {
-    gap: 10,
-  },
-  cancelButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-  },
-  cancelText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-});
+

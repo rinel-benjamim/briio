@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Text,
   Alert,
   ActivityIndicator,
@@ -26,9 +25,9 @@ import {
   Share2,
   Download,
 } from "lucide-react-native";
-import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import {
   generateRdoPdf,
@@ -118,6 +117,230 @@ export default function RdoDetailScreen() {
   function handleViewAllPhotos() {
     router.push(`/(tabs)/reports/${id}/photos`);
   }
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      flex: 1,
+      textAlign: "center",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: 20,
+      paddingTop: 8,
+      paddingBottom: 24,
+      gap: 12,
+    },
+    reportHeader: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 16,
+      gap: 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    rhTop: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    rhNumber: {
+      ...typography.presets.h3,
+      color: colors.textMain,
+    },
+    rhStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.successBg,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    rhStatusText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.success,
+      fontSize: 12,
+    },
+    rhDate: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    rhProject: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    rhLocation: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    summary: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    summaryRow: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingVertical: 4,
+    },
+    summaryItem: {
+      alignItems: "center",
+      gap: 2,
+    },
+    summaryValue: {
+      ...typography.presets.h3,
+      color: colors.textMain,
+    },
+    summaryLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summaryDivider: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginVertical: 4,
+    },
+    sectionList: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    sectionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 14,
+      paddingHorizontal: 14,
+    },
+    sectionLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      flex: 1,
+    },
+    sectionInfo: {
+      gap: 1,
+    },
+    sectionName: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    sectionSummary: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    sectionDivider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    photos: {
+      gap: 4,
+    },
+    photoHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    photoTitle: {
+      ...typography.presets.label,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    photoCount: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    photoStrip: {
+      flexDirection: "row",
+      gap: 5,
+    },
+    photoThumb: {
+      width: 60,
+      height: 60,
+      borderRadius: 10,
+      backgroundColor: colors.border,
+    },
+    viewAllLink: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      height: 32,
+      justifyContent: "center",
+    },
+    viewAllText: {
+      ...typography.presets.label,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+    primaryButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: 16,
+      height: 56,
+      gap: 8,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    secondaryActions: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    secondaryButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      height: 50,
+      gap: 6,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    secondaryButtonText: {
+      ...typography.presets.label,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -270,227 +493,3 @@ export default function RdoDetailScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-    flex: 1,
-    textAlign: "center",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 12,
-  },
-  reportHeader: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 16,
-    gap: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  rhTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  rhNumber: {
-    ...typography.presets.h3,
-    color: colors.textMain,
-  },
-  rhStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: colors.successBg,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  rhStatusText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.success,
-    fontSize: 12,
-  },
-  rhDate: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  rhProject: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  rhLocation: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  summary: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 4,
-  },
-  summaryItem: {
-    alignItems: "center",
-    gap: 2,
-  },
-  summaryValue: {
-    ...typography.presets.h3,
-    color: colors.textMain,
-  },
-  summaryLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summaryDivider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: 4,
-  },
-  sectionList: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  sectionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 14,
-    paddingHorizontal: 14,
-  },
-  sectionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    flex: 1,
-  },
-  sectionInfo: {
-    gap: 1,
-  },
-  sectionName: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  sectionSummary: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  sectionDivider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  photos: {
-    gap: 4,
-  },
-  photoHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  photoTitle: {
-    ...typography.presets.label,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
-  },
-  photoCount: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  photoStrip: {
-    flexDirection: "row",
-    gap: 5,
-  },
-  photoThumb: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
-    backgroundColor: colors.border,
-  },
-  viewAllLink: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    height: 32,
-    justifyContent: "center",
-  },
-  viewAllText: {
-    ...typography.presets.label,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  primaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  secondaryActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  secondaryButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    height: 50,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  secondaryButtonText: {
-    ...typography.presets.label,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-});

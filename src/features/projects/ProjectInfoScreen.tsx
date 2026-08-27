@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -9,8 +9,9 @@ import {
   Map,
   CircleCheck,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_PROJECT = {
@@ -30,9 +31,10 @@ interface InfoRowProps {
   label: string;
   value: string;
   icon?: React.ReactNode;
+  styles: any;
 }
 
-function InfoRow({ label, value, icon }: InfoRowProps) {
+function InfoRow({ label, value, icon, styles }: InfoRowProps) {
   return (
     <View style={styles.row}>
       <View style={styles.rowLeft}>
@@ -44,7 +46,7 @@ function InfoRow({ label, value, icon }: InfoRowProps) {
   );
 }
 
-function Divider() {
+function Divider({ styles }: { styles: any }) {
   return <View style={styles.divider} />;
 }
 
@@ -52,6 +54,134 @@ export default function ProjectInfoScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingBottom: 8,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      flex: 1,
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+      gap: 16,
+    },
+    identity: {
+      gap: 4,
+      paddingTop: 8,
+    },
+    projectName: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    statusRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    statusBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+      backgroundColor: colors.successBg,
+      gap: 6,
+    },
+    statusText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.success,
+    },
+    section: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    sectionHeader: {
+      padding: 12,
+      paddingHorizontal: 16,
+      paddingBottom: 8,
+    },
+    sectionTitle: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginHorizontal: 16,
+    },
+    row: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 12,
+      paddingHorizontal: 16,
+    },
+    rowLeft: {
+      flex: 1,
+      gap: 2,
+    },
+    rowLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    rowValue: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    addressRow: {
+      paddingHorizontal: 16,
+      paddingBottom: 8,
+    },
+    addressText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    mapPlaceholder: {
+      height: 120,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+      borderBottomLeftRadius: borderRadius.lg,
+      borderBottomRightRadius: borderRadius.lg,
+    },
+    mapText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -84,30 +214,31 @@ export default function ProjectInfoScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Dados da obra</Text>
           </View>
-          <Divider />
+          <Divider styles={styles} />
           <InfoRow
             label="Localização"
             value={MOCK_PROJECT.location}
             icon={<MapPin size={16} color={colors.textMuted} />}
+            styles={styles}
           />
-          <Divider />
-          <InfoRow label="Data de início" value={MOCK_PROJECT.startDate} />
-          <Divider />
-          <InfoRow label="Previsão de conclusão" value={MOCK_PROJECT.endDate} />
-          <Divider />
-          <InfoRow label="Responsável" value={MOCK_PROJECT.responsible} />
+          <Divider styles={styles} />
+          <InfoRow label="Data de início" value={MOCK_PROJECT.startDate} styles={styles} />
+          <Divider styles={styles} />
+          <InfoRow label="Previsão de conclusão" value={MOCK_PROJECT.endDate} styles={styles} />
+          <Divider styles={styles} />
+          <InfoRow label="Responsável" value={MOCK_PROJECT.responsible} styles={styles} />
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Entidades</Text>
           </View>
-          <Divider />
-          <InfoRow label="Cliente" value={MOCK_PROJECT.client} />
-          <Divider />
-          <InfoRow label="Empreiteiro" value={MOCK_PROJECT.contractor} />
-          <Divider />
-          <InfoRow label="Fiscalização" value={MOCK_PROJECT.inspector} />
+          <Divider styles={styles} />
+          <InfoRow label="Cliente" value={MOCK_PROJECT.client} styles={styles} />
+          <Divider styles={styles} />
+          <InfoRow label="Empreiteiro" value={MOCK_PROJECT.contractor} styles={styles} />
+          <Divider styles={styles} />
+          <InfoRow label="Fiscalização" value={MOCK_PROJECT.inspector} styles={styles} />
         </View>
 
         <View style={styles.section}>
@@ -115,6 +246,7 @@ export default function ProjectInfoScreen() {
             label="Referência da obra"
             value={MOCK_PROJECT.reference}
             icon={<Copy size={18} color={colors.textMuted} />}
+            styles={styles}
           />
         </View>
 
@@ -134,131 +266,3 @@ export default function ProjectInfoScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    gap: 16,
-  },
-  identity: {
-    gap: 4,
-    paddingTop: 8,
-  },
-  projectName: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: colors.successBg,
-    gap: 6,
-  },
-  statusText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.success,
-  },
-  section: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  sectionHeader: {
-    padding: 12,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  sectionTitle: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginHorizontal: 16,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 12,
-    paddingHorizontal: 16,
-  },
-  rowLeft: {
-    flex: 1,
-    gap: 2,
-  },
-  rowLabel: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  rowValue: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  addressRow: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  addressText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  mapPlaceholder: {
-    height: 120,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-    borderBottomLeftRadius: borderRadius.lg,
-    borderBottomRightRadius: borderRadius.lg,
-  },
-  mapText: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-});

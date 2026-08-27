@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Text,
   Alert,
   ActivityIndicator,
@@ -15,8 +14,9 @@ import {
   FileSearch,
 } from "lucide-react-native";
 import { typography } from "@/constants/typography";
-import { colors, borderRadius } from "@/constants";
+import { borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
@@ -100,6 +100,169 @@ export default function RdoGeneratedScreen() {
       Alert.alert("Erro", `Não foi possível abrir o PDF.\n\n${message}`);
     }
   }
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 8,
+      paddingBottom: 24,
+      gap: 14,
+    },
+    successCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.successBg,
+      borderRadius: borderRadius["2xl"],
+      padding: 18,
+      gap: 12,
+    },
+    successIconContainer: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: colors.success,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    successInfo: {
+      gap: 2,
+      flex: 1,
+    },
+    successTitle: {
+      fontSize: 16,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.success,
+    },
+    successSubtitle: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    reportIdentity: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius["2xl"],
+      padding: 20,
+      gap: 4,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    reportNumber: {
+      fontSize: typography.fontSize["3xl"],
+      fontWeight: typography.fontWeight.bold,
+      color: colors.textMain,
+    },
+    reportDate: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    reportProject: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    reportLocation: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    reportFile: {
+      alignSelf: "flex-start",
+      backgroundColor: colors.warningBg,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: borderRadius.full,
+      marginTop: 8,
+    },
+    fileText: {
+      fontSize: typography.fontSize.xs,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.warning,
+    },
+    pdfPreview: {
+      backgroundColor: colors.progressTrack,
+      borderRadius: borderRadius["2xl"],
+      height: 250,
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    pdfPage: {
+      width: 180,
+      height: 190,
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      padding: 10,
+      gap: 4,
+    },
+    pdfHeader: {
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.primary,
+    },
+    pdfLine: {
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: colors.border,
+    },
+    pdfSpacer: {
+      height: 4,
+    },
+    pdfTable: {
+      gap: 3,
+    },
+    pdfTableRow: {
+      height: 10,
+      borderRadius: 2,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    pdfPhotos: {
+      flexDirection: "row",
+      gap: 3,
+    },
+    pdfPhoto: {
+      width: 40,
+      height: 40,
+      borderRadius: 3,
+      backgroundColor: colors.border,
+    },
+    pdfSignature: {
+      height: 12,
+      borderRadius: 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    buttonRow: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    secondaryButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius["2xl"],
+      height: 56,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    secondaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -197,166 +360,3 @@ export default function RdoGeneratedScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 14,
-  },
-  successCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.successBg,
-    borderRadius: borderRadius["2xl"],
-    padding: 18,
-    gap: 12,
-  },
-  successIconContainer: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.success,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  successInfo: {
-    gap: 2,
-    flex: 1,
-  },
-  successTitle: {
-    fontSize: 16,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.success,
-  },
-  successSubtitle: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  reportIdentity: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius["2xl"],
-    padding: 20,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  reportNumber: {
-    fontSize: typography.fontSize["3xl"],
-    fontWeight: typography.fontWeight.bold,
-    color: colors.textMain,
-  },
-  reportDate: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  reportProject: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  reportLocation: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  reportFile: {
-    alignSelf: "flex-start",
-    backgroundColor: colors.warningBg,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    marginTop: 8,
-  },
-  fileText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.warning,
-  },
-  pdfPreview: {
-    backgroundColor: colors.progressTrack,
-    borderRadius: borderRadius["2xl"],
-    height: 250,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  pdfPage: {
-    width: 180,
-    height: 190,
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    padding: 10,
-    gap: 4,
-  },
-  pdfHeader: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-  },
-  pdfLine: {
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-  },
-  pdfSpacer: {
-    height: 4,
-  },
-  pdfTable: {
-    gap: 3,
-  },
-  pdfTableRow: {
-    height: 10,
-    borderRadius: 2,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  pdfPhotos: {
-    flexDirection: "row",
-    gap: 3,
-  },
-  pdfPhoto: {
-    width: 40,
-    height: 40,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-  },
-  pdfSignature: {
-    height: 12,
-    borderRadius: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  secondaryButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius["2xl"],
-    height: 56,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  secondaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-});

@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -8,8 +8,9 @@ import {
   ArrowRight,
   Info,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 
@@ -29,6 +30,186 @@ export default function NewRdoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { rdoId } = useRdo();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingBottom: 8,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      flex: 1,
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    navSpacer: {
+      width: 36,
+      height: 36,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 20,
+      gap: 20,
+    },
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    contextProject: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    question: {
+      gap: 4,
+    },
+    questionTitle: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    questionSubtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    optionCard: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      padding: 16,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    optionHeader: {
+      flexDirection: "row",
+      gap: 12,
+      alignItems: "flex-start",
+    },
+    optionIcon: {
+      width: 22,
+      height: 22,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    optionTextGroup: {
+      flex: 1,
+      gap: 2,
+      alignItems: "flex-start",
+    },
+    optionTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    optionDesc: {
+      ...typography.presets.bodySmall,
+      color: colors.textMuted,
+    },
+    previousReport: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: colors.bgMain,
+      borderRadius: borderRadius.md,
+      padding: 10,
+      paddingHorizontal: 12,
+    },
+    previousReportLeft: {
+      gap: 1,
+    },
+    previousReportNumber: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    previousReportDate: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    previousReportMeta: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    previousReportAction: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    previousReportActionText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.primary,
+    },
+    spacer: {
+      height: 4,
+    },
+    optionCardSecondary: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    optionLeftSecondary: {
+      flex: 1,
+      alignItems: "flex-start",
+      gap: 10,
+    },
+    optionIconSecondary: {
+      width: 24,
+      height: 24,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    optionActionSecondary: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    optionActionTextSecondary: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+    },
+    note: {
+      flexDirection: "row",
+      gap: 10,
+      backgroundColor: colors.primaryLight,
+      borderRadius: borderRadius.xl,
+      padding: 14,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    noteText: {
+      flex: 1,
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -126,183 +307,3 @@ export default function NewRdoScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  navSpacer: {
-    width: 36,
-    height: 36,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 20,
-    gap: 20,
-  },
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  contextProject: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  question: {
-    gap: 4,
-  },
-  questionTitle: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  questionSubtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  optionCard: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    padding: 16,
-    gap: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  optionHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  optionIcon: {
-    width: 22,
-    height: 22,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  optionTextGroup: {
-    flex: 1,
-    gap: 2,
-    alignItems: "flex-start",
-  },
-  optionTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  optionDesc: {
-    ...typography.presets.bodySmall,
-    color: colors.textMuted,
-  },
-  previousReport: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: colors.bgMain,
-    borderRadius: borderRadius.md,
-    padding: 10,
-    paddingHorizontal: 12,
-  },
-  previousReportLeft: {
-    gap: 1,
-  },
-  previousReportNumber: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  previousReportDate: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  previousReportMeta: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  previousReportAction: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  previousReportActionText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
-  },
-  spacer: {
-    height: 4,
-  },
-  optionCardSecondary: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  optionLeftSecondary: {
-    flex: 1,
-    alignItems: "flex-start",
-    gap: 10,
-  },
-  optionIconSecondary: {
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  optionActionSecondary: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  optionActionTextSecondary: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-  },
-  note: {
-    flexDirection: "row",
-    gap: 10,
-    backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius.xl,
-    padding: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  noteText: {
-    flex: 1,
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-});

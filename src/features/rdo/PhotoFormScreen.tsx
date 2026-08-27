@@ -2,15 +2,15 @@ import { useState } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Text,
   Image,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { CirclePlus, Camera, Image as ImageIcon } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ContextBar } from "@/components/ui/ContextBar";
@@ -32,6 +32,133 @@ interface PhotoFormProps {
 
 export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormProps) {
   const colors = useThemeColors();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 8,
+      gap: 18,
+    },
+    stepBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: borderRadius.full,
+      backgroundColor: colors.progressTrack,
+    },
+    stepBadgeText: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: typography.fontWeight.semibold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    photoArea: {
+      flexDirection: "row",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      padding: 12,
+      gap: 12,
+      height: 140,
+      alignItems: "center",
+    },
+    photoButton: {
+      width: 140,
+      height: 110,
+      backgroundColor: colors.primaryLight,
+      borderRadius: borderRadius.lg,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+    },
+    photoButtonText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+      textAlign: "center",
+    },
+    previewSection: {
+      gap: 8,
+    },
+    previewImage: {
+      width: "100%",
+      height: 180,
+      borderRadius: borderRadius.lg,
+      backgroundColor: colors.border,
+    },
+    changePhotoText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+      textAlign: "center",
+    },
+    section: {
+      gap: 7,
+    },
+    sectionLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: typography.fontWeight.bold,
+      fontFamily: typography.fontFamily,
+      color: colors.textMain,
+    },
+    typeRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    typeOption: {
+      paddingHorizontal: 14,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    typeOptionSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    typeOptionText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    typeOptionTextSelected: {
+      color: colors.textOnBrand,
+    },
+    saveReassurance: {
+      alignItems: "flex-start",
+    },
+    buttonSection: {
+      gap: 10,
+    },
+    cancelButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+    },
+    cancelText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: typography.fontWeight.regular,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+  }));
+
   const { id, photoId } = useLocalSearchParams<{ id: string; photoId?: string }>();
 
   const editData = mode === "edit" ? MOCK_PHOTOS_DATA[photoId || "1"] : null;
@@ -178,128 +305,4 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 8,
-    gap: 18,
-  },
-  stepBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.progressTrack,
-  },
-  stepBadgeText: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: typography.fontWeight.semibold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  photoArea: {
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    padding: 12,
-    gap: 12,
-    height: 140,
-    alignItems: "center",
-  },
-  photoButton: {
-    width: 140,
-    height: 110,
-    backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius.lg,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  photoButtonText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-    textAlign: "center",
-  },
-  previewSection: {
-    gap: 8,
-  },
-  previewImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: borderRadius.lg,
-    backgroundColor: colors.border,
-  },
-  changePhotoText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-    textAlign: "center",
-  },
-  section: {
-    gap: 7,
-  },
-  sectionLabel: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily,
-    color: colors.textMain,
-  },
-  typeRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  typeOption: {
-    paddingHorizontal: 14,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  typeOptionSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  typeOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  typeOptionTextSelected: {
-    color: colors.textOnBrand,
-  },
-  saveReassurance: {
-    alignItems: "flex-start",
-  },
-  buttonSection: {
-    gap: 10,
-  },
-  cancelButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-  },
-  cancelText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-});
+

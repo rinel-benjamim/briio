@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, ScrollView, StyleSheet, Text, Modal, Pressable } from "react-native";
+import { View, ScrollView, Text, Modal, Pressable } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -13,8 +13,9 @@ import {
   Info,
   ArrowRight as ArrowRightIcon,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { InfoCard } from "@/components/projects/InfoCard";
@@ -60,6 +61,219 @@ export default function ProjectDetailScreen() {
     { key: "edit", label: "Editar obra", icon: Pencil, color: colors.textMain },
     { key: "delete", label: "Excluir obra", icon: Trash2, color: colors.warning },
   ];
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingBottom: 8,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      flex: 1,
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      gap: 24,
+    },
+    rdoSection: {
+      gap: 12,
+    },
+    sectionLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    rdoCard: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      padding: 20,
+      gap: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    rdoDate: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    rdoStatus: {
+      ...typography.presets.h4,
+      color: colors.textMain,
+    },
+    progressSection: {
+      gap: 8,
+    },
+    progressTrack: {
+      height: 8,
+      backgroundColor: colors.border,
+      borderRadius: 4,
+      overflow: "hidden",
+    },
+    progressFill: {
+      height: "100%",
+      backgroundColor: colors.primary,
+      borderRadius: 4,
+    },
+    progressSteps: {
+      ...typography.presets.bodySmall,
+      color: colors.textMuted,
+    },
+    ctaButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: borderRadius["2xl"],
+      height: 56,
+      gap: 8,
+    },
+    ctaText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    infoSection: {
+      gap: 12,
+    },
+    infoHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    viewMore: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    viewMoreText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+    recentSection: {
+      gap: 12,
+    },
+    editAction: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingVertical: 12,
+    },
+    editText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    overlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: "flex-end",
+    },
+    sheet: {
+      backgroundColor: colors.bgSurface,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingBottom: 34,
+    },
+    sheetHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 20,
+      paddingBottom: 12,
+    },
+    sheetTitle: {
+      ...typography.presets.h4,
+      color: colors.textMain,
+    },
+    closeButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    option: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      padding: 16,
+      paddingHorizontal: 20,
+    },
+    optionLabel: {
+      ...typography.presets.body,
+    },
+    confirmSheet: {
+      backgroundColor: colors.bgSurface,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      padding: 24,
+      paddingBottom: 34,
+      gap: 12,
+    },
+    confirmTitle: {
+      ...typography.presets.h4,
+      color: colors.warning,
+    },
+    confirmText: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+      marginBottom: 8,
+    },
+    confirmActions: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    cancelButton: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: colors.border,
+    },
+    cancelButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    deleteButton: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: colors.warning,
+    },
+    deleteButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textOnBrand,
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -242,216 +456,3 @@ export default function ProjectDetailScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    gap: 24,
-  },
-  rdoSection: {
-    gap: 12,
-  },
-  sectionLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  rdoCard: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    padding: 20,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  rdoDate: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  rdoStatus: {
-    ...typography.presets.h4,
-    color: colors.textMain,
-  },
-  progressSection: {
-    gap: 8,
-  },
-  progressTrack: {
-    height: 8,
-    backgroundColor: colors.border,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: colors.primary,
-    borderRadius: 4,
-  },
-  progressSteps: {
-    ...typography.presets.bodySmall,
-    color: colors.textMuted,
-  },
-  ctaButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius["2xl"],
-    height: 56,
-    gap: 8,
-  },
-  ctaText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  infoSection: {
-    gap: 12,
-  },
-  infoHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  viewMore: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  viewMoreText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  recentSection: {
-    gap: 12,
-  },
-  editAction: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 12,
-  },
-  editText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: colors.bgSurface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 34,
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 12,
-  },
-  sheetTitle: {
-    ...typography.presets.h4,
-    color: colors.textMain,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 16,
-    paddingHorizontal: 20,
-  },
-  optionLabel: {
-    ...typography.presets.body,
-  },
-  confirmSheet: {
-    backgroundColor: colors.bgSurface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
-    paddingBottom: 34,
-    gap: 12,
-  },
-  confirmTitle: {
-    ...typography.presets.h4,
-    color: colors.warning,
-  },
-  confirmText: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-    marginBottom: 8,
-  },
-  confirmActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: colors.border,
-  },
-  cancelButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  deleteButton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: colors.warning,
-  },
-  deleteButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textOnBrand,
-  },
-});

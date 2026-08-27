@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   View,
   FlatList,
-  StyleSheet,
   Text,
   Modal,
   Pressable,
@@ -21,7 +20,8 @@ import {
   FileText,
 } from "lucide-react-native";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius, shadows } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
@@ -104,6 +104,277 @@ export default function ReportsScreen() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingBottom: 12,
+      backgroundColor: colors.bgSurface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerLeft: {
+      flex: 1,
+      gap: 2,
+    },
+    navTitle: {
+      ...typography.presets.h1,
+      color: colors.textMain,
+    },
+    navSubtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+    },
+    topActions: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    iconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.bgMain,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    filters: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      gap: 8,
+      marginBottom: 8,
+      paddingTop: 12,
+    },
+    filterPill: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: borderRadius.full,
+      height: 32,
+      justifyContent: "center",
+      backgroundColor: colors.bgMain,
+    },
+    filterPillActive: {
+      backgroundColor: colors.primary,
+    },
+    filterText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    filterTextActive: {
+      color: colors.textOnBrand,
+      fontWeight: typography.fontWeight.semibold,
+    },
+    sortRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 8,
+    },
+    sortLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    sortControl: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    sortValue: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    searchContainer: {
+      paddingHorizontal: 20,
+      marginBottom: 8,
+    },
+    searchInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      paddingHorizontal: 14,
+      height: 48,
+      gap: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    searchInput: {
+      flex: 1,
+      ...typography.presets.body,
+      color: colors.textMain,
+      padding: 0,
+    },
+    listContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 100,
+      gap: 12,
+      flexGrow: 1,
+    },
+    emptyState: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 60,
+      gap: 12,
+    },
+    emptyTitle: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    emptyDescription: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    reportCard: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      padding: 16,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...shadows.sm,
+    },
+    cardTop: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    reportNumber: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    statusBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: borderRadius.md,
+    },
+    statusGenerated: {
+      backgroundColor: colors.successBg,
+    },
+    statusDraft: {
+      backgroundColor: colors.warningBg,
+    },
+    statusText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      fontSize: 11,
+    },
+    statusTextGenerated: {
+      color: colors.success,
+    },
+    statusTextDraft: {
+      color: colors.warning,
+    },
+    projectName: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    reportDate: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    reportSummary: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    fab: {
+      position: "absolute",
+      right: 20,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primary,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.24,
+      shadowRadius: 12,
+      elevation: 8,
+    },
+    overlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: "flex-end",
+    },
+    sheet: {
+      backgroundColor: colors.primaryLight,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      maxHeight: "60%",
+      paddingBottom: 34,
+    },
+    sheetHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 20,
+      paddingBottom: 12,
+    },
+    sheetTitle: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    closeButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.bgMain,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    sheetSubtitle: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+      paddingHorizontal: 20,
+      marginBottom: 8,
+    },
+    projectList: {
+      paddingHorizontal: 20,
+    },
+    projectOption: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 16,
+      gap: 12,
+      borderRadius: borderRadius.lg,
+    },
+    projectOptionSelected: {
+      backgroundColor: colors.primaryLight,
+    },
+    projectOptionIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.bgMain,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    projectOptionInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    projectOptionName: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    projectOptionNameSelected: {
+      color: colors.primary,
+    },
+    projectOptionLocation: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+  }));
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 150);
@@ -364,274 +635,3 @@ export default function ReportsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    backgroundColor: colors.bgSurface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerLeft: {
-    flex: 1,
-    gap: 2,
-  },
-  navTitle: {
-    ...typography.presets.h1,
-    color: colors.textMain,
-  },
-  navSubtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-  },
-  topActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.bgMain,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  filters: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 8,
-    marginBottom: 8,
-    paddingTop: 12,
-  },
-  filterPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: borderRadius.full,
-    height: 32,
-    justifyContent: "center",
-    backgroundColor: colors.bgMain,
-  },
-  filterPillActive: {
-    backgroundColor: colors.primary,
-  },
-  filterText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  filterTextActive: {
-    color: colors.textOnBrand,
-    fontWeight: typography.fontWeight.semibold,
-  },
-  sortRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-  },
-  sortLabel: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  sortControl: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  sortValue: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  searchContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 8,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: 14,
-    height: 48,
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  searchInput: {
-    flex: 1,
-    ...typography.presets.body,
-    color: colors.textMain,
-    padding: 0,
-  },
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 100,
-    gap: 12,
-    flexGrow: 1,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 60,
-    gap: 12,
-  },
-  emptyTitle: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  emptyDescription: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-  reportCard: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    padding: 16,
-    gap: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.sm,
-  },
-  cardTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  reportNumber: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: borderRadius.md,
-  },
-  statusGenerated: {
-    backgroundColor: colors.successBg,
-  },
-  statusDraft: {
-    backgroundColor: colors.warningBg,
-  },
-  statusText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    fontSize: 11,
-  },
-  statusTextGenerated: {
-    color: colors.success,
-  },
-  statusTextDraft: {
-    color: colors.warning,
-  },
-  projectName: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  reportDate: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  reportSummary: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  fab: {
-    position: "absolute",
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.24,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: colors.primaryLight,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "60%",
-    paddingBottom: 34,
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 12,
-  },
-  sheetTitle: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.bgMain,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  sheetSubtitle: {
-    ...typography.presets.body,
-    color: colors.textMuted,
-    paddingHorizontal: 20,
-    marginBottom: 8,
-  },
-  projectList: {
-    paddingHorizontal: 20,
-  },
-  projectOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    gap: 12,
-    borderRadius: borderRadius.lg,
-  },
-  projectOptionSelected: {
-    backgroundColor: colors.primaryLight,
-  },
-  projectOptionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.bgMain,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  projectOptionInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  projectOptionName: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  projectOptionNameSelected: {
-    color: colors.primary,
-  },
-  projectOptionLocation: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-});

@@ -3,7 +3,7 @@ import { useColorScheme } from "react-native";
 import { colors as lightColors } from "@/constants/colors";
 import { darkColors } from "@/constants/colors-dark";
 
-type ThemeColors = Record<keyof typeof lightColors, string>;
+export type ThemeColors = Record<keyof typeof lightColors, string>;
 
 const ThemeContext = createContext<ThemeColors>(lightColors as ThemeColors);
 

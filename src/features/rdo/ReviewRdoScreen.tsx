@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -7,9 +7,9 @@ import {
   CheckCircle,
   FileDown,
 } from "lucide-react-native";
-import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_RDO = {
@@ -44,6 +44,191 @@ export default function ReviewRdoScreen() {
   const insets = useSafeAreaInsets();
   const [step] = useState(9);
   const totalSteps = 9;
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      flex: 1,
+    },
+    progressIndicator: {
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 9999,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    progressText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: 20,
+      paddingTop: 8,
+      paddingBottom: 24,
+      gap: 16,
+    },
+    reportIdentity: {
+      gap: 4,
+    },
+    reportNumber: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    reportDate: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    reportProject: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    reportLocation: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    overallStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.successBg,
+      borderRadius: 16,
+      padding: 14,
+      paddingHorizontal: 16,
+      gap: 10,
+      borderWidth: 1,
+      borderColor: colors.success,
+    },
+    overallInfo: {
+      gap: 2,
+    },
+    overallTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.success,
+    },
+    overallSubtitle: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    checklistLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    checklist: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    checklistItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 12,
+      paddingHorizontal: 16,
+    },
+    checklistItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      flex: 1,
+    },
+    checklistItemInfo: {
+      gap: 1,
+    },
+    checklistItemName: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    checklistItemSummary: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    editButton: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    signatureSection: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 14,
+      paddingHorizontal: 16,
+      gap: 4,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    signatureLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    signatureRole: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    signatureName: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    signatureNote: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    primaryButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: 16,
+      height: 56,
+      gap: 8,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    primaryHint: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -137,188 +322,3 @@ export default function ReviewRdoScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-    flex: 1,
-  },
-  progressIndicator: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 9999,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 16,
-  },
-  reportIdentity: {
-    gap: 4,
-  },
-  reportNumber: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  reportDate: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  reportProject: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  reportLocation: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  overallStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.successBg,
-    borderRadius: 16,
-    padding: 14,
-    paddingHorizontal: 16,
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.success,
-  },
-  overallInfo: {
-    gap: 2,
-  },
-  overallTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.success,
-  },
-  overallSubtitle: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  checklistLabel: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  checklist: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  checklistItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 12,
-    paddingHorizontal: 16,
-  },
-  checklistItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    flex: 1,
-  },
-  checklistItemInfo: {
-    gap: 1,
-  },
-  checklistItemName: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  checklistItemSummary: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  editButton: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  signatureSection: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 14,
-    paddingHorizontal: 16,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  signatureLabel: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  signatureRole: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  signatureName: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  signatureNote: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  primaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  primaryHint: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-});

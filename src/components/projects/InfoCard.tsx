@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius, shadows } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 
 interface InfoField {
   label: string;
@@ -15,6 +16,40 @@ export function InfoCard({ fields }: InfoCardProps) {
   for (let i = 0; i < fields.length; i += 2) {
     rows.push(fields.slice(i, i + 2));
   }
+
+  const styles = useThemedStyles((colors) => ({
+    card: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+      ...shadows.sm,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "stretch",
+    },
+    cell: {
+      flex: 1,
+      padding: 14,
+      paddingHorizontal: 16,
+      gap: 4,
+    },
+    verticalDivider: {
+      width: 1,
+      backgroundColor: colors.border,
+      marginVertical: 14,
+    },
+    label: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    value: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+  }));
 
   return (
     <View style={styles.card}>
@@ -37,37 +72,3 @@ export function InfoCard({ fields }: InfoCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-    ...shadows.sm,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  cell: {
-    flex: 1,
-    padding: 14,
-    paddingHorizontal: 16,
-    gap: 4,
-  },
-  verticalDivider: {
-    width: 1,
-    backgroundColor: colors.border,
-    marginVertical: 14,
-  },
-  label: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  value: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-});

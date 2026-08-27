@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius, shadows } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
@@ -44,6 +45,106 @@ export function RecentReports({
       bg: colors.successBg,
     },
   };
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      gap: 12,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    title: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    list: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+      ...shadows.sm,
+    },
+    item: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 14,
+      paddingHorizontal: 16,
+    },
+    left: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      flex: 1,
+    },
+    dateColumn: {
+      width: 40,
+      alignItems: "center",
+      gap: 1,
+    },
+    day: {
+      ...typography.presets.h3,
+      color: colors.textMain,
+    },
+    month: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    itemDivider: {
+      width: 1,
+      height: 32,
+      backgroundColor: colors.border,
+    },
+    info: {
+      flex: 1,
+      gap: 2,
+    },
+    reportNumber: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    reportProject: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    badge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: borderRadius.full,
+      gap: 4,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    badgeText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    footer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      gap: 4,
+    },
+    viewAll: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -103,103 +204,3 @@ export function RecentReports({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  list: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-    ...shadows.sm,
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 14,
-    paddingHorizontal: 16,
-  },
-  left: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    flex: 1,
-  },
-  dateColumn: {
-    width: 40,
-    alignItems: "center",
-    gap: 1,
-  },
-  day: {
-    ...typography.presets.h3,
-    color: colors.textMain,
-  },
-  month: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  itemDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: colors.border,
-  },
-  info: {
-    flex: 1,
-    gap: 2,
-  },
-  reportNumber: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  reportProject: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    gap: 4,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  badgeText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 4,
-  },
-  viewAll: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-});

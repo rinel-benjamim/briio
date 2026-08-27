@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius, shadows } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SegmentedControlProps {
@@ -13,6 +14,36 @@ export function SegmentedControl({
   selected,
   onSelect,
 }: SegmentedControlProps) {
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flexDirection: "row",
+      backgroundColor: colors.bgMain,
+      borderRadius: borderRadius.lg,
+      padding: 3,
+      gap: 3,
+    },
+    segment: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 10,
+      borderRadius: borderRadius.md,
+    },
+    segmentActive: {
+      backgroundColor: colors.bgSurface,
+      ...shadows.sm,
+    },
+    text: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    textActive: {
+      color: colors.primary,
+      fontWeight: typography.fontWeight.semibold,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       {options.map((option) => (
@@ -37,33 +68,3 @@ export function SegmentedControl({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    backgroundColor: colors.bgMain,
-    borderRadius: borderRadius.lg,
-    padding: 3,
-    gap: 3,
-  },
-  segment: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 10,
-    borderRadius: borderRadius.md,
-  },
-  segmentActive: {
-    backgroundColor: colors.bgSurface,
-    ...shadows.sm,
-  },
-  text: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  textActive: {
-    color: colors.primary,
-    fontWeight: typography.fontWeight.semibold,
-  },
-});

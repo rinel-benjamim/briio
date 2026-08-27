@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowRight } from "lucide-react-native";
-import { colors, typography, borderRadius, shadows } from "@/constants";
+import { typography, borderRadius, shadows } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface RecentRdoItem {
@@ -16,25 +18,84 @@ interface RecentRdoListProps {
   onItemPress?: (id: string) => void;
 }
 
-const statusConfig = {
-  draft: {
-    label: "Rascunho",
-    color: colors.warning,
-    bg: colors.warningBg,
-  },
-  completed: {
-    label: "Concluído",
-    color: colors.success,
-    bg: colors.successBg,
-  },
-  generated: {
-    label: "Gerado",
-    color: colors.success,
-    bg: colors.successBg,
-  },
-};
-
 export function RecentRdoList({ items, onViewAll, onItemPress }: RecentRdoListProps) {
+  const colors = useThemeColors();
+
+  const statusConfig = {
+    draft: {
+      label: "Rascunho",
+      color: colors.warning,
+      bg: colors.warningBg,
+    },
+    completed: {
+      label: "Concluído",
+      color: colors.success,
+      bg: colors.successBg,
+    },
+    generated: {
+      label: "Gerado",
+      color: colors.success,
+      bg: colors.successBg,
+    },
+  };
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      gap: 12,
+    },
+    list: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+      ...shadows.sm,
+    },
+    item: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 14,
+      paddingHorizontal: 16,
+    },
+    itemText: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+    badge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: borderRadius.full,
+      gap: 4,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    badgeText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    footer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      gap: 4,
+    },
+    viewAll: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <View style={styles.list}>
@@ -81,60 +142,3 @@ export function RecentRdoList({ items, onViewAll, onItemPress }: RecentRdoListPr
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-  },
-  list: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-    ...shadows.sm,
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 14,
-    paddingHorizontal: 16,
-  },
-  itemText: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    gap: 4,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  badgeText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 4,
-  },
-  viewAll: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-});

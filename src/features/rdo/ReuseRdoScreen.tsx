@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -15,8 +15,9 @@ import {
   Camera,
   ArrowRight,
 } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 
@@ -76,6 +77,187 @@ export default function ReuseRdoScreen() {
       )
     );
   };
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgMain,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingBottom: 8,
+      gap: 12,
+    },
+    navButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      flex: 1,
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    progressBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 9999,
+      backgroundColor: colors.bgSurface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    progressText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingBottom: 8,
+      paddingTop: 20,
+      gap: 6,
+    },
+    context: {
+      gap: 2,
+      paddingTop: 2,
+    },
+    contextLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.primary,
+    },
+    contextDate: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    contextProject: {
+      ...typography.presets.bodySmall,
+      color: colors.textMuted,
+    },
+    sourceReport: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      padding: 16,
+      gap: 4,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    sourceLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+      textTransform: "uppercase",
+    },
+    sourceNumber: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+    },
+    sourceDate: {
+      ...typography.presets.bodySmall,
+      color: colors.textMuted,
+    },
+    sourceNote: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    sectionHeader: {
+      gap: 2,
+    },
+    sectionTitle: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    sectionSubtitle: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    list: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+    listItem: {
+      padding: 14,
+      paddingHorizontal: 14,
+    },
+    listItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    checkbox: {
+      width: 22,
+      height: 22,
+      borderRadius: 6,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkboxSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    listItemInfo: {
+      flex: 1,
+      gap: 1,
+    },
+    listItemTitle: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    listItemSummary: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    primaryButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: borderRadius.xl,
+      height: 56,
+      gap: 8,
+      marginTop: 14,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    note: {
+      alignItems: "center",
+      gap: 2,
+      paddingBottom: 8,
+    },
+    noteText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+  }));
 
   return (
     <View style={styles.container}>
@@ -185,184 +367,3 @@ export default function ReuseRdoScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgMain,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    gap: 12,
-  },
-  navButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    flex: 1,
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  progressBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 9999,
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    paddingTop: 20,
-    gap: 6,
-  },
-  context: {
-    gap: 2,
-    paddingTop: 2,
-  },
-  contextLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
-  },
-  contextDate: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  contextProject: {
-    ...typography.presets.bodySmall,
-    color: colors.textMuted,
-  },
-  sourceReport: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    padding: 16,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  sourceLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-  sourceNumber: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMain,
-  },
-  sourceDate: {
-    ...typography.presets.bodySmall,
-    color: colors.textMuted,
-  },
-  sourceNote: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  sectionHeader: {
-    gap: 2,
-  },
-  sectionTitle: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
-  },
-  sectionSubtitle: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  list: {
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
-  },
-  listItem: {
-    padding: 14,
-    paddingHorizontal: 14,
-  },
-  listItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  listItemInfo: {
-    flex: 1,
-    gap: 1,
-  },
-  listItemTitle: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  listItemSummary: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  primaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.xl,
-    height: 56,
-    gap: 8,
-    marginTop: 14,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textOnBrand,
-  },
-  note: {
-    alignItems: "center",
-    gap: 2,
-    paddingBottom: 8,
-  },
-  noteText: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-});

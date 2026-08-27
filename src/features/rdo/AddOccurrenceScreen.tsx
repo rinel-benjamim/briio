@@ -14,8 +14,8 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -62,6 +62,174 @@ export default function AddOccurrenceScreen() {
     }
   };
 
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgSurface,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      flex: 1,
+    },
+    progressText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: 20,
+      paddingTop: 8,
+      paddingBottom: 24,
+      gap: 20,
+    },
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    section: {
+      gap: 12,
+    },
+    sectionLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    field: {
+      gap: 8,
+    },
+    fieldLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    textInput: {
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    timeField: {
+      flexDirection: "row",
+      alignItems: "center",
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "space-between",
+    },
+    timeValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    textArea: {
+      height: 88,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    segmentedControl: {
+      flexDirection: "row",
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+      height: 40,
+    },
+    segmentOption: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+    },
+    segmentOptionSelected: {
+      backgroundColor: colors.primary,
+    },
+    segmentOptionText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    segmentOptionTextSelected: {
+      color: colors.textOnBrand,
+      fontWeight: typography.fontWeight.semibold,
+    },
+    buttonSection: {
+      gap: 12,
+    },
+    primaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: 24,
+      height: 48,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    secondaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+    },
+    secondaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    autosaveStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
+    },
+    autosaveText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -69,7 +237,7 @@ export default function AddOccurrenceScreen() {
           style={styles.navButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Registar ocorrência</Text>
         <Text style={styles.progressText}>
@@ -99,7 +267,7 @@ export default function AddOccurrenceScreen() {
               value={title}
               onChangeText={setTitle}
               placeholder="Ex.: Chuva intensa"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
             />
           </View>
 
@@ -109,9 +277,9 @@ export default function AddOccurrenceScreen() {
               style={styles.timeField}
               onPress={() => setShowTimePicker(true)}
             >
-              <Clock size={18} color="#6B7280" />
+              <Clock size={18} color={colors.textMuted} />
               <Text style={styles.timeValue}>{formatTime(timeDate)}</Text>
-              <ChevronDown size={18} color="#9CA3AF" />
+              <ChevronDown size={18} color={colors.textMuted} />
             </PressableOpacity>
             {showTimePicker && (
               <DateTimePicker
@@ -130,7 +298,7 @@ export default function AddOccurrenceScreen() {
               value={location}
               onChangeText={setLocation}
               placeholder="Ex.: Área externa"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
             />
           </View>
 
@@ -141,7 +309,7 @@ export default function AddOccurrenceScreen() {
               value={description}
               onChangeText={setDescription}
               placeholder="Descreva o que aconteceu e como afetou os trabalhos."
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
               multiline
               textAlignVertical="top"
             />
@@ -180,7 +348,7 @@ export default function AddOccurrenceScreen() {
             value={actionTaken}
             onChangeText={setActionTaken}
             placeholder="Ex.: Trabalhos exteriores interrompidos durante aproximadamente 1 hora."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.textMuted}
             multiline
             textAlignVertical="top"
           />
@@ -202,178 +370,10 @@ export default function AddOccurrenceScreen() {
         </View>
 
         <View style={styles.autosaveStatus}>
-          <Check size={14} color="#9CA3AF" />
+          <Check size={14} color={colors.textMuted} />
           <Text style={styles.autosaveText}>Salvo automaticamente</Text>
         </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surfaceBg,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 20,
-  },
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-  contextProject: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  section: {
-    gap: 12,
-  },
-  sectionLabel: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  timeField: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    justifyContent: "space-between",
-  },
-  timeValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textArea: {
-    height: 88,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  segmentedControl: {
-    flexDirection: "row",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    overflow: "hidden",
-    height: 40,
-  },
-  segmentOption: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-  },
-  segmentOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-  },
-  segmentOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  segmentOptionTextSelected: {
-    color: "#FFFFFF",
-    fontWeight: typography.fontWeight.semibold,
-  },
-  buttonSection: {
-    gap: 12,
-  },
-  primaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: 24,
-    height: 48,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: "#FFFFFF",
-  },
-  secondaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 44,
-  },
-  secondaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  autosaveStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  autosaveText: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-});

@@ -1,5 +1,6 @@
-import { View, StyleSheet, Text } from "react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { View, Text } from "react-native";
+import { typography, borderRadius } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface SegmentOption {
@@ -20,6 +21,42 @@ export function SegmentedField({
   options,
   onChange,
 }: SegmentedFieldProps) {
+  const styles = useThemedStyles((colors) => ({
+    field: {
+      gap: 8,
+    },
+    label: {
+      ...typography.presets.label,
+      color: colors.textMain,
+    },
+    container: {
+      flexDirection: "row",
+      height: 44,
+      borderRadius: borderRadius.lg,
+      backgroundColor: colors.bgMain,
+      padding: 3,
+      gap: 3,
+    },
+    option: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: borderRadius.md,
+    },
+    optionSelected: {
+      backgroundColor: colors.bgSurface,
+    },
+    optionText: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    optionTextSelected: {
+      color: colors.primary,
+      fontWeight: typography.fontWeight.semibold,
+    },
+  }));
+
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -50,39 +87,3 @@ export function SegmentedField({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  field: {
-    gap: 8,
-  },
-  label: {
-    ...typography.presets.label,
-    color: colors.textMain,
-  },
-  container: {
-    flexDirection: "row",
-    height: 44,
-    borderRadius: borderRadius.lg,
-    backgroundColor: colors.bgMain,
-    padding: 3,
-    gap: 3,
-  },
-  option: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: borderRadius.md,
-  },
-  optionSelected: {
-    backgroundColor: colors.bgSurface,
-  },
-  optionText: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  optionTextSelected: {
-    color: colors.primary,
-    fontWeight: typography.fontWeight.semibold,
-  },
-});

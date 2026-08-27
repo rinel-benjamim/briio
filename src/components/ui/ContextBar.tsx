@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 
 interface ContextBarProps {
   date: string;
@@ -7,6 +8,20 @@ interface ContextBarProps {
 }
 
 export function ContextBar({ date, projectName }: ContextBarProps) {
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      gap: 2,
+    },
+    date: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    project: {
+      ...typography.presets.bodyMedium,
+      color: colors.textMain,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <Text style={styles.date}>{date}</Text>
@@ -14,17 +29,3 @@ export function ContextBar({ date, projectName }: ContextBarProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 2,
-  },
-  date: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-  },
-  project: {
-    ...typography.presets.bodyMedium,
-    color: colors.textMain,
-  },
-});

@@ -12,8 +12,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeft, Camera, Image as ImageIcon, Check } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useThemeColors } from "@/contexts/ThemeContext";
-import { colors } from "@/constants";
 import { typography } from "@/constants/typography";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 const MOCK_CONTEXT = {
@@ -72,6 +72,190 @@ export default function AddPhotoScreen() {
     }
   };
 
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.bgSurface,
+    },
+    topNav: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+      gap: 12,
+    },
+    navButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    navTitle: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMain,
+      flex: 1,
+    },
+    progressText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: 20,
+      paddingTop: 8,
+      paddingBottom: 24,
+      gap: 20,
+    },
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    photoArea: {
+      flexDirection: "row",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      padding: 12,
+      gap: 12,
+      height: 140,
+      alignItems: "center",
+    },
+    photoButton: {
+      width: 140,
+      height: 110,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+    },
+    photoButtonText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textOnBrand,
+      textAlign: "center",
+    },
+    previewSection: {
+      gap: 8,
+    },
+    previewImage: {
+      width: "100%",
+      height: 180,
+      borderRadius: 12,
+      backgroundColor: colors.border,
+    },
+    changePhotoText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    section: {
+      gap: 12,
+    },
+    sectionLabel: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+    },
+    field: {
+      gap: 8,
+    },
+    fieldLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    textInput: {
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+    typeRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    typeOption: {
+      paddingHorizontal: 14,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.bgSurface,
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    typeOptionSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    typeOptionText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    typeOptionTextSelected: {
+      color: colors.textOnBrand,
+    },
+    buttonSection: {
+      gap: 12,
+    },
+    primaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.primary,
+      borderRadius: 24,
+      height: 48,
+    },
+    primaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textOnBrand,
+    },
+    secondaryButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+    },
+    secondaryButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    autosaveStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
+    },
+    autosaveText: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <View style={[styles.topNav, { paddingTop: insets.top + 8 }]}>
@@ -79,7 +263,7 @@ export default function AddPhotoScreen() {
           style={styles.navButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={20} color={colors.textPrimary} />
+          <ArrowLeft size={20} color={colors.textMain} />
         </PressableOpacity>
         <Text style={styles.navTitle}>Adicionar fotografia</Text>
         <Text style={styles.progressText}>
@@ -102,11 +286,11 @@ export default function AddPhotoScreen() {
         {!photoUri ? (
           <View style={styles.photoArea}>
             <PressableOpacity style={styles.photoButton} onPress={takePhoto}>
-              <Camera size={28} color={colors.brandPrimary} />
+              <Camera size={28} color={colors.primary} />
               <Text style={styles.photoButtonText}>Tirar fotografia</Text>
             </PressableOpacity>
             <PressableOpacity style={styles.photoButton} onPress={pickImage}>
-              <ImageIcon size={28} color={colors.brandPrimary} />
+              <ImageIcon size={28} color={colors.primary} />
               <Text style={styles.photoButtonText}>Escolher da galeria</Text>
             </PressableOpacity>
           </View>
@@ -129,7 +313,7 @@ export default function AddPhotoScreen() {
               value={caption}
               onChangeText={setCaption}
               placeholder="Ex.: Armadura para os pilares."
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
             />
           </View>
 
@@ -140,7 +324,7 @@ export default function AddPhotoScreen() {
               value={location}
               onChangeText={setLocation}
               placeholder="Ex.: Bloco A — Piso 2"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textMuted}
             />
           </View>
         </View>
@@ -186,194 +370,10 @@ export default function AddPhotoScreen() {
         </View>
 
         <View style={styles.autosaveStatus}>
-          <Check size={14} color="#9CA3AF" />
+          <Check size={14} color={colors.textMuted} />
           <Text style={styles.autosaveText}>Salvo automaticamente</Text>
         </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surfaceBg,
-  },
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  progressText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 8,
-    paddingBottom: 24,
-    gap: 20,
-  },
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-  contextProject: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  photoArea: {
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)",
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: "rgba(148, 163, 184, 0.1)",
-    padding: 12,
-    gap: 12,
-    height: 140,
-    alignItems: "center",
-  },
-  photoButton: {
-    width: 140,
-    height: 110,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  photoButtonText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "#FFFFFF",
-    textAlign: "center",
-  },
-  previewSection: {
-    gap: 8,
-  },
-  previewImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: 12,
-    backgroundColor: "#D1D5DB",
-  },
-  changePhotoText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: "#1B3A5C",
-    textAlign: "center",
-  },
-  section: {
-    gap: 12,
-  },
-  sectionLabel: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
-  },
-  textInput: {
-    height: 48,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-    ...typography.presets.body,
-    color: colors.textPrimary,
-  },
-  typeRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  typeOption: {
-    paddingHorizontal: 14,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(148, 163, 184, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)",
-  },
-  typeOptionSelected: {
-    backgroundColor: colors.brandPrimary,
-    borderColor: colors.brandPrimary,
-  },
-  typeOptionText: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  typeOptionTextSelected: {
-    color: "#FFFFFF",
-  },
-  buttonSection: {
-    gap: 12,
-  },
-  primaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    borderRadius: 24,
-    height: 48,
-  },
-  primaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: "#FFFFFF",
-  },
-  secondaryButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 44,
-  },
-  secondaryButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
-  },
-  autosaveStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  autosaveText: {
-    ...typography.presets.caption,
-    color: colors.textSecondary,
-  },
-});

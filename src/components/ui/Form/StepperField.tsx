@@ -1,6 +1,8 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, Text } from "react-native";
 import { Minus, Plus } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useThemeColors } from "@/contexts/ThemeContext";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 
 interface StepperFieldProps {
@@ -22,6 +24,54 @@ export function StepperField({
   step = 1,
   suffix,
 }: StepperFieldProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles((colors) => ({
+    field: {
+      gap: 8,
+    },
+    label: {
+      ...typography.presets.label,
+      color: colors.textMain,
+    },
+    stepper: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      height: 48,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    button: {
+      width: 50,
+      height: 48,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.primaryLight,
+      borderRadius: borderRadius.lg,
+    },
+    divider: {
+      width: 1,
+      height: 28,
+      backgroundColor: colors.border,
+    },
+    valueContainer: {
+      flex: 1,
+      height: 48,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    value: {
+      ...typography.presets.h3,
+      color: colors.textMain,
+    },
+    suffix: {
+      ...typography.presets.caption,
+      color: colors.textMuted,
+      marginRight: 14,
+    },
+  }));
+
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -54,50 +104,3 @@ export function StepperField({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  field: {
-    gap: 8,
-  },
-  label: {
-    ...typography.presets.label,
-    color: colors.textMain,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  button: {
-    width: 50,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius.lg,
-  },
-  divider: {
-    width: 1,
-    height: 28,
-    backgroundColor: colors.border,
-  },
-  valueContainer: {
-    flex: 1,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  value: {
-    ...typography.presets.h3,
-    color: colors.textMain,
-  },
-  suffix: {
-    ...typography.presets.caption,
-    color: colors.textMuted,
-    marginRight: 14,
-  },
-});

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Search } from "lucide-react-native";
-import { colors, typography, borderRadius } from "@/constants";
+import { typography, borderRadius } from "@/constants";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
+import { useThemeColors } from "@/contexts/ThemeContext";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -15,6 +17,33 @@ export function SearchBar({
   onChangeText,
 }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const colors = useThemeColors();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      height: 48,
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.lg,
+      paddingHorizontal: 16,
+      gap: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    containerFocused: {
+      borderColor: colors.primary,
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    input: {
+      flex: 1,
+      ...typography.presets.body,
+      color: colors.textMain,
+    },
+  }));
 
   return (
     <View style={[styles.container, isFocused && styles.containerFocused]}>
@@ -31,29 +60,3 @@ export function SearchBar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 48,
-    backgroundColor: colors.bgSurface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: 16,
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  containerFocused: {
-    borderColor: colors.primary,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  input: {
-    flex: 1,
-    ...typography.presets.body,
-    color: colors.textMain,
-  },
-});

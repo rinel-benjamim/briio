@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Camera, X } from "lucide-react-native";
-import { colors, typography } from "@/constants";
+import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
+import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 
@@ -45,6 +46,120 @@ export default function PhotosScreen() {
       router.push(`/(tabs)/reports/${id}`);
     }
   };
+
+  const styles = useThemedStyles((colors) => ({
+    context: {
+      gap: 2,
+    },
+    contextDate: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    contextProject: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summaryCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      padding: 16,
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    summaryLeft: {
+      gap: 4,
+    },
+    summaryLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summaryValue: {
+      ...typography.presets.h2,
+      color: colors.textMain,
+    },
+    summaryRight: {
+      alignItems: "flex-end",
+      gap: 4,
+    },
+    summarySubLabel: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMuted,
+    },
+    summarySubValue: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    sectionLabel: {
+      ...typography.presets.bodySmall,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.textMuted,
+      letterSpacing: 1,
+    },
+    photoGrid: {
+      gap: 8,
+    },
+    photoRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    photoItemContainer: {
+      flex: 1,
+      position: "relative",
+    },
+    removeButton: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      backgroundColor: colors.overlay,
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 10,
+    },
+    photoItem: {
+      height: 140,
+      backgroundColor: colors.bgSurface,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "flex-end",
+      padding: 8,
+      paddingHorizontal: 10,
+      overflow: "hidden",
+    },
+    photoCaption: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.textMain,
+    },
+    addButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.bgSurface,
+      borderRadius: 16,
+      height: 56,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    addButtonText: {
+      ...typography.presets.body,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.primary,
+    },
+  }));
 
   return (
     <RdoScreenLayout
@@ -108,117 +223,3 @@ export default function PhotosScreen() {
     </RdoScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  context: {
-    gap: 2,
-  },
-  contextDate: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  contextProject: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summaryCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    padding: 16,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  summaryLeft: {
-    gap: 4,
-  },
-  summaryLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summaryValue: {
-    ...typography.presets.h2,
-    color: colors.textMain,
-  },
-  summaryRight: {
-    alignItems: "flex-end",
-    gap: 4,
-  },
-  summarySubLabel: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMuted,
-  },
-  summarySubValue: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  sectionLabel: {
-    ...typography.presets.bodySmall,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  photoGrid: {
-    gap: 8,
-  },
-  photoRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  photoItemContainer: {
-    flex: 1,
-    position: "relative",
-  },
-  removeButton: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.overlay,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-  },
-  photoItem: {
-    height: 140,
-    backgroundColor: colors.bgSurface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: "flex-end",
-    padding: 8,
-    paddingHorizontal: 10,
-    overflow: "hidden",
-  },
-  photoCaption: {
-    ...typography.presets.caption,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.textMain,
-  },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bgSurface,
-    borderRadius: 16,
-    height: 56,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  addButtonText: {
-    ...typography.presets.body,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
-  },
-});
