@@ -1272,41 +1272,46 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 
 ## Fase 0 --- Fundação
 
--   [ ] Repositório
--   [ ] Expo + React Native
--   [ ] TypeScript
--   [ ] Expo Router
--   [ ] Lint/format
--   [ ] Design tokens
--   [ ] SQLite
--   [ ] Migrations
--   [ ] Filesystem
+-   [x] Repositório
+-   [x] Expo + React Native
+-   [x] TypeScript
+-   [x] Expo Router
+-   [x] Lint/format
+-   [x] Design tokens (light + dark mode)
+-   [x] SQLite (expo-sqlite)
+-   [x] Migrations (12 entidades)
+-   [x] Filesystem (fotografias + PDFs)
 
 ## Fase 1 --- Obras
 
--   [ ] Perfil local
--   [ ] Dashboard
--   [ ] Lista de obras
--   [ ] Criar obra
--   [ ] Editar obra
--   [ ] Detalhes
+-   [x] Dashboard
+-   [x] Lista de obras
+-   [x] Criar obra
+-   [x] Editar obra
+-   [x] Detalhes
+-   [x] Informações da obra
 -   [ ] Arquivar obra
+-   [ ] Repository layer (CRUD SQLite)
+-   [ ] Validações
 
 ## Fase 2 --- RDO
 
--   [ ] Criar RDO
+-   [x] Criar RDO
+-   [x] Overview
+-   [x] Condições do dia
+-   [x] Mão de obra
+-   [x] Materiais
+-   [x] Equipamentos
+-   [x] Tarefas
+-   [x] Ocorrências
+-   [x] Observações
+-   [x] Fotografias
+-   [x] Revisão
+-   [x] RDO gerado (PDF básico)
+-   [ ] Repository layer (CRUD SQLite)
+-   [ ] Autosave real com debounce
+-   [ ] Validações
 -   [ ] Validação de RDO duplicado
--   [ ] Draft
--   [ ] Autosave
--   [ ] Overview
--   [ ] Condições
--   [ ] Mão de obra
--   [ ] Materiais
--   [ ] Equipamentos
--   [ ] Tarefas
--   [ ] Ocorrências
--   [ ] Observações
--   [ ] Fotografias
 
 ## Fase 3 --- Reutilização
 

@@ -227,20 +227,23 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Excluir Obra — Confirmação com modal de alerta
 - [x] Fase 2: RDO (todas as secções, review, geração PDF, detalhe RDO)
 - [x] Lista de Relatórios — Search, filtros, FAB com modal de seleção de obra
-- [x] Refatoração Fase 1: Componentes UI partilhados (13 componentes)
-- [x] Refatoração Fase 2: Mock data consolidada (12 ficheiros)
-- [x] Refatoração Fase 3: Tipos unificados (ProjectStatus)
-- [x] Refatoração Fase 4: Forms unificados (12 → 6 formulários)
-- [x] Refatoração Fase 5: Form fields partilhados (5 componentes)
-- [x] Refatoração Fase 6: RdoContext + rotas dinâmicas
-- [x] Refatoração Fase 7: Bugs e erros de estilo corrigidos
-- [x] Refatoração Fase 8: Código morto removido
-- [x] Refatoração Fase 9: Acessibilidade básica
+- [x] Refatoração Fase 1-9: Componentes UI, mocks, tipos, forms, acessibilidade
+- [x] Dark mode — arquitetura useThemedStyles, paleta Figma, 44+ ficheiros convertidos
+- [x] Micro-interações — PressOpacity, AnimatedFAB, TabBar animada
+- [x] Screen transitions — slide_from_right, slide_from_bottom, fade
+- [x] Lazy loading — LoadingScreen, FadeInView
+
+### Em progresso
+- [ ] Repository layer (CRUD para todas as entidades)
+- [ ] Services layer (lógica de negócio)
+- [ ] Integração SQLite (substituir mocks)
+- [ ] Validações em formulários
+- [ ] Autosave real com debounce
 
 ### Pendente
 - [ ] Arquivar obra (alternativa a excluir)
-- [ ] Integração com SQLite (substituir mocks)
 - [ ] Testes unitários
+- [ ] Testes de integração
 
 ### Próximas fases
 - Fase 3: Reutilização de RDO anterior
