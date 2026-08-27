@@ -55,6 +55,13 @@ export function useRdoRepository() {
     );
   }
 
+  async function findPreviousByProject(projectId: string, beforeDate: string): Promise<RDO | null> {
+    return db.getFirstAsync<RDO>(
+      "SELECT * FROM rdos WHERE project_id = ? AND report_date < ? ORDER BY report_date DESC LIMIT 1",
+      [projectId, beforeDate]
+    );
+  }
+
   async function getNextNumber(projectId: string): Promise<number> {
     const result = await db.getFirstAsync<{ max_num: number | null }>(
       "SELECT MAX(number) as max_num FROM rdos WHERE project_id = ?",
@@ -148,6 +155,7 @@ export function useRdoRepository() {
     findByProjectId,
     findByProjectAndDate,
     findLatestByProject,
+    findPreviousByProject,
     getNextNumber,
     create,
     update,

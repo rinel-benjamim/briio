@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,19 +20,19 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useReuseService, type ReusableDataSummary } from "@/services/reuse.service";
+import { useRdoRepository } from "@/repositories/rdo.repository";
 
-const MOCK_CONTEXT = {
-  date: "17 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
-
-const MOCK_SOURCE_RDO = {
-  number: "RDO #032",
-  date: "12 Agosto 2026",
-};
+function formatShortDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 interface ReusableItem {
   id: string;
+  key: "workforce" | "tasks" | "materials" | "equipment";
   title: string;
   summary: string;
   icon: React.ReactNode;
@@ -48,18 +48,76 @@ interface DaySpecificItem {
 
 export default function ReuseRdoScreen() {
   const colors = useThemeColors();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { sourceId } = useLocalSearchParams<{ sourceId: string }>();
   const insets = useSafeAreaInsets();
-  const { rdoId } = useRdo();
+  const { rdoId, projectId, projectName, date } = useRdo();
+  const reuseService = useReuseService();
+  const rdoRepo = useRdoRepository();
   const [step] = useState(1);
   const totalSteps = 2;
 
-  const INITIAL_REUSABLE_ITEMS: ReusableItem[] = [
-    { id: "1", title: "Mão de obra", summary: "7 trabalhadores · 56 h", icon: <Users size={18} color={colors.textMuted} />, selected: true },
-    { id: "2", title: "Atividades", summary: "2 atividades", icon: <ClipboardCheck size={18} color={colors.textMuted} />, selected: true },
-    { id: "3", title: "Materiais", summary: "3 registos", icon: <Package size={18} color={colors.textMuted} />, selected: true },
-    { id: "4", title: "Equipamentos", summary: "3 equipamentos", icon: <Wrench size={18} color={colors.textMuted} />, selected: true },
-  ];
+  const [sourceRdo, setSourceRdo] = useState<any>(null);
+  const [summary, setSummary] = useState<ReusableDataSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copying, setCopying] = useState(false);
+
+  const [reusableItems, setReusableItems] = useState<ReusableItem[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      if (!sourceId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const [rdo, data] = await Promise.all([
+          rdoRepo.findById(sourceId),
+          reuseService.getReusableSummary(sourceId),
+        ]);
+        setSourceRdo(rdo);
+        setSummary(data);
+        setReusableItems([
+          {
+            id: "1",
+            key: "workforce",
+            title: "Mão de obra",
+            summary: `${data.workforceCount} trabalhadores · ${data.totalHours} h`,
+            icon: <Users size={18} color={colors.textMuted} />,
+            selected: true,
+          },
+          {
+            id: "2",
+            key: "tasks",
+            title: "Atividades",
+            summary: `${data.taskCount} atividades`,
+            icon: <ClipboardCheck size={18} color={colors.textMuted} />,
+            selected: true,
+          },
+          {
+            id: "3",
+            key: "materials",
+            title: "Materiais",
+            summary: `${data.materialCount} registos`,
+            icon: <Package size={18} color={colors.textMuted} />,
+            selected: true,
+          },
+          {
+            id: "4",
+            key: "equipment",
+            title: "Equipamentos",
+            summary: `${data.equipmentCount} equipamentos`,
+            icon: <Wrench size={18} color={colors.textMuted} />,
+            selected: true,
+          },
+        ]);
+      } catch (e) {
+        console.error("Failed to load RDO data:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [sourceId]);
 
   const DAY_SPECIFIC_ITEMS: DaySpecificItem[] = [
     { id: "5", title: "Condições do dia", summary: "Será preenchido para hoje", icon: <CloudSun size={18} color={colors.textMuted} /> },
@@ -68,14 +126,31 @@ export default function ReuseRdoScreen() {
     { id: "8", title: "Fotografias", summary: "Serão adicionadas para hoje", icon: <Camera size={18} color={colors.textMuted} /> },
   ];
 
-  const [reusableItems, setReusableItems] = useState(INITIAL_REUSABLE_ITEMS);
-
   const toggleItem = (itemId: string) => {
     setReusableItems((prev) =>
       prev.map((item) =>
         item.id === itemId ? { ...item, selected: !item.selected } : item
       )
     );
+  };
+
+  const handleContinue = async () => {
+    if (!sourceId || !rdoId) return;
+    setCopying(true);
+    try {
+      const options = {
+        workforce: reusableItems.find((i) => i.key === "workforce")?.selected ?? false,
+        tasks: reusableItems.find((i) => i.key === "tasks")?.selected ?? false,
+        materials: reusableItems.find((i) => i.key === "materials")?.selected ?? false,
+        equipment: reusableItems.find((i) => i.key === "equipment")?.selected ?? false,
+      };
+      await reuseService.copyDataToNewRdo(sourceId, rdoId, options);
+      router.push(`/(tabs)/reports/${rdoId}`);
+    } catch (e) {
+      console.error("Failed to copy data:", e);
+    } finally {
+      setCopying(false);
+    }
   };
 
   const styles = useThemedStyles((colors) => ({
@@ -241,6 +316,7 @@ export default function ReuseRdoScreen() {
       height: 56,
       gap: 8,
       marginTop: 14,
+      opacity: copying ? 0.6 : 1,
     },
     primaryButtonText: {
       ...typography.presets.body,
@@ -258,6 +334,8 @@ export default function ReuseRdoScreen() {
       textAlign: "center",
     },
   }));
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
@@ -280,18 +358,20 @@ export default function ReuseRdoScreen() {
       >
         <View style={styles.context}>
           <Text style={styles.contextLabel}>Novo RDO</Text>
-          <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-          <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+          <Text style={styles.contextDate}>{date || formatShortDate(new Date().toISOString().split("T")[0])}</Text>
+          <Text style={styles.contextProject}>{projectName || "Obra"}</Text>
         </View>
 
-        <View style={styles.sourceReport}>
-          <Text style={styles.sourceLabel}>RDO de origem</Text>
-          <Text style={styles.sourceNumber}>{MOCK_SOURCE_RDO.number}</Text>
-          <Text style={styles.sourceDate}>{MOCK_SOURCE_RDO.date}</Text>
-          <Text style={styles.sourceNote}>
-            Escolha os dados que pretende aproveitar.
-          </Text>
-        </View>
+        {sourceRdo && (
+          <View style={styles.sourceReport}>
+            <Text style={styles.sourceLabel}>RDO de origem</Text>
+            <Text style={styles.sourceNumber}>RDO #{sourceRdo.number}</Text>
+            <Text style={styles.sourceDate}>{formatShortDate(sourceRdo.report_date)}</Text>
+            <Text style={styles.sourceNote}>
+              Escolha os dados que pretende aproveitar.
+            </Text>
+          </View>
+        )}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Dados que podem ser reutilizados</Text>
@@ -349,9 +429,12 @@ export default function ReuseRdoScreen() {
 
         <PressableOpacity
           style={styles.primaryButton}
-          onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
+          onPress={handleContinue}
+          disabled={copying}
         >
-          <Text style={styles.primaryButtonText}>Continuar</Text>
+          <Text style={styles.primaryButtonText}>
+            {copying ? "A copiar..." : "Continuar"}
+          </Text>
           <ArrowRight size={18} color={colors.textOnBrand} />
         </PressableOpacity>
 

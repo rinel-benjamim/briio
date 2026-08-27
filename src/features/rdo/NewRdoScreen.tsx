@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,23 +14,49 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useRdoRepository } from "@/repositories/rdo.repository";
 
-const MOCK_CONTEXT = {
-  date: "17 Agosto 2026",
-  projectName: "Reabilitação Pedrinhas",
-};
+function formatReportDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
-const MOCK_PREVIOUS_RDO = {
-  number: "RDO #032",
-  date: "12 Ago 2026",
-  meta: "6 fotografias · 2 ocorrências",
-};
+function formatShortDate(isoDate: string): string {
+  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const d = new Date(isoDate + "T00:00:00");
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+}
 
 export default function NewRdoScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { rdoId } = useRdo();
+  const { rdoId, projectId, projectName, date } = useRdo();
+  const rdoRepo = useRdoRepository();
+
+  const [previousRdo, setPreviousRdo] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      if (!projectId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const prev = await rdoRepo.findPreviousByProject(projectId, today);
+        setPreviousRdo(prev);
+      } catch (e) {
+        console.error("Failed to load previous RDO:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [projectId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -209,7 +236,23 @@ export default function NewRdoScreen() {
       ...typography.presets.caption,
       color: colors.textMuted,
     },
+    emptyState: {
+      backgroundColor: colors.bgSurface,
+      borderRadius: borderRadius.xl,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      gap: 8,
+    },
+    emptyText: {
+      ...typography.presets.bodySmall,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
   }));
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
@@ -227,8 +270,8 @@ export default function NewRdoScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.context}>
-          <Text style={styles.contextDate}>{MOCK_CONTEXT.date}</Text>
-          <Text style={styles.contextProject}>{MOCK_CONTEXT.projectName}</Text>
+          <Text style={styles.contextDate}>{date || formatReportDate(new Date().toISOString().split("T")[0])}</Text>
+          <Text style={styles.contextProject}>{projectName || "Obra"}</Text>
         </View>
 
         <View style={styles.question}>
@@ -238,40 +281,48 @@ export default function NewRdoScreen() {
           </Text>
         </View>
 
-        <PressableOpacity
-          style={styles.optionCard}
-          onPress={() => router.push(`/(tabs)/reports/reuse`)}
-        >
-          <View style={styles.optionHeader}>
-            <View style={styles.optionIcon}>
-              <Copy size={22} color={colors.primary} />
+        {previousRdo ? (
+          <PressableOpacity
+            style={styles.optionCard}
+            onPress={() => router.push(`/(tabs)/reports/reuse?sourceId=${previousRdo.id}`)}
+          >
+            <View style={styles.optionHeader}>
+              <View style={styles.optionIcon}>
+                <Copy size={22} color={colors.primary} />
+              </View>
+              <View style={styles.optionTextGroup}>
+                <Text style={styles.optionTitle}>Usar RDO anterior</Text>
+                <Text style={styles.optionDesc}>
+                  Comece com os dados de um relatório recente e atualize apenas o
+                  que mudou.
+                </Text>
+              </View>
             </View>
-            <View style={styles.optionTextGroup}>
-              <Text style={styles.optionTitle}>Usar RDO anterior</Text>
-              <Text style={styles.optionDesc}>
-                Comece com os dados de um relatório recente e atualize apenas o
-                que mudou.
-              </Text>
+            <View style={styles.previousReport}>
+              <View style={styles.previousReportLeft}>
+                <Text style={styles.previousReportNumber}>
+                  RDO #{previousRdo.number}
+                </Text>
+                <Text style={styles.previousReportDate}>
+                  {formatShortDate(previousRdo.report_date)}
+                </Text>
+              </View>
+              <View style={styles.previousReportAction}>
+                <Text style={styles.previousReportActionText}>Selecionar</Text>
+                <ArrowRight size={14} color={colors.primary} />
+              </View>
             </View>
+          </PressableOpacity>
+        ) : (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>
+              Não existem RDOs anteriores para esta obra.
+            </Text>
+            <Text style={styles.emptyText}>
+              Comece um novo relatório do zero.
+            </Text>
           </View>
-          <View style={styles.previousReport}>
-            <View style={styles.previousReportLeft}>
-              <Text style={styles.previousReportNumber}>
-                {MOCK_PREVIOUS_RDO.number}
-              </Text>
-              <Text style={styles.previousReportDate}>
-                {MOCK_PREVIOUS_RDO.date}
-              </Text>
-              <Text style={styles.previousReportMeta}>
-                {MOCK_PREVIOUS_RDO.meta}
-              </Text>
-            </View>
-            <View style={styles.previousReportAction}>
-              <Text style={styles.previousReportActionText}>Selecionar</Text>
-              <ArrowRight size={14} color={colors.primary} />
-            </View>
-          </View>
-        </PressableOpacity>
+        )}
 
         <View style={styles.spacer} />
 
