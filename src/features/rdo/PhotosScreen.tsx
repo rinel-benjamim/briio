@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { View, Text, Image, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { Camera, X } from "lucide-react-native";
 import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
@@ -23,17 +24,28 @@ export default function PhotosScreen() {
   const fromReview = from === "review";
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
-    photographRepo.findByRdoId(id).then((data) => {
-      setPhotos(data);
-      setLoading(false);
-    });
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+      photographRepo.findByRdoId(id).then((data) => {
+        setPhotos(data);
+        setLoading(false);
+      });
+    }, [id])
+  );
 
   const removePhoto = async (photoId: string) => {
-    await photographRepo.remove(photoId);
-    setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+    Alert.alert("Remover fotografia", "Tem a certeza que deseja remover?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: async () => {
+          await photographRepo.remove(photoId);
+          setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+        },
+      },
+    ]);
   };
 
   const handleContinue = () => {
@@ -101,6 +113,17 @@ export default function PhotosScreen() {
       color: colors.textMuted,
       letterSpacing: 1,
     },
+    emptyState: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 32,
+      gap: 8,
+    },
+    emptyText: {
+      ...typography.presets.body,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
     photoGrid: {
       gap: 8,
     },
@@ -116,29 +139,54 @@ export default function PhotosScreen() {
       position: "absolute",
       top: 8,
       right: 8,
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      backgroundColor: colors.overlay,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: "rgba(0,0,0,0.6)",
       justifyContent: "center",
       alignItems: "center",
       zIndex: 10,
     },
     photoItem: {
-      height: 140,
+      aspectRatio: 1,
       backgroundColor: colors.bgSurface,
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.border,
-      justifyContent: "flex-end",
-      padding: 8,
-      paddingHorizontal: 10,
       overflow: "hidden",
+    },
+    photoImage: {
+      width: "100%",
+      height: "100%",
+    },
+    photoCaptionBar: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
     },
     photoCaption: {
       ...typography.presets.caption,
       fontWeight: typography.fontWeight.medium,
-      color: colors.textMain,
+      color: "#FFFFFF",
+    },
+    photoTypeBadge: {
+      position: "absolute",
+      top: 8,
+      left: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 9999,
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    photoTypeText: {
+      ...typography.presets.caption,
+      fontWeight: typography.fontWeight.medium,
+      color: "#FFFFFF",
+      fontSize: 10,
     },
     addButton: {
       flexDirection: "row",
@@ -159,6 +207,12 @@ export default function PhotosScreen() {
   }));
 
   if (loading) return <LoadingScreen />;
+
+  const PHOTO_TYPE_LABELS: Record<string, string> = {
+    before: "Antes",
+    during: "Execução",
+    after: "Depois",
+  };
 
   const rows: Photograph[][] = [];
   for (let i = 0; i < photos.length; i += 2) {
@@ -192,30 +246,55 @@ export default function PhotosScreen() {
 
       <Text style={styles.sectionLabel}>FOTOGRAFIAS REGISTADAS</Text>
 
-      <View style={styles.photoGrid}>
-        {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.photoRow}>
-            {row.map((photo) => (
-              <View key={photo.id} style={styles.photoItemContainer}>
-                <PressableOpacity
-                  style={styles.removeButton}
-                  onPress={() => removePhoto(photo.id)}
-                >
-                  <X size={14} color={colors.textOnBrand} />
-                </PressableOpacity>
-                <PressableOpacity
-                  style={styles.photoItem}
-                  onPress={() =>
-                    router.push(`/(tabs)/reports/${id}/edit-photo?photoId=${photo.id}`)
-                  }
-                >
-                  <Text style={styles.photoCaption}>{photo.caption ?? ""}</Text>
-                </PressableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-      </View>
+      {photos.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Camera size={32} color={colors.textMuted} />
+          <Text style={styles.emptyText}>
+            Nenhuma fotografia adicionada.{"\n"}Toque no botão abaixo para adicionar.
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.photoGrid}>
+          {rows.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.photoRow}>
+              {row.map((photo) => (
+                <View key={photo.id} style={styles.photoItemContainer}>
+                  <PressableOpacity
+                    style={styles.removeButton}
+                    onPress={() => removePhoto(photo.id)}
+                  >
+                    <X size={14} color="#FFFFFF" />
+                  </PressableOpacity>
+                  {photo.type && (
+                    <View style={styles.photoTypeBadge}>
+                      <Text style={styles.photoTypeText}>
+                        {PHOTO_TYPE_LABELS[photo.type] ?? photo.type}
+                      </Text>
+                    </View>
+                  )}
+                  <PressableOpacity
+                    style={styles.photoItem}
+                    onPress={() =>
+                      router.push(`/(tabs)/reports/${id}/edit-photo?photoId=${photo.id}`)
+                    }
+                  >
+                    {photo.file_uri ? (
+                      <Image source={{ uri: photo.file_uri }} style={styles.photoImage} resizeMode="cover" />
+                    ) : null}
+                    {photo.caption ? (
+                      <View style={styles.photoCaptionBar}>
+                        <Text style={styles.photoCaption} numberOfLines={2}>
+                          {photo.caption}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </PressableOpacity>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      )}
 
       <PressableOpacity
         style={styles.addButton}

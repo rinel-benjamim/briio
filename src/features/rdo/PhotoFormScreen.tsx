@@ -119,7 +119,7 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
     },
     previewImage: {
       width: "100%",
-      height: 180,
+      aspectRatio: 1,
       borderRadius: borderRadius.lg,
       backgroundColor: colors.border,
     },
@@ -190,6 +190,7 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
+      aspect: [1, 1],
       quality: 1,
     });
 
@@ -207,6 +208,7 @@ export function PhotoForm({ mode, currentStep = 8, totalSteps = 9 }: PhotoFormPr
 
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
+      aspect: [1, 1],
       quality: 1,
     });
 
