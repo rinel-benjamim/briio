@@ -60,10 +60,15 @@ export function useWeatherRepository() {
     await db.runAsync("DELETE FROM rdo_weather_conditions WHERE rdo_id = ?", [rdoId]);
   }
 
+  async function removeByPeriod(rdoId: string, period: WeatherPeriod): Promise<void> {
+    await db.runAsync("DELETE FROM rdo_weather_conditions WHERE rdo_id = ? AND period = ?", [rdoId, period]);
+  }
+
   return {
     findByRdoId,
     upsert,
     remove,
     removeByRdoId,
+    removeByPeriod,
   };
 }

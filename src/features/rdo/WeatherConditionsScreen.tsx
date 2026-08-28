@@ -23,19 +23,23 @@ type WeatherOption = "sunny" | "cloudy" | "rain";
 interface WeatherPeriodProps {
   label: string;
   selected: WeatherOption | null;
-  onSelect: (option: WeatherOption) => void;
+  onSelect: (option: WeatherOption | null) => void;
   colors: ThemeColors;
   styles: Record<string, any>;
 }
 
 function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPeriodProps) {
+  const handlePress = (option: WeatherOption) => {
+    onSelect(selected === option ? null : option);
+  };
+
   return (
     <View style={styles.periodSection}>
       <Text style={styles.periodLabel}>{label}</Text>
       <View style={styles.periodOptions}>
         <PressableOpacity
           style={[styles.weatherOption, selected === "sunny" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("sunny")}
+          onPress={() => handlePress("sunny")}
         >
           <Sun
             size={25}
@@ -53,7 +57,7 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
 
         <PressableOpacity
           style={[styles.weatherOption, selected === "cloudy" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("cloudy")}
+          onPress={() => handlePress("cloudy")}
         >
           <Cloud
             size={25}
@@ -71,7 +75,7 @@ function WeatherPeriod({ label, selected, onSelect, colors, styles }: WeatherPer
 
         <PressableOpacity
           style={[styles.weatherOption, selected === "rain" && styles.weatherOptionSelected]}
-          onPress={() => onSelect("rain")}
+          onPress={() => handlePress("rain")}
         >
           <CloudRain
             size={25}
@@ -134,9 +138,21 @@ export default function WeatherConditionsScreen() {
     const save = async () => {
       setSaveState("saving");
       try {
-        if (morning) await weatherRepo.upsert(id, "morning" as WeatherPeriod, morning as WeatherCondition, null);
-        if (afternoon) await weatherRepo.upsert(id, "afternoon" as WeatherPeriod, afternoon as WeatherCondition, null);
-        if (night) await weatherRepo.upsert(id, "night" as WeatherPeriod, night as WeatherCondition, null);
+        if (morning) {
+          await weatherRepo.upsert(id, "morning" as WeatherPeriod, morning as WeatherCondition, null);
+        } else {
+          await weatherRepo.removeByPeriod(id, "morning" as WeatherPeriod);
+        }
+        if (afternoon) {
+          await weatherRepo.upsert(id, "afternoon" as WeatherPeriod, afternoon as WeatherCondition, null);
+        } else {
+          await weatherRepo.removeByPeriod(id, "afternoon" as WeatherPeriod);
+        }
+        if (night) {
+          await weatherRepo.upsert(id, "night" as WeatherPeriod, night as WeatherCondition, null);
+        } else {
+          await weatherRepo.removeByPeriod(id, "night" as WeatherPeriod);
+        }
         setSaveState("saved");
         setTimeout(() => setSaveState("idle"), 1500);
       } catch {
