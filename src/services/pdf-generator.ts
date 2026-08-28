@@ -1,6 +1,6 @@
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system/legacy";
+import * as LegacyFS from "expo-file-system/legacy";
 import { getPdfsDir } from "@/storage/filesystem";
 import { useRdoRepository } from "@/repositories/rdo.repository";
 import { useProjectRepository } from "@/repositories/project.repository";
@@ -25,6 +25,12 @@ export type RdoData = {
     night?: string;
   };
   workforce?: {
+    entries: {
+      function: string;
+      peopleCount: number;
+      hoursPerPerson: number;
+      totalHours: number;
+    }[];
     totalWorkers: number;
     totalHours: number;
   };
@@ -55,6 +61,7 @@ export type RdoData = {
   photos?: {
     caption: string;
     type: string;
+    base64?: string;
   }[];
 };
 
@@ -82,6 +89,22 @@ const OCCURRENCE_IMPACT_LABELS: Record<string, string> = {
   relevant: "Relevante",
   stoppage: "Paragem",
 };
+
+async function photoToBase64(uri: string): Promise<string | undefined> {
+  try {
+    const cacheDir = LegacyFS.cacheDirectory ?? LegacyFS.documentDirectory ?? "";
+    const filename = `rdo_photo_${Date.now()}.jpg`;
+    const destUri = cacheDir + filename;
+    await LegacyFS.copyAsync({ from: uri, to: destUri });
+    const base64 = await LegacyFS.readAsStringAsync(destUri, {
+      encoding: LegacyFS.EncodingType.Base64,
+    });
+    await LegacyFS.deleteAsync(destUri, { idempotent: true });
+    return `data:image/jpeg;base64,${base64}`;
+  } catch {
+    return undefined;
+  }
+}
 
 export function useRdoDataFetcher() {
   const rdoRepo = useRdoRepository();
@@ -130,7 +153,16 @@ export function useRdoDataFetcher() {
       projectLocation: project?.location || "",
       author: project?.responsible_name || "",
       weather: Object.keys(weatherData).length > 0 ? weatherData : undefined,
-      workforce: workforce.length > 0 ? { totalWorkers, totalHours } : undefined,
+      workforce: workforce.length > 0 ? {
+        entries: workforce.map((w) => ({
+          function: w.function,
+          peopleCount: w.people_count,
+          hoursPerPerson: w.hours_per_person,
+          totalHours: w.total_hours,
+        })),
+        totalWorkers,
+        totalHours,
+      } : undefined,
       materials: materials.map((m) => ({
         name: m.material,
         quantity: String(m.quantity),
@@ -155,10 +187,11 @@ export function useRdoDataFetcher() {
         impact: OCCURRENCE_IMPACT_LABELS[o.impact] || o.impact,
       })),
       observations: observation?.content || undefined,
-      photos: photos.map((p) => ({
+      photos: await Promise.all(photos.map(async (p) => ({
         caption: p.caption || "",
         type: p.type || "",
-      })),
+        base64: p.file_uri ? await photoToBase64(p.file_uri) : undefined,
+      }))),
     };
   }
 
@@ -182,15 +215,19 @@ export function generateHtml(data: RdoData): string {
       </tr>`
     : "";
 
-  const workforceRow =
+  const workforceRows =
     data.workforce
-      ? `
+      ? data.workforce.entries.map((w) => `
       <tr>
-        <td class="label">Total de trabalhadores</td>
+        <td>${w.function}</td>
+        <td>${w.peopleCount}</td>
+        <td>${w.hoursPerPerson}h</td>
+        <td>${w.totalHours}h</td>
+      </tr>`).join("") + `
+      <tr style="font-weight:600;background:#E6F4EA">
+        <td>TOTAL</td>
         <td>${data.workforce.totalWorkers}</td>
-      </tr>
-      <tr>
-        <td class="label">Horas trabalhadas</td>
+        <td>—</td>
         <td>${data.workforce.totalHours}h</td>
       </tr>`
       : "";
@@ -241,6 +278,33 @@ export function generateHtml(data: RdoData): string {
     )
     .join("") || "";
 
+  const PHOTO_TYPE_LABELS: Record<string, string> = {
+    before: "Antes",
+    during: "Execução",
+    after: "Depois",
+  };
+
+  const photosHtml = data.photos && data.photos.length > 0
+    ? `
+  <div class="section">
+    <div class="section-title">Fotografias (${data.photos.length})</div>
+    <div class="photo-grid">
+      ${data.photos.map((p, i) => `
+        <div class="photo-card">
+          ${p.base64
+            ? `<img src="${p.base64}" class="photo-img" />`
+            : `<div class="photo-placeholder">${i + 1}</div>`
+          }
+          <div class="photo-info">
+            ${p.type ? `<span class="photo-type">${PHOTO_TYPE_LABELS[p.type] || p.type}</span>` : ""}
+            ${p.caption ? `<span class="photo-caption">${p.caption}</span>` : ""}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </div>`
+    : "";
+
   return `
 <!DOCTYPE html>
 <html lang="pt">
@@ -261,6 +325,13 @@ export function generateHtml(data: RdoData): string {
     th { background: #E6F4EA; font-weight: 600; color: #1A2E22; }
     td.label { font-weight: 600; color: #1A2E22; width: 40%; }
     .observations { background: #E6F4EA; border: 1px solid #E0E6E1; border-radius: 6px; padding: 10px; font-size: 11px; line-height: 1.5; }
+    .photo-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .photo-card { width: 30%; border: 1px solid #E0E6E1; border-radius: 8px; overflow: hidden; break-inside: avoid; }
+    .photo-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+    .photo-placeholder { width: 100%; aspect-ratio: 1; background: #E6F4EA; display: flex; align-items: center; justify-content: center; color: #5B6E63; font-size: 14px; font-weight: 600; }
+    .photo-info { padding: 6px 8px; }
+    .photo-type { display: inline-block; font-size: 8px; font-weight: 600; color: #134E32; background: #E6F4EA; padding: 1px 6px; border-radius: 999px; }
+    .photo-caption { display: block; font-size: 9px; color: #1A2E22; margin-top: 2px; line-height: 1.3; }
     .footer { margin-top: 24px; border-top: 1px solid #E0E6E1; padding-top: 12px; }
     .signature { text-align: center; width: 45%; display: inline-block; vertical-align: top; }
     .signature .line { border-bottom: 1px solid #1A2E22; margin-bottom: 4px; height: 30px; }
@@ -298,7 +369,8 @@ export function generateHtml(data: RdoData): string {
   <div class="section">
     <div class="section-title">Mão de Obra</div>
     <table>
-      <tbody>${workforceRow}</tbody>
+      <thead><tr><th>Função</th><th>Pessoas</th><th>H/pessoa</th><th>Total</th></tr></thead>
+      <tbody>${workforceRows}</tbody>
     </table>
   </div>`
       : ""
@@ -366,6 +438,8 @@ export function generateHtml(data: RdoData): string {
       : ""
   }
 
+  ${photosHtml}
+
   <div class="footer">
     <div class="signature">
       <div class="line"></div>
@@ -397,8 +471,8 @@ export async function generateRdoPdf(data: RdoData): Promise<string> {
   const pdfsDir = await getPdfsDir();
   const filename = data.number.replace(/[^a-zA-Z0-9]/g, "_") + ".pdf";
   const destUri = pdfsDir.uri + filename;
-  await FileSystem.writeAsStringAsync(destUri, base64, {
-    encoding: FileSystem.EncodingType.Base64,
+  await LegacyFS.writeAsStringAsync(destUri, base64, {
+    encoding: LegacyFS.EncodingType.Base64,
   });
 
   return destUri;
@@ -426,7 +500,7 @@ export async function printRdoPdf(html: string): Promise<void> {
 
 export async function getRdoPdfSize(pdfUri: string): Promise<string> {
   try {
-    const info = await FileSystem.getInfoAsync(pdfUri);
+    const info = await LegacyFS.getInfoAsync(pdfUri);
     if (info.exists && info.size) {
       const sizeMB = (info.size / (1024 * 1024)).toFixed(1);
       return `${sizeMB} MB`;
