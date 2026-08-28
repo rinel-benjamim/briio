@@ -14,3 +14,6 @@ export type { CreateOccurrenceInput, UpdateOccurrenceInput } from "./occurrence.
 export { useObservationRepository } from "./observation.repository";
 export { usePhotographRepository } from "./photograph.repository";
 export type { CreatePhotographInput, UpdatePhotographInput } from "./photograph.repository";
+export { useProfileRepository } from "./profile.repository";
+export type { CreateProfileInput, UpdateProfileInput } from "./profile.repository";
+export { useSettingsRepository } from "./settings.repository";

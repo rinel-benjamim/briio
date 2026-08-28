@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,6 +16,7 @@ import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { useRdo } from "@/contexts/RdoContext";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdoRepository } from "@/repositories/rdo.repository";
+import { useCreateRdo } from "@/hooks/useRdoData";
 
 function formatReportDate(isoDate: string): string {
   const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -31,10 +32,17 @@ function formatShortDate(isoDate: string): string {
 
 export default function NewRdoScreen() {
   const colors = useThemeColors();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { projectId: urlProjectId, projectName: urlProjectName } = useLocalSearchParams<{
+    projectId: string;
+    projectName: string;
+  }>();
   const insets = useSafeAreaInsets();
-  const { rdoId, projectId, projectName, date } = useRdo();
+  const { rdoId, projectId: ctxProjectId, projectName: ctxProjectName, date, setRdoId, setProjectId } = useRdo();
   const rdoRepo = useRdoRepository();
+  const { create: createRdo, loading: creating } = useCreateRdo();
+
+  const projectId = urlProjectId || ctxProjectId;
+  const projectName = urlProjectName || ctxProjectName;
 
   const [previousRdo, setPreviousRdo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +65,19 @@ export default function NewRdoScreen() {
     }
     load();
   }, [projectId]);
+
+  const handleStartFromScratch = useCallback(async () => {
+    if (!projectId) return;
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const rdo = await createRdo(projectId, today);
+      setRdoId(rdo.id);
+      setProjectId(projectId);
+      router.replace(`/(tabs)/reports/${rdo.id}`);
+    } catch (e) {
+      console.error("Failed to create RDO:", e);
+    }
+  }, [projectId, createRdo, setRdoId, setProjectId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -327,14 +348,15 @@ export default function NewRdoScreen() {
         <View style={styles.spacer} />
 
         <PressableOpacity
-          style={styles.optionCardSecondary}
-          onPress={() => router.push(`/(tabs)/reports/${rdoId}`)}
+          style={[styles.optionCardSecondary, creating && { opacity: 0.5 }]}
+          onPress={handleStartFromScratch}
+          disabled={creating}
         >
           <View style={styles.optionLeftSecondary}>
             <View style={styles.optionIconSecondary}>
               <FilePlus size={24} color={colors.textMuted} />
             </View>
-            <Text style={styles.optionTitle}>Começar do zero</Text>
+            <Text style={styles.optionTitle}>{creating ? "Criando..." : "Começar do zero"}</Text>
             <Text style={styles.optionDesc}>
               Criar um novo RDO sem reutilizar dados anteriores.
             </Text>

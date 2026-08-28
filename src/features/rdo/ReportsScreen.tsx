@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import {
   Search,
   SlidersHorizontal,
@@ -27,6 +27,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useRdo } from "@/contexts/RdoContext";
 import { useRdoList } from "@/hooks/useRdoData";
+import { useDataChangeListener } from "@/hooks/useDataChangeListener";
 import { useProjectRepository } from "@/repositories/project.repository";
 import type { Project, RDO } from "@/types";
 
@@ -54,6 +55,19 @@ export default function ReportsScreen() {
   useEffect(() => {
     projectRepo.findAll().then(setProjects);
   }, []);
+
+  const refreshAll = useCallback(() => {
+    refresh();
+    projectRepo.findAll().then(setProjects);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshAll();
+    }, [refreshAll])
+  );
+
+  useDataChangeListener(refreshAll);
 
   const projectMap = useCallback(() => {
     const map: Record<string, Project> = {};

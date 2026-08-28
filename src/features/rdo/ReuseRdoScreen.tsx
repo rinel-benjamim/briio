@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +23,7 @@ import { useRdo } from "@/contexts/RdoContext";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useReuseService, type ReusableDataSummary } from "@/services/reuse.service";
 import { useRdoRepository } from "@/repositories/rdo.repository";
+import { useCreateRdo } from "@/hooks/useRdoData";
 
 function formatShortDate(isoDate: string): string {
   const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -50,9 +51,10 @@ export default function ReuseRdoScreen() {
   const colors = useThemeColors();
   const { sourceId } = useLocalSearchParams<{ sourceId: string }>();
   const insets = useSafeAreaInsets();
-  const { rdoId, projectId, projectName, date } = useRdo();
+  const { rdoId, projectId, projectName, date, setRdoId, setProjectId } = useRdo();
   const reuseService = useReuseService();
   const rdoRepo = useRdoRepository();
+  const { create: createRdo } = useCreateRdo();
   const [step] = useState(1);
   const totalSteps = 2;
 
@@ -60,6 +62,7 @@ export default function ReuseRdoScreen() {
   const [summary, setSummary] = useState<ReusableDataSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [copying, setCopying] = useState(false);
+  const [newRdoId, setNewRdoId] = useState<string | null>(null);
 
   const [reusableItems, setReusableItems] = useState<ReusableItem[]>([]);
 
@@ -76,6 +79,12 @@ export default function ReuseRdoScreen() {
         ]);
         setSourceRdo(rdo);
         setSummary(data);
+        
+        // If no projectId in context, use the source RDO's project
+        if (!projectId && rdo) {
+          setProjectId(rdo.project_id);
+        }
+        
         setReusableItems([
           {
             id: "1",
@@ -134,24 +143,37 @@ export default function ReuseRdoScreen() {
     );
   };
 
-  const handleContinue = async () => {
-    if (!sourceId || !rdoId) return;
+  const handleContinue = useCallback(async () => {
+    if (!sourceId || !sourceRdo) return;
     setCopying(true);
     try {
+      const targetProjectId = projectId || sourceRdo.project_id;
+
+      // Create a new RDO if one doesn't exist yet
+      let targetRdoId = newRdoId;
+      if (!targetRdoId) {
+        const today = new Date().toISOString().split("T")[0];
+        const rdo = await createRdo(targetProjectId, today);
+        targetRdoId = rdo.id;
+        setNewRdoId(targetRdoId);
+        setRdoId(targetRdoId);
+        setProjectId(targetProjectId);
+      }
+
       const options = {
         workforce: reusableItems.find((i) => i.key === "workforce")?.selected ?? false,
         tasks: reusableItems.find((i) => i.key === "tasks")?.selected ?? false,
         materials: reusableItems.find((i) => i.key === "materials")?.selected ?? false,
         equipment: reusableItems.find((i) => i.key === "equipment")?.selected ?? false,
       };
-      await reuseService.copyDataToNewRdo(sourceId, rdoId, options);
-      router.push(`/(tabs)/reports/${rdoId}`);
+      await reuseService.copyDataToNewRdo(sourceId, targetRdoId, options);
+      router.replace(`/(tabs)/reports/${targetRdoId}`);
     } catch (e) {
       console.error("Failed to copy data:", e);
     } finally {
       setCopying(false);
     }
-  };
+  }, [sourceId, sourceRdo, projectId, newRdoId, reusableItems, reuseService, createRdo, setRdoId, setProjectId]);
 
   const styles = useThemedStyles((colors) => ({
     container: {
