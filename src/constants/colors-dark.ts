@@ -31,6 +31,8 @@ export const darkColors = {
 
   // Hero card
   heroBg: "#171C19",
+  heroText: "#FFFFFF",
+  heroTextMuted: "rgba(255,255,255,0.7)",
 
   // Tab bar
   activeTabBg: "rgba(43, 179, 126, 0.15)",

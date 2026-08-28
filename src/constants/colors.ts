@@ -31,6 +31,8 @@ export const colors = {
 
   // Hero card
   heroBg: "#15221D",
+  heroText: "#FFFFFF",
+  heroTextMuted: "rgba(255,255,255,0.7)",
 
   // Tab bar
   activeTabBg: "#DDF5E9",
