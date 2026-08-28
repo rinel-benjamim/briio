@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { View, Text, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Plus, ChevronRight, Copy } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
+import { Plus, ChevronRight, Copy, Trash2 } from "lucide-react-native";
 import { typography, borderRadius } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SectionEmptyToggle } from "@/components/ui/SectionEmptyToggle";
 import { useRdo } from "@/contexts/RdoContext";
 import { useTaskRepository } from "@/repositories/task.repository";
 import type { Task } from "@/types";
@@ -24,13 +26,15 @@ export default function TasksScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
-    taskRepo.findByRdoId(id).then((data) => {
-      setTasks(data);
-      setLoading(false);
-    });
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+      taskRepo.findByRdoId(id).then((data) => {
+        setTasks(data);
+        setLoading(false);
+      });
+    }, [id])
+  );
 
   const STATUS_LABELS: Record<string, { label: string; color: string; bgColor: string }> = {
     in_progress: { label: "Em curso", color: colors.warning, bgColor: colors.warningBg },
@@ -44,6 +48,20 @@ export default function TasksScreen() {
     } else {
       router.push(`/(tabs)/reports/${id}/occurrences`);
     }
+  };
+
+  const removeTask = (taskId: string) => {
+    Alert.alert("Remover atividade", "Tem a certeza que deseja remover?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: async () => {
+          await taskRepo.remove(taskId);
+          setTasks((prev) => prev.filter((t) => t.id !== taskId));
+        },
+      },
+    ]);
   };
 
   const styles = useThemedStyles((colors) => ({
@@ -131,6 +149,14 @@ export default function TasksScreen() {
       alignItems: "center",
       gap: 8,
     },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: "rgba(239, 68, 68, 0.1)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
     activityItemQtyInfo: {
       alignItems: "flex-end",
       gap: 4,
@@ -210,6 +236,8 @@ export default function TasksScreen() {
 
       <Text style={styles.sectionLabel}>ATIVIDADES REGISTADAS</Text>
 
+      <SectionEmptyToggle rdoId={id ?? ""} section="tasks" hasData={tasks.length > 0} />
+
       <View style={styles.activitiesList}>
         {tasks.map((item, index) => {
           const statusInfo = STATUS_LABELS[item.status] ?? STATUS_LABELS.in_progress;
@@ -236,6 +264,9 @@ export default function TasksScreen() {
                       </Text>
                     </View>
                   </View>
+                  <PressableOpacity style={styles.deleteButton} onPress={() => removeTask(item.id)}>
+                    <Trash2 size={16} color="#EF4444" />
+                  </PressableOpacity>
                   <ChevronRight size={16} color={colors.textMuted} />
                 </View>
               </PressableOpacity>

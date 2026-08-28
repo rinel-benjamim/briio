@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { View, Text, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { ChevronRight, Plus, Copy } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
+import { ChevronRight, Plus, Copy, Trash2 } from "lucide-react-native";
 import { typography, shadows } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SectionEmptyToggle } from "@/components/ui/SectionEmptyToggle";
 import { useRdo } from "@/contexts/RdoContext";
 import { useEquipmentRepository } from "@/repositories/equipment.repository";
 import type { EquipmentEntry } from "@/types";
@@ -24,15 +26,31 @@ export default function EquipmentScreen() {
   const [entries, setEntries] = useState<EquipmentEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
-    equipmentRepo.findByRdoId(id).then((data) => {
-      setEntries(data);
-      setLoading(false);
-    });
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+      equipmentRepo.findByRdoId(id).then((data) => {
+        setEntries(data);
+        setLoading(false);
+      });
+    }, [id])
+  );
 
   const totalHours = entries.reduce((sum, e) => sum + e.hours_used, 0);
+
+  const removeEntry = (entryId: string) => {
+    Alert.alert("Remover equipamento", "Tem a certeza que deseja remover?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: async () => {
+          await equipmentRepo.remove(entryId);
+          setEntries((prev) => prev.filter((e) => e.id !== entryId));
+        },
+      },
+    ]);
+  };
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -111,6 +129,15 @@ export default function EquipmentScreen() {
       ...typography.presets.bodySmall,
       color: colors.textMuted,
     },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: "rgba(239, 68, 68, 0.1)",
+      justifyContent: "center",
+      alignItems: "center",
+      marginLeft: 8,
+    },
     divider: {
       height: 1,
       backgroundColor: colors.border,
@@ -178,6 +205,8 @@ export default function EquipmentScreen() {
 
       <Text style={styles.sectionLabel}>EQUIPAMENTOS REGISTADOS</Text>
 
+      <SectionEmptyToggle rdoId={id ?? ""} section="equipment" hasData={entries.length > 0} />
+
       <View style={styles.equipmentList}>
         {entries.map((item, index) => (
           <View key={item.id}>
@@ -193,6 +222,9 @@ export default function EquipmentScreen() {
                   </Text>
                 </View>
               </View>
+              <PressableOpacity style={styles.deleteButton} onPress={() => removeEntry(item.id)}>
+                <Trash2 size={16} color="#EF4444" />
+              </PressableOpacity>
               <ChevronRight size={16} color={colors.textMuted} />
             </PressableOpacity>
             {index < entries.length - 1 && <View style={styles.divider} />}

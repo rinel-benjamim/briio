@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { View, Text, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Plus, ChevronRight } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
+import { Plus, ChevronRight, Trash2 } from "lucide-react-native";
 import { typography } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SectionEmptyToggle } from "@/components/ui/SectionEmptyToggle";
 import { useRdo } from "@/contexts/RdoContext";
 import { useOccurrenceRepository } from "@/repositories/occurrence.repository";
 import type { Occurrence } from "@/types";
@@ -30,13 +32,15 @@ export default function OccurrencesScreen() {
   const [occurrences, setOccurrences] = useState<Occurrence[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
-    occurrenceRepo.findByRdoId(id).then((data) => {
-      setOccurrences(data);
-      setLoading(false);
-    });
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+      occurrenceRepo.findByRdoId(id).then((data) => {
+        setOccurrences(data);
+        setLoading(false);
+      });
+    }, [id])
+  );
 
   const handleContinue = () => {
     if (fromReview) {
@@ -44,6 +48,20 @@ export default function OccurrencesScreen() {
     } else {
       router.push(`/(tabs)/reports/${id}/observations`);
     }
+  };
+
+  const removeOccurrence = (occId: string) => {
+    Alert.alert("Remover ocorrência", "Tem a certeza que deseja remover?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: async () => {
+          await occurrenceRepo.remove(occId);
+          setOccurrences((prev) => prev.filter((o) => o.id !== occId));
+        },
+      },
+    ]);
   };
 
   const styles = useThemedStyles((colors) => ({
@@ -124,6 +142,16 @@ export default function OccurrencesScreen() {
       ...typography.presets.body,
       fontWeight: typography.fontWeight.semibold,
       color: colors.textMain,
+      flex: 1,
+    },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: "rgba(239, 68, 68, 0.1)",
+      justifyContent: "center",
+      alignItems: "center",
+      marginLeft: 8,
     },
     occurrenceMeta: {
       ...typography.presets.caption,
@@ -185,6 +213,8 @@ export default function OccurrencesScreen() {
 
       <Text style={styles.sectionLabel}>OCORRÊNCIAS REGISTADAS</Text>
 
+      <SectionEmptyToggle rdoId={id ?? ""} section="occurrences" hasData={occurrences.length > 0} />
+
       <View style={styles.occurrencesCard}>
         {occurrences.map((item, index) => (
           <View key={item.id}>
@@ -196,6 +226,9 @@ export default function OccurrencesScreen() {
             >
               <View style={styles.occurrenceTop}>
                 <Text style={styles.occurrenceTitle}>{item.title}</Text>
+                <PressableOpacity style={styles.deleteButton} onPress={() => removeOccurrence(item.id)}>
+                  <Trash2 size={16} color="#EF4444" />
+                </PressableOpacity>
                 <ChevronRight size={16} color={colors.textMuted} />
               </View>
               <Text style={styles.occurrenceMeta}>

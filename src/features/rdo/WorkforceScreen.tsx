@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { View, Text, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { ChevronRight, Plus, Copy } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
+import { ChevronRight, Plus, Copy, Trash2 } from "lucide-react-native";
 import { typography, shadows } from "@/constants";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { RdoScreenLayout } from "@/components/ui/RdoScreenLayout";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SectionEmptyToggle } from "@/components/ui/SectionEmptyToggle";
 import { useRdo } from "@/contexts/RdoContext";
 import { useWorkforceRepository } from "@/repositories/workforce.repository";
 import type { WorkforceEntry } from "@/types";
@@ -26,10 +28,12 @@ export default function WorkforceScreen() {
   const [totalHours, setTotalHours] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
-    loadData();
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+      loadData();
+    }, [id])
+  );
 
   async function loadData() {
     if (!id) return;
@@ -42,6 +46,20 @@ export default function WorkforceScreen() {
     setTotalHours(summary.totalHours);
     setLoading(false);
   }
+
+  const removeEntry = (entryId: string) => {
+    Alert.alert("Remover função", "Tem a certeza que deseja remover?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: async () => {
+          await workforceRepo.remove(entryId);
+          loadData();
+        },
+      },
+    ]);
+  };
 
   const styles = useThemedStyles((colors) => ({
     context: {
@@ -124,6 +142,14 @@ export default function WorkforceScreen() {
       alignItems: "center",
       gap: 8,
     },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: "rgba(239, 68, 68, 0.1)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
     workItemTotalInfo: {
       alignItems: "flex-end",
       gap: 2,
@@ -204,6 +230,8 @@ export default function WorkforceScreen() {
 
       <Text style={styles.sectionLabel}>FUNCÇÕES</Text>
 
+      <SectionEmptyToggle rdoId={id ?? ""} section="workforce" hasData={entries.length > 0} onToggle={loadData} />
+
       <View style={styles.workforceList}>
         {entries.map((item, index) => (
           <View key={item.id}>
@@ -224,6 +252,9 @@ export default function WorkforceScreen() {
                   <Text style={styles.workItemTotal}>{item.total_hours} h</Text>
                   <Text style={styles.workItemTotalLabel}>total</Text>
                 </View>
+                <PressableOpacity style={styles.deleteButton} onPress={() => removeEntry(item.id)}>
+                  <Trash2 size={16} color="#EF4444" />
+                </PressableOpacity>
                 <ChevronRight size={16} color={colors.textMuted} />
               </View>
             </PressableOpacity>
