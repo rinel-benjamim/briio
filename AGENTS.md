@@ -241,7 +241,7 @@ Ficheiro de design: `/home/codespace/Documentos/briio-design/briio.pen`
 - [x] Fase 3: Reutilização de RDO anterior (selecionar dados, copiar com transação)
 - [x] Fase 4: PDF com dados reais (HTML/CSS template, geração, partilha, impressão)
 - [x] Arquivar obra (alternativa a excluir)
-- [x] Fase 5: Testes unitários (28 tests — validation, uuid)
+- [x] Fase 5: Testes unitários (59 tests — validation, uuid, repositories, services)
 
 ### Em progresso
 - [ ] Testes de integração

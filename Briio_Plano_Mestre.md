@@ -1335,8 +1335,8 @@ A IA não deve alterar decisões arquiteturais silenciosamente.
 
 ## Fase 5 --- Qualidade
 
--   [x] Unit tests (28 tests — validation, uuid)
--   [ ] Repository tests
+-   [x] Unit tests (59 tests — validation, uuid, repositories, services)
+-   [x] Repository tests
 -   [ ] Integration tests
 -   [ ] E2E
 -   [ ] Offline tests
