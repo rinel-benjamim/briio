@@ -1,12 +1,14 @@
-import { View, ScrollView, StyleSheet, Text, Modal, Pressable, FlatList } from "react-native";
-import { useState, useEffect, useMemo } from "react";
+import { View, ScrollView, StyleSheet, Text, Modal, Pressable, FlatList, Image } from "react-native";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Plus, X, Check, Building2, Camera, Users, AlertTriangle } from "lucide-react-native";
 import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography } from "@/constants";
 import { useProjects } from "@/hooks/useProjects";
-import { useRdoList } from "@/hooks/useRdoData";
+import { useRdoList, useRdoOverview } from "@/hooks/useRdoData";
+import { useProfile } from "@/hooks/useProfile";
+import { useDataChangeListener } from "@/hooks/useDataChangeListener";
 
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { AnimatedFAB } from "@/components/ui/AnimatedFAB";
@@ -20,6 +22,8 @@ import { RDOCard } from "@/components/rdo/RDOCard";
 import { RecentReports } from "@/components/rdo/RecentReports";
 import { useRdo } from "@/contexts/RdoContext";
 
+const EMPTY_RDO_IMG = require("@/assets/images/onboarding-img3.png");
+
 const QUICK_ACTIONS = [
   { id: "photo", label: "Fotografia", icon: Camera },
   { id: "workforce", label: "Mão de obra", icon: Users },
@@ -30,11 +34,12 @@ export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const { rdoId } = useRdo();
+  const { profile, refresh: refreshProfile } = useProfile();
   const [projectModalVisible, setProjectModalVisible] = useState(false);
   const [selectedProjectForNew, setSelectedProjectForNew] = useState<ProjectOption | null>(null);
 
-  const { projects, loading: projectsLoading } = useProjects();
-  const { rdos, loading: rdosLoading } = useRdoList();
+  const { projects, loading: projectsLoading, refresh: refreshProjects } = useProjects();
+  const { rdos, loading: rdosLoading, refresh: refreshRdos } = useRdoList();
 
   const loading = projectsLoading || rdosLoading;
 
@@ -60,6 +65,23 @@ export default function DashboardScreen() {
     if (rdos.length === 0) return null;
     return rdos[0];
   }, [rdos]);
+
+  const { overview: latestRdoOverview, refresh: refreshOverview } = useRdoOverview(latestRdo?.id ?? null);
+
+  const refreshAll = useCallback(() => {
+    refreshProjects();
+    refreshRdos();
+    refreshProfile();
+    if (latestRdo?.id) refreshOverview();
+  }, [latestRdo?.id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshAll();
+    }, [refreshAll])
+  );
+
+  useDataChangeListener(refreshAll);
 
   const recentReports = useMemo(() => {
     return rdos.slice(0, 5).map((r) => {
@@ -92,11 +114,15 @@ export default function DashboardScreen() {
         <FadeInView delay={0}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <Text style={[styles.greeting, { color: colors.textMain }]}>Bom dia, Ana</Text>
+              <Text style={[styles.greeting, { color: colors.textMain }]}>
+                Bom dia, {profile?.name?.split(" ")[0] ?? "utilizador"}
+              </Text>
               <Text style={[styles.subtitle, { color: colors.textMuted }]}>Vamos registar o progresso de hoje?</Text>
             </View>
             <View style={[styles.avatar, { backgroundColor: colors.primaryLight }]}>
-              <Text style={[styles.avatarText, { color: colors.primary }]}>AR</Text>
+              <Text style={[styles.avatarText, { color: colors.primary }]}>
+                {profile?.name?.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2) ?? "U"}
+              </Text>
             </View>
           </View>
         </FadeInView>
@@ -115,12 +141,15 @@ export default function DashboardScreen() {
           <RDOCard
             date={new Date(latestRdo.report_date).toLocaleDateString("pt-AO", { day: "numeric", month: "long", year: "numeric" })}
             projectName={selectedProject?.name ?? ""}
-            progressPercentage={latestRdo.progress_percentage}
+            progressPercentage={latestRdoOverview?.progressPercentage ?? 0}
+            completedSteps={latestRdoOverview?.completedSections ?? 0}
+            totalSteps={latestRdoOverview?.totalSections ?? 8}
             onContinue={() => router.push(`/(tabs)/reports/${latestRdo.id}`)}
           />
         ) : (
           <FadeInView delay={100}>
             <View style={styles.newReportSection}>
+              <Image source={EMPTY_RDO_IMG} style={styles.emptyRdoImage} resizeMode="contain" />
               <Text style={[styles.newReportLabel, { color: colors.textMuted }]}>RDO de hoje</Text>
               <PressableOpacity
                 style={[styles.newReportButton, { backgroundColor: colors.primary }]}
@@ -291,6 +320,11 @@ const styles = StyleSheet.create({
   },
   newReportSection: {
     gap: 12,
+  },
+  emptyRdoImage: {
+    width: "100%",
+    height: 280,
+    marginBottom: 4,
   },
   newReportLabel: {
     ...typography.presets.caption,

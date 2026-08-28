@@ -33,8 +33,8 @@ export function RDOCard({
       <PressableOpacity style={[styles.card, { backgroundColor: colors.heroBg }]} onPress={onContinue}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text style={[styles.headerLabel, { color: colors.primary }]}>RDO de hoje</Text>
-            <Text style={[styles.headerDate, { color: colors.textMain }]}>{date}</Text>
+            <Text style={[styles.headerLabel, { color: colors.heroText }]}>RDO de hoje</Text>
+            <Text style={[styles.headerDate, { color: colors.heroText }]}>{date}</Text>
           </View>
           <View style={[styles.statusBadge, { backgroundColor: colors.warningBg }]}>
             <Text style={[styles.statusText, { color: colors.warning }]}>Em andamento</Text>
@@ -43,13 +43,13 @@ export function RDOCard({
 
         <View style={styles.completionSection}>
           <View style={styles.completionRow}>
-            <Text style={[styles.completionPercent, { color: colors.textMain }]}>{progressPercentage}%</Text>
+            <Text style={[styles.completionPercent, { color: colors.heroText }]}>{progressPercentage}%</Text>
             {progressLabel && (
-              <Text style={[styles.completionSteps, { color: colors.primary }]}>{progressLabel}</Text>
+              <Text style={[styles.completionSteps, { color: colors.heroTextMuted }]}>{progressLabel}</Text>
             )}
           </View>
 
-          <View style={[styles.progressTrack, { backgroundColor: colors.progressTrack }]}>
+          <View style={[styles.progressTrack, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
             <View
               style={[
                 styles.progressFill,

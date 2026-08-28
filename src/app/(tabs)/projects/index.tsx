@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   View,
   FlatList,
@@ -6,7 +6,7 @@ import {
   TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import {
   Search,
   SlidersHorizontal,
@@ -19,6 +19,7 @@ import { useThemeColors } from "@/contexts/ThemeContext";
 import { typography, borderRadius } from "@/constants";
 import { useThemedStyles } from "@/hooks/useThemedStyles";
 import { useProjects } from "@/hooks/useProjects";
+import { useDataChangeListener } from "@/hooks/useDataChangeListener";
 import { PressableOpacity } from "@/components/ui/PressableOpacity";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
@@ -33,7 +34,15 @@ export default function ProjectsScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { projects, loading } = useProjects();
+  const { projects, loading, refresh } = useProjects();
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [])
+  );
+
+  useDataChangeListener(refresh);
 
   const styles = useThemedStyles((colors) => ({
     container: {
