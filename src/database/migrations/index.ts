@@ -1,9 +1,16 @@
 import type { SQLiteDatabase } from "expo-sqlite";
+import { migration001InitialSchema } from "./001_initial_schema";
+import { migration002AddSkippedSections } from "./002_add_skipped_sections";
 
 export interface Migration {
   version: number;
   up: (db: SQLiteDatabase) => Promise<void>;
 }
+
+export const allMigrations: Migration[] = [
+  migration001InitialSchema,
+  migration002AddSkippedSections,
+];
 
 export async function runMigrations(db: SQLiteDatabase, migrations: Migration[]) {
   await db.withTransactionAsync(async () => {

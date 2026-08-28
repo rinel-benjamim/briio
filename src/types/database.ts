@@ -40,6 +40,7 @@ export interface RDO extends BaseEntity {
   generated_pdf_uri: string | null;
   completed_at: string | null;
   generated_at: string | null;
+  skipped_sections: string | null;
 }
 
 export interface RDOConfiguration extends BaseEntity {

@@ -13,6 +13,7 @@ export interface UpdateRdoInput {
   generated_pdf_uri?: string;
   completed_at?: string;
   generated_at?: string;
+  skipped_sections?: string | null;
 }
 
 export function useRdoRepository() {
@@ -107,6 +108,7 @@ export function useRdoRepository() {
     if (input.generated_pdf_uri !== undefined) { fields.push("generated_pdf_uri = ?"); values.push(input.generated_pdf_uri); }
     if (input.completed_at !== undefined) { fields.push("completed_at = ?"); values.push(input.completed_at); }
     if (input.generated_at !== undefined) { fields.push("generated_at = ?"); values.push(input.generated_at); }
+    if (input.skipped_sections !== undefined) { fields.push("skipped_sections = ?"); values.push(input.skipped_sections); }
 
     fields.push("updated_at = ?");
     values.push(now);

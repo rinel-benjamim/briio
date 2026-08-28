@@ -1,5 +1,7 @@
 import { View, ScrollView, Text } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ArrowLeftCircle,
@@ -84,49 +86,15 @@ export default function RdoOverviewScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { overview, loading } = useRdoOverview(id ?? null);
+  const { overview, loading, refresh } = useRdoOverview(id ?? null);
   const projectRepo = useProjectRepository();
   const [project, setProject] = useState<Project | null>(null);
 
-  useEffect(() => {
-    if (overview) {
-      projectRepo.findById(overview.rdo.project_id).then(setProject);
-    }
-  }, [overview]);
-
-  if (loading || !overview) return <LoadingScreen />;
-
-  const { rdo, sectionStatuses, completedSections, totalSections, progressPercentage } = overview;
-
-  const counts: Record<string, number> = {
-    weather: 0,
-    workforce: 0,
-    workforceHours: 0,
-    materials: 0,
-    equipment: 0,
-    tasks: 0,
-    occurrences: 0,
-    observations: 0,
-    photographs: 0,
-  };
-
-  const sections: RdoSection[] = SECTION_KEYS.map((key) => ({
-    id: key,
-    name: SECTION_NAMES[key],
-    summary: buildSectionSummary(key, counts),
-    completed: sectionStatuses[key] === "complete",
-  }));
-
-  const getNextUnfilledSection = () => {
-    for (const section of sections) {
-      if (!section.completed) {
-        return SECTION_ROUTES[section.id];
-      }
-    }
-    return null;
-  };
-
-  const nextSection = getNextUnfilledSection();
+  useFocusEffect(
+    useCallback(() => {
+      if (id) refresh();
+    }, [id])
+  );
 
   const styles = useThemedStyles((colors) => ({
     container: {
@@ -325,6 +293,50 @@ export default function RdoOverviewScreen() {
       color: colors.textMuted,
     },
   }));
+
+  useEffect(() => {
+    if (overview) {
+      projectRepo.findById(overview.rdo.project_id).then(setProject);
+    }
+  }, [overview]);
+
+  if (loading) return <LoadingScreen />;
+
+  if (!overview) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bgMain, justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <Text style={{ color: colors.textMuted, textAlign: "center" }}>
+          Relatório não encontrado.
+        </Text>
+        <PressableOpacity
+          onPress={() => router.back()}
+          style={{ marginTop: 16, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: colors.primary, borderRadius: 8 }}
+        >
+          <Text style={{ color: colors.bgMain, fontWeight: "600" }}>Voltar</Text>
+        </PressableOpacity>
+      </View>
+    );
+  }
+
+  const { rdo, sectionStatuses, counts, completedSections, totalSections, progressPercentage } = overview;
+
+  const sections: RdoSection[] = SECTION_KEYS.map((key) => ({
+    id: key,
+    name: SECTION_NAMES[key],
+    summary: buildSectionSummary(key, counts),
+    completed: sectionStatuses[key] === "complete",
+  }));
+
+  const getNextUnfilledSection = () => {
+    for (const section of sections) {
+      if (!section.completed) {
+        return SECTION_ROUTES[section.id];
+      }
+    }
+    return null;
+  };
+
+  const nextSection = getNextUnfilledSection();
 
   return (
     <View style={styles.container}>

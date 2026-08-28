@@ -24,6 +24,17 @@ export interface RdoOverview {
     observations: RdoSectionStatus;
     photographs: RdoSectionStatus;
   };
+  counts: {
+    weather: number;
+    workforce: number;
+    workforceHours: number;
+    materials: number;
+    equipment: number;
+    tasks: number;
+    occurrences: number;
+    observations: number;
+    photographs: number;
+  };
   completedSections: number;
   totalSections: number;
   progressPercentage: number;
@@ -83,6 +94,10 @@ export function useRdoService() {
     const rdo = await rdoRepo.findById(id);
     if (!rdo) return null;
 
+    const skippedSections: string[] = rdo.skipped_sections
+      ? JSON.parse(rdo.skipped_sections)
+      : [];
+
     const [weather, workforce, materials, equipment, tasks, occurrences, observations, photos] = await Promise.all([
       weatherRepo.findByRdoId(id),
       workforceRepo.findByRdoId(id),
@@ -94,20 +109,21 @@ export function useRdoService() {
       photographRepo.findByRdoId(id),
     ]);
 
-    function sectionStatus(hasData: boolean, count: number): RdoSectionStatus {
+    function sectionStatus(key: string, hasData: boolean, count: number): RdoSectionStatus {
+      if (skippedSections.includes(key)) return "complete";
       if (!hasData || count === 0) return "empty";
       return "complete";
     }
 
     const sectionStatuses = {
-      weather: sectionStatus(weather.length > 0, weather.length),
-      workforce: sectionStatus(workforce.length > 0, workforce.length),
-      materials: sectionStatus(materials.length > 0, materials.length),
-      equipment: sectionStatus(equipment.length > 0, equipment.length),
-      tasks: sectionStatus(tasks.length > 0, tasks.length),
-      occurrences: sectionStatus(occurrences.length > 0, occurrences.length),
-      observations: (observations?.content ? "complete" : "empty") as RdoSectionStatus,
-      photographs: sectionStatus(photos.length > 0, photos.length),
+      weather: sectionStatus("weather", weather.length > 0, weather.length),
+      workforce: sectionStatus("workforce", workforce.length > 0, workforce.length),
+      materials: sectionStatus("materials", materials.length > 0, materials.length),
+      equipment: sectionStatus("equipment", equipment.length > 0, equipment.length),
+      tasks: sectionStatus("tasks", tasks.length > 0, tasks.length),
+      occurrences: sectionStatus("occurrences", occurrences.length > 0, occurrences.length),
+      observations: (skippedSections.includes("observations") || observations?.content) ? "complete" as RdoSectionStatus : "empty" as RdoSectionStatus,
+      photographs: sectionStatus("photographs", photos.length > 0, photos.length),
     };
 
     const sections = Object.values(sectionStatuses);
@@ -115,9 +131,22 @@ export function useRdoService() {
     const totalSections = sections.length;
     const progressPercentage = Math.round((completedSections / totalSections) * 100);
 
+    const counts = {
+      weather: weather.length,
+      workforce: workforce.length,
+      workforceHours: workforce.reduce((sum, w) => sum + (w.total_hours || 0), 0),
+      materials: materials.length,
+      equipment: equipment.length,
+      tasks: tasks.length,
+      occurrences: occurrences.length,
+      observations: observations?.content ? 1 : 0,
+      photographs: photos.length,
+    };
+
     return {
       rdo,
       sectionStatuses,
+      counts,
       completedSections,
       totalSections,
       progressPercentage,
@@ -139,6 +168,27 @@ export function useRdoService() {
     });
   }
 
+  async function toggleSkippedSection(id: string, section: string): Promise<RDO> {
+    const rdo = await rdoRepo.findById(id);
+    if (!rdo) throw new Error("RDO não encontrado");
+
+    const current: string[] = rdo.skipped_sections ? JSON.parse(rdo.skipped_sections) : [];
+    const updated = current.includes(section)
+      ? current.filter((s) => s !== section)
+      : [...current, section];
+
+    return rdoRepo.update(id, {
+      skipped_sections: updated.length > 0 ? JSON.stringify(updated) : null,
+    });
+  }
+
+  async function isSectionSkipped(id: string, section: string): Promise<boolean> {
+    const rdo = await rdoRepo.findById(id);
+    if (!rdo || !rdo.skipped_sections) return false;
+    const skipped: string[] = JSON.parse(rdo.skipped_sections);
+    return skipped.includes(section);
+  }
+
   return {
     getAll,
     getById,
@@ -149,5 +199,7 @@ export function useRdoService() {
     getOverview,
     markAsCompleted,
     markAsGenerated,
+    toggleSkippedSection,
+    isSectionSkipped,
   };
 }
